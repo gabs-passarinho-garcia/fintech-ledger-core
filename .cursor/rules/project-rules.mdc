@@ -1,0 +1,178 @@
+---
+alwaysApply: true
+---
+
+# Project Fintech Ledger Core: The Financial Engine
+
+"Whoever can be trusted with very little can also be trusted with much." - Luke 16:10 (NIV)
+
+## 📜 Preamble: Our Mission
+
+This document is the foundational charter for Fintech Ledger Core, a high-performance financial ledger engine. Our purpose is to build a secure, reliable, and transparent ledger system that demonstrates excellence in software architecture, infrastructure, and best practices.
+
+Every algorithm, database transaction, and API endpoint must reflect this commitment to integrity, security, and technical excellence.
+
+## 🛡️ Our Guiding Principles
+
+These are the core philosophies that shape our technical world.
+
+**Excellence-Driven Development:** We are building a ledger engine that must be a showcase of technical seniority. Our technical decisions must prioritize security, accuracy, auditability, and architectural soundness. The system must be a trustworthy steward of financial data.
+
+**Clean Architecture & Domain-Driven Design (DDD):** This is our strategic map. A rigorous separation of concerns is critical in the financial domain. Our goal is to build a business core (Domain) that is robust, testable, and completely independent of external systems and frameworks.
+
+**Hybrid Vigor (OOP & FP):** We wield the best of both paradigms. Object-Oriented principles for a solid structure and clear responsibilities, and Functional Programming for business logic and data transformations, ensuring predictability and immutability.
+
+**Multi-Tenancy First:** The system is designed from the ground up to support multiple tenants with data isolation at the application level, using a shared database, shared schema approach.
+
+## 📜 The Unbreakable Laws of the Code
+
+These rules are non-negotiable and enforced automatically by our tooling.
+
+**TypeScript is Law:** All application code MUST be written in TypeScript with `strict` mode enabled.
+
+**The `any` Heresy:** The use of `any` is strictly forbidden. It defeats the purpose of TypeScript and introduces unacceptable risk in a financial system. Use specific types, interfaces, generics, or `unknown`.
+
+**Bun, Our One True Runtime:** Bun is our universal tool for package management, runtime, and test execution (`bun:test`). There are no exceptions.
+
+**Linter & Prettier Are The Authority:** All code must pass ESLint and Prettier checks before it can be merged. Consistency is key to clarity and maintainability.
+
+**The Command Authority Protocol:** The AI operates in an advisory capacity. It is strictly forbidden from executing potentially destructive commands automatically. Actions such as database writes, migrations, `git push`, file deletions, or branch modifications require explicit user confirmation for each specific command before execution.
+
+## 🏛️ The Architectural Blueprint: The Vault
+
+Our application follows the principles of Clean Architecture. Violating these boundaries compromises the system's integrity and flexibility.
+
+**The Golden Rule:** Dependencies flow inwards. `Infrastructure -> Presentation -> Service -> Domain`.
+
+### 1. The Domain Layer (The Vault)
+
+**Responsibility:** Contains the core business logic, rules, and entities of our financial domain. This is the most secure and independent layer.
+
+**Contents:** Entities (`LedgerEntry`, `Account`, `Tenant`), Value Objects, and domain-specific logic.
+
+**Rules:**
+
+* NO external dependencies (no Prisma, no Elysia, no AWS SDK).
+* Entities encapsulate their own logic (e.g., `ledgerEntry.markAsCompleted()` not a service changing a status).
+* Entities are not dumb data bags; they are the living core of our software.
+* All financial calculations use `Decimal.js` for precision.
+
+### 2. The Repository Layer (Keepers of the Ledger)
+
+**Responsibility:** Handles the persistence of Domain Entities.
+
+**Contents:** Concrete and focused repository classes (`CreateLedgerEntryRepository`, `GetAccountRepository`, `UpdateAccountBalanceRepository`).
+
+**Rules:**
+
+* Single Responsibility Principle (SRP) is strictly enforced. One repository per operation type (create, read, update, delete).
+* Methods accept and return Domain Entities. The mapping between the Domain and the database model (Prisma) happens here.
+* All database queries are executed here and only here.
+* Repositories accept an optional `Prisma.TransactionClient` for atomic operations.
+
+### 3. The Service Layer (The Treasury Office)
+
+**Responsibility:** Orchestrates business workflows.
+
+**Contents:** Application services (use cases) like `CreateLedgerEntryUseCase`.
+
+**Rules:**
+
+* All services MUST implement the generic `IService<T, U>` interface.
+* Coordinates repositories and domain entities to execute a use case.
+* Uses `TransactionManager` to ensure atomic operations for financial transactions.
+* All balance updates and ledger entry creation must happen within a single database transaction.
+
+### 4. The Presentation Layer (The Merchant's Counter)
+
+**Responsibility:** Interacts with the outside world (HTTP requests).
+
+**Contents:** Elysia controllers/routers, request/response DTOs (TypeBox).
+
+**Rules:**
+
+* Validates all incoming data using TypeBox schemas.
+* Uses dependency injection via Awilix container to resolve services.
+* Controllers are structured as Elysia plugins with `prefix` and use `scopeResolver` for DI.
+* Calls the appropriate Service to execute an action.
+* Translates internal domain models into public-facing API responses.
+
+### 5. The Infrastructure Layer (The Ambassadors)
+
+**Responsibility:** This is the ONLY layer that knows about the outside world. It contains the concrete implementations of external services.
+
+**Contents:** Adapters for AWS services (SQS), database handlers (PrismaHandler), logging (Winston), etc.
+
+**Rules:**
+
+* Implements interfaces defined in the Service Layer (e.g., `SQSHandler` implements `IQueueProducer`).
+* Handles all communication with external APIs, including authentication, request formatting, and parsing responses.
+* This is where SDKs and specific external dependencies live.
+
+## ⚔️ Our Armory: The Official Tech Stack
+
+* **Runtime & Tooling:** Bun
+* **Language:** TypeScript
+* **Framework:** Elysia.js
+* **Database:** PostgreSQL
+* **ORM:** Prisma
+* **Dependency Injection:** Awilix
+* **Schema & Validation:** TypeBox
+* **Infrastructure as Code:** OpenTofu
+* **Containerization:** Docker
+* **Cloud Provider:** Amazon Web Services (AWS)
+* **Observability:** OpenTelemetry, Sentry
+* **Precise Math:** Decimal.js
+
+## 📜 The Craftsman's Code: Daily Practices
+
+**Code with Wisdom (The Engineering Principles):** We rigorously apply principles like **SOLID, DRY, and ACID**. We practice **Clean Code**, combat **code smells**, and use **Design Patterns** as proven solutions.
+
+**Database Normalization:** Our database schemas must be meticulously structured to ensure data integrity, following normalization best practices.
+
+**Dependency Injection is Key:** We use DI (via Awilix) to inject concrete implementations into our services at runtime. All dependencies are registered in modules (ProvidersModule, LedgerModule, AppModule) and resolved via the container.
+
+**Atomic Transactions:** All financial operations that involve multiple database changes (e.g., debiting one account and crediting another) MUST be executed within a single database transaction using Prisma's `$transaction`.
+
+**Multi-Tenancy:** All database queries MUST include `tenantId` in the `where` clause to ensure data isolation. The `tenantId` is extracted from the request context (session, headers, or path parameters).
+
+**Event-Driven Architecture:** After successful database transactions, events are dispatched to SQS for asynchronous processing. This ensures eventual consistency without blocking the main transaction.
+
+**Security First:** All endpoints are protected with:
+
+* Rate limiting (configurable per endpoint type)
+* Security headers (CSP, HSTS, X-Frame-Options, etc.)
+* Correlation ID tracking for request tracing
+* Input validation via TypeBox schemas
+
+**Observability:** The system includes:
+
+* Structured logging via Winston
+* Distributed tracing via OpenTelemetry
+* Error tracking via Sentry
+* Performance monitoring via Server-Timing headers
+
+**Meaningful Tests:** Our goal is 100% confidence in critical financial paths. Unit tests for the Domain and Service layers are paramount. Integration tests should cover the interaction with repositories and external services using mocks.
+
+**Conventional Commits:** All commits must follow the Conventional Commits specification (`feat:`, `fix:`, `chore:`, etc.).
+
+**Controllers by Model:** Each domain model has its own controller file following the pattern:
+
+* `src/modules/{module}/infra/controllers/{Module}Controller.ts`
+* Controllers are exported as Elysia instances with `prefix`
+* Use `scopeResolver` for dependency injection
+* Follow the pattern from zion-pay and klema-api
+
+**Module Organization:** Each domain module follows this structure:
+
+```
+src/modules/{module}/
+├── domain/          # Entities, Factories, Value Objects
+├── usecases/        # Application services (use cases)
+├── infra/           # Infrastructure implementations
+│   ├── controllers/ # HTTP controllers
+│   └── repositories/ # Database repositories
+└── dtos/            # Data Transfer Objects (TypeBox schemas)
+```
+
+Let's build with integrity, for a purpose greater than ourselves. *Soli Deo Gloria.*

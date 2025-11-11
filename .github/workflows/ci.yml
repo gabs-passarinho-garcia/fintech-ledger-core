@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16.8
+        env:
+          POSTGRES_DB: ledger_core_db
+          POSTGRES_USER: ledger_user
+          POSTGRES_PASSWORD: ledger_password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Generate Prisma Client
+        run: bun db:init
+        env:
+          DATABASE_URL: postgresql://ledger_user:ledger_password@localhost:5432/ledger_core_db
+
+      - name: Run migrations
+        run: bun db:deploy
+        env:
+          DATABASE_URL: postgresql://ledger_user:ledger_password@localhost:5432/ledger_core_db
+
+      - name: Run type check
+        run: bun check:type
+
+      - name: Run linter
+        run: bun lint
+
+      - name: Run tests
+        run: bun test
+        env:
+          DATABASE_URL: postgresql://ledger_user:ledger_password@localhost:5432/ledger_core_db
+

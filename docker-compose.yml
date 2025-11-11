@@ -1,0 +1,70 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16.8
+    container_name: ledger-core-postgres
+    environment:
+      POSTGRES_DB: ledger_core_db
+      POSTGRES_USER: ledger_user
+      POSTGRES_PASSWORD: ledger_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ledger-core-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ledger_user -d ledger_core_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # LocalStack - AWS Services Emulation
+  localstack:
+    image: localstack/localstack:3.0
+    container_name: ledger-core-localstack
+    environment:
+      # LocalStack Configuration
+      SERVICES: sqs,secretsmanager
+      DEBUG: 1
+      DATA_DIR: /tmp/localstack/data
+      PERSISTENCE: 1
+      # AWS Configuration for LocalStack
+      AWS_DEFAULT_REGION: us-east-2
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      # LocalStack specific settings
+      HOST_TMP_FOLDER: ${TMPDIR:-/tmp}/localstack
+      EDGE_PORT: 4566
+      EDGE_BIND_HOST: 0.0.0.0
+    ports:
+      - "4566:4566"            # LocalStack Edge
+      - "4510-4559:4510-4559"  # External services port range
+    volumes:
+      - localstack_data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - ledger-core-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  localstack_data:
+    driver: local
+
+networks:
+  ledger-core-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+
