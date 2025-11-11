@@ -48,6 +48,10 @@ export class CognitoHandler implements IOAuth {
     // Check if we're in local development mode (LocalStack)
     const isLocalDev = this.envVariableHandler.get<string>(LOCAL_DEVELOPMENT) === 'true';
 
+    // Determine LocalStack endpoint based on runtime environment
+    // If running in Docker container, use service name; otherwise use localhost
+    const localstackEndpoint = Bun.env.LOCALSTACK_ENDPOINT || 'http://localhost:4566';
+
     this.cognitoClient = new CognitoIdentityProvider({
       apiVersion: this.envVariableHandler.get<string>('AWS_COGNITO_API_VERSION') as string,
       region: this.envVariableHandler.get('AWS_REGION') as string,
@@ -56,7 +60,7 @@ export class CognitoHandler implements IOAuth {
         secretAccessKey: this.envVariableHandler.get('AWS_SECRET_ACCESS_KEY') as string,
       },
       ...(isLocalDev && {
-        endpoint: 'http://localstack:4566',
+        endpoint: localstackEndpoint,
       }),
     });
   }
