@@ -52,6 +52,27 @@ down: ## Stop all services
 
 dev: ## Start application in development mode (with hot reload)
 	@echo "$(BLUE)🔥 Starting application in development mode...$(NC)"
+	@echo "$(YELLOW)📦 Ensuring infrastructure services are running...$(NC)"
+	@docker compose up -d
+	@echo "$(YELLOW)⏳ Waiting for services to be healthy...$(NC)"
+	@timeout=60; \
+	while [ $$timeout -gt 0 ]; do \
+		postgres_health=$$(docker inspect ledger-core-postgres --format='{{.State.Health.Status}}' 2>/dev/null || echo ""); \
+		localstack_health=$$(docker inspect ledger-core-localstack --format='{{.State.Health.Status}}' 2>/dev/null || echo ""); \
+		if [ "$$postgres_health" = "healthy" ] && [ "$$localstack_health" = "healthy" ]; then \
+			echo "$(GREEN)✅ All services are healthy!$(NC)"; \
+			break; \
+		fi; \
+		echo "  • PostgreSQL: $$([ -n "$$postgres_health" ] && echo "$$postgres_health" || echo "starting...")"; \
+		echo "  • LocalStack: $$([ -n "$$localstack_health" ] && echo "$$localstack_health" || echo "starting...")"; \
+		sleep 2; \
+		timeout=$$((timeout - 2)); \
+	done; \
+	if [ $$timeout -le 0 ]; then \
+		echo "$(RED)❌ Timeout waiting for services to be healthy$(NC)"; \
+		echo "$(YELLOW)Run 'make status' to check service status$(NC)"; \
+		exit 1; \
+	fi
 	@echo "$(YELLOW)Server will be available at:$(NC)"
 	@echo "  • http://localhost:$${SERVER_PORT:-3000}"
 	@echo "  • API Docs: http://localhost:$${SERVER_PORT:-3000}/docs"
