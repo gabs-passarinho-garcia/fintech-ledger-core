@@ -2,7 +2,7 @@
 # Fintech Ledger Core - Docker Compose Management
 # ===========================================
 
-.PHONY: help up down test lint db-migrate db-update db-init
+.PHONY: help up down dev start build test lint db-migrate db-update db-init
 
 # Default target
 .DEFAULT_GOAL := help
@@ -49,6 +49,27 @@ down: ## Stop all services
 	@echo "$(YELLOW)🛑 Stopping all services...$(NC)"
 	docker compose down
 	@echo "$(GREEN)✅ All services stopped!$(NC)"
+
+dev: ## Start application in development mode (with hot reload)
+	@echo "$(BLUE)🔥 Starting application in development mode...$(NC)"
+	@echo "$(YELLOW)Server will be available at:$(NC)"
+	@echo "  • http://localhost:$${SERVER_PORT:-3000}"
+	@echo "  • API Docs: http://localhost:$${SERVER_PORT:-3000}/docs"
+	@echo ""
+	bun dev
+
+start: build ## Start application in production mode (requires build)
+	@echo "$(BLUE)🚀 Starting application in production mode...$(NC)"
+	@echo "$(YELLOW)Server will be available at:$(NC)"
+	@echo "  • http://localhost:$${SERVER_PORT:-3000}"
+	@echo "  • API Docs: http://localhost:$${SERVER_PORT:-3000}/docs"
+	@echo ""
+	bun prod
+
+build: ## Build application for production
+	@echo "$(BLUE)🔨 Building application...$(NC)"
+	bun build:prod
+	@echo "$(GREEN)✅ Build completed!$(NC)"
 
 # ===========================================
 # DATABASE MANAGEMENT
