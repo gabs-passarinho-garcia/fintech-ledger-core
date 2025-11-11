@@ -37,7 +37,8 @@
     "tsconfig.json",
     "node_modules",
     "dist",
-    "prisma/**/*"
+    "prisma/**/*",
+    "prisma.config.ts"
   ],
   "include": ["src/**/*"]
 }

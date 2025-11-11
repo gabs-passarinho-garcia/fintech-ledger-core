@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Tenant {
-  id        String    @id @default(uuid())
+  id        String    @id @default(uuid()) @db.Uuid
   name      String
   createdBy String
   createdAt DateTime  @default(now())
@@ -28,8 +28,8 @@ model Tenant {
 }
 
 model Account {
-  id        String    @id @default(uuid())
-  tenantId  String
+  id        String    @id @default(uuid()) @db.Uuid
+  tenantId  String    @db.Uuid
   name      String
   balance   Decimal   @default(0) @db.Decimal(18, 2)
   createdBy String
@@ -61,10 +61,10 @@ enum LedgerEntryStatus {
 }
 
 model LedgerEntry {
-  id            String            @id @default(uuid())
-  tenantId     String
-  fromAccountId String?
-  toAccountId  String?
+  id            String            @id @default(uuid()) @db.Uuid
+  tenantId     String            @db.Uuid
+  fromAccountId String?          @db.Uuid
+  toAccountId  String?           @db.Uuid
   amount       Decimal            @db.Decimal(18, 2)
   type         TransactionType
   status       LedgerEntryStatus  @default(PENDING)

@@ -13,7 +13,8 @@ import { security, securityPresets } from './common/middlewares/security';
 import { swaggerPlugin } from './common/middlewares/swaggerPlugin';
 import { rateLimit, rateLimitConfigs } from './common/middlewares/rateLimiting';
 import { AppModule } from './AppModule';
-import { LedgerController } from './modules/ledger/infra/controllers/LedgerController';
+import { LedgerController } from './models/ledger/infra/controllers/LedgerController';
+import { AuthController } from './models/auth/infra/controllers/AuthController';
 import * as Sentry from '@sentry/bun';
 import { instrumentation } from './instrumentation';
 
@@ -149,6 +150,7 @@ export function createApp(): Elysia {
         },
       },
     )
+    .use(AuthController)
     .use(LedgerController);
 
   return app as never;

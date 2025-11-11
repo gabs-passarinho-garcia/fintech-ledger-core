@@ -16,7 +16,7 @@ const compat = new FlatCompat({
 });
 
 export default [{
-    ignores: ["eslint.config.mjs", "dist", "build", "node_modules", "prisma", "**/__tests__/**", "**/*.test.{js,ts}", "**/*.spec.{js,ts}", "**/test/**", "**/tests/**"],
+    ignores: ["eslint.config.mjs", "dist", "build", "node_modules", "prisma", "**/__tests__/**", "**/*.test.{js,ts}", "**/*.spec.{js,ts}", "**/test/**", "**/tests/**", "prisma.config.ts"],
 }, ...compat.extends("plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"), {
     plugins: {
         "@typescript-eslint": typescriptEslint_eslintPlugin,

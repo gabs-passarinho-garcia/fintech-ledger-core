@@ -1,4 +1,5 @@
 import { Decimal } from 'decimal.js';
+import { uuidv7 } from 'uuidv7';
 import { LedgerEntry, type TransactionType, type LedgerEntryStatus } from './LedgerEntry.entity';
 
 export interface CreateLedgerEntryInput {
@@ -26,7 +27,7 @@ export class LedgerEntryFactory {
     const amount = input.amount instanceof Decimal ? input.amount : new Decimal(input.amount);
 
     return LedgerEntry.create({
-      id: crypto.randomUUID(),
+      id: uuidv7(),
       tenantId: input.tenantId,
       fromAccountId: input.fromAccountId ?? null,
       toAccountId: input.toAccountId ?? null,

@@ -55,6 +55,23 @@ services:
       start_period: 30s
     restart: unless-stopped
 
+  # Database initialization service
+  app-init:
+    image: oven/bun:1.3.0-alpine
+    container_name: ledger-core-init
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://ledger_user:ledger_password@postgres:5432/ledger_core_db
+    working_dir: /app
+    volumes:
+      - .:/app
+    networks:
+      - ledger-core-network
+    command: sh -c "bun install && bun db:init && bun db:deploy && bun db:seed"
+    restart: "no"
+
 volumes:
   postgres_data:
     driver: local
