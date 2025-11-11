@@ -6,4 +6,5 @@ export * from './NotFoundError';
 export * from './NotSignedError';
 export * from './ErrorSchema';
 export * from './ErrorFactory';
-export { AppEnvironment, AppEnvironmentType } from '../enums/AppEnvironment';
+export { AppEnvironment } from '../enums/AppEnvironment';
+export type { AppEnvironmentType } from '../enums/AppEnvironment';
