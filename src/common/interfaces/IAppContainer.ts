@@ -5,7 +5,7 @@ import type { IQueueProducer } from './IQueueProducer';
 import type { SessionHandler } from '../providers/SessionHandler';
 import type { EnvVariableHandler } from '../providers/EnvVariableHandler';
 import type { SecretsHandler } from '../providers/AWS/SecretsHandler';
-import type { CognitoHandler } from '../providers/AWS/CognitoHandler';
+import type { IOAuth } from './IOAuth';
 import type { KeyAuthHandler } from '../auth/KeyAuthHandler';
 import type { TokenAuthHandler } from '../auth/TokenAuthHandler';
 import type { GetAccountRepository } from '@/models/ledger/infra/repositories/GetAccountRepository';
@@ -36,7 +36,7 @@ export interface IAppContainer {
   // Infrastructure handlers
   envVariableHandler: EnvVariableHandler;
   secretsHandler: SecretsHandler;
-  oauthHandler: CognitoHandler;
+  oauthHandler: IOAuth;
   // Authentication handlers
   tokenAuthHandler: TokenAuthHandler;
   keyAuthHandler: KeyAuthHandler;
