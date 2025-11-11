@@ -80,9 +80,13 @@ export function createApp(): Elysia {
     .use(
       Bun.env['APP_ENV'] === AppEnvironment.PRODUCTION
         ? security(securityPresets.strict())
-        : ([AppEnvironment.DEVELOPMENT, AppEnvironment.STAGING] as AppEnvironmentType[]).includes(
-              Bun.env['APP_ENV'] as AppEnvironmentType,
-            )
+        : (
+              [
+                AppEnvironment.DEVELOPMENT,
+                AppEnvironment.STAGING,
+                AppEnvironment.LOCAL,
+              ] as AppEnvironmentType[]
+            ).includes(Bun.env['APP_ENV'] as AppEnvironmentType)
           ? security(securityPresets.moderate())
           : security(securityPresets.lenient()),
     )

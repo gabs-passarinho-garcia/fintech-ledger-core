@@ -6,6 +6,7 @@ import {
   REFERRER_POLICIES,
   EXTERNAL_DOMAINS,
 } from '../constants/security.constants';
+import { Logger } from '@/common/providers/Logger';
 
 /**
  * Security headers configuration interface
@@ -95,6 +96,14 @@ function buildHSTSHeader(config: {
  * This middleware is designed to work alongside @elysiajs/cors without conflicts
  */
 export function security(userConfig: SecurityConfig = {}): Elysia {
+  Logger.logStatic(
+    'info',
+    {
+      userConfig,
+    },
+    'Security',
+    'Security',
+  );
   return new Elysia({ name: 'security' }).onAfterHandle({ as: 'global' }, ({ set }) => {
     // Content Security Policy
     if (userConfig.contentSecurityPolicy?.directives) {
