@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "High-performance financial ledger engine focused on atomic consistency and decoupled architecture",
   "license": "GPL-3.0-or-later",
+  "type": "module",
   "scripts": {
     "dev": "bun run --hot --watch src/server.ts",
     "prod": "bun run dist/server.js",
@@ -35,7 +36,8 @@
     "@opentelemetry/exporter-trace-otlp-proto": "0.206.0",
     "@opentelemetry/instrumentation-pg": "0.59.0",
     "@opentelemetry/sdk-trace-node": "2.1.0",
-    "@prisma/client": "6.17.1",
+    "@prisma/adapter-pg": "7.0.0",
+    "@prisma/client": "7.0.0",
     "@sentry/bun": "^8.45.1",
     "@sentry/opentelemetry": "^8.45.1",
     "@sinclair/typebox": "0.34.41",
@@ -45,6 +47,7 @@
     "dotenv": "17.2.3",
     "elysia": "1.4.11",
     "elysia-rate-limit": "4.4.0",
+    "pg": "8.16.3",
     "uuidv7": "^1.0.2",
     "winston": "3.18.3"
   },
@@ -59,7 +62,7 @@
     "eslint-plugin-sonarjs": "3.0.5",
     "prettier": "3.6.2",
     "prettier-plugin-prisma": "5.0.0",
-    "prisma": "6.17.1",
+    "prisma": "7.0.0",
     "typescript": "5.9.3"
   },
   "imports": {

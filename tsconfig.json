@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "NodeNext",
-    "rootDir": "./src",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "rootDir": ".",
+    "moduleResolution": "bundler",
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
-      "prisma": ["prisma/*"]
+      "prisma/*": ["prisma/client/*"]
     },
 
     "resolveJsonModule": true,
@@ -40,5 +40,5 @@
     "prisma/**/*",
     "prisma.config.ts"
   ],
-  "include": ["src/**/*"]
+  "include": ["**/*"]
 }
