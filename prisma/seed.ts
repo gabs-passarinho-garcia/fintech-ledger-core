@@ -1,8 +1,15 @@
 import { PrismaClient } from './client';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { Decimal } from 'decimal.js';
 import { uuidv7 } from 'uuidv7';
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({
+  connectionString: Bun.env.DATABASE_URL,
+});
+
+const prisma = new PrismaClient({
+  adapter,
+});
 
 /**
  * Seeds the database with sample data for development and testing.
