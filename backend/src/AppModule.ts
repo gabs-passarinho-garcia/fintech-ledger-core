@@ -4,8 +4,16 @@ import { AuthModule as CommonAuthModule } from './common/providers/AuthModule';
 import { PaymentModule } from './common/providers/payment/PaymentModule';
 import { LedgerModule } from './models/ledger/LedgerModule';
 import { AuthModule } from './models/auth/AuthModule';
+import { TenantModule } from './models/tenant/TenantModule';
 
 export const AppModule: ModuleDefinition = {
   name: 'AppModule',
-  imports: [ProvidersModule, CommonAuthModule, PaymentModule, LedgerModule, AuthModule],
+  imports: [
+    ProvidersModule,
+    CommonAuthModule,
+    PaymentModule,
+    LedgerModule,
+    AuthModule,
+    TenantModule,
+  ],
 };

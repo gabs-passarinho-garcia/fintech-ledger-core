@@ -9,6 +9,7 @@ export interface User {
   id: string;
   username: string;
   createdAt: Date | string;
+  isMaster?: boolean;
 }
 
 /**
@@ -80,6 +81,20 @@ export interface Pagination {
 export interface ListResponse<T> {
   entries: T[];
   pagination: Pagination;
+}
+
+/**
+ * Tenant data structure
+ */
+export interface Tenant {
+  id: string;
+  name: string;
+  createdBy: string;
+  createdAt: Date | string;
+  updatedBy?: string | null;
+  updatedAt: Date | string;
+  deletedBy?: string | null;
+  deletedAt?: Date | string | null;
 }
 
 /**

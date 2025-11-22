@@ -14,6 +14,7 @@ interface UseAuthReturn {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isMaster: boolean;
   signIn: (input: SignInInput) => Promise<SignInResponse>;
   signUp: (input: SignUpInput) => Promise<SignUpResponse>;
   signOut: () => void;
@@ -94,6 +95,7 @@ export function useAuth(): UseAuthReturn {
     user,
     isAuthenticated: checkAuth(), // Only check token, user can be loaded later
     isLoading,
+    isMaster: user?.isMaster ?? false,
     signIn,
     signUp,
     signOut,

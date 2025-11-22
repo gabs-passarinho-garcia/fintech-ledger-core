@@ -16,6 +16,10 @@ import {
   ListLedgerEntriesResponseSchema,
 } from '../../dtos/ListLedgerEntries.dto';
 import {
+  ListAllLedgerEntriesQuerySchema,
+  ListAllLedgerEntriesResponseSchema,
+} from '../../dtos/ListAllLedgerEntries.dto';
+import {
   UpdateLedgerEntryRequestSchema,
   UpdateLedgerEntryResponseSchema,
   type UpdateLedgerEntryRequest,
@@ -28,6 +32,7 @@ import { SessionContextExtractor } from '../../usecases/helpers/SessionContextEx
 const LEDGER_TAG = 'Ledger';
 const ENTRIES_PATH = '/entries';
 const ENTRIES_ID_PATH = '/entries/:id';
+const ENTRIES_ALL_PATH = '/entries/all';
 
 /**
  * Controller for ledger operations.
@@ -189,6 +194,48 @@ export const LedgerController = new Elysia({ prefix: '/ledger' })
       detail: {
         summary: 'Update Ledger Entry',
         description: 'Updates a ledger entry status',
+        tags: [LEDGER_TAG],
+      },
+      isSignIn: true,
+    },
+  )
+  .get(
+    ENTRIES_ALL_PATH,
+    async function listAllLedgerEntries({ query, scope }) {
+      const listAllLedgerEntriesUseCase = scope.resolve(AppProviders.listAllLedgerEntriesUseCase);
+      const result = await listAllLedgerEntriesUseCase.execute({
+        status: query.status,
+        type: query.type,
+        dateFrom: query.dateFrom,
+        dateTo: query.dateTo,
+        tenantId: query.tenantId,
+        page: query.page,
+        limit: query.limit,
+        includeDeleted: query.includeDeleted,
+      });
+
+      return {
+        statusCode: HTTPStatusCode.OK,
+        data: result,
+      };
+    },
+    {
+      query: ListAllLedgerEntriesQuerySchema,
+      headers: TokenAuthSchema,
+      response: {
+        [HTTPStatusCode.OK]: t.Object({
+          statusCode: t.Literal(HTTPStatusCode.OK),
+          data: ListAllLedgerEntriesResponseSchema,
+        }),
+        [HTTPStatusCode.BAD_REQUEST]: ErrorSchema,
+        [HTTPStatusCode.UNAUTHORIZED]: ErrorSchema,
+        [HTTPStatusCode.FORBIDDEN]: ErrorSchema,
+        [HTTPStatusCode.INTERNAL_SERVER_ERROR]: ErrorSchema,
+      },
+      detail: {
+        summary: 'List All Ledger Entries',
+        description:
+          'Lists all ledger entries in the system without tenant filter. Only master users can access.',
         tags: [LEDGER_TAG],
       },
       isSignIn: true,

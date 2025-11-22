@@ -15,11 +15,13 @@ import type { GetLedgerEntryRepository } from '@/models/ledger/infra/repositorie
 import type { ListLedgerEntriesRepository } from '@/models/ledger/infra/repositories/ListLedgerEntriesRepository';
 import type { UpdateLedgerEntryRepository } from '@/models/ledger/infra/repositories/UpdateLedgerEntryRepository';
 import type { DeleteLedgerEntryRepository } from '@/models/ledger/infra/repositories/DeleteLedgerEntryRepository';
+import type { ListAllLedgerEntriesRepository } from '@/models/ledger/infra/repositories/ListAllLedgerEntriesRepository';
 import type { CreateLedgerEntryUseCase } from '@/models/ledger/usecases/CreateLedgerEntry.usecase';
 import type { GetLedgerEntryUseCase } from '@/models/ledger/usecases/GetLedgerEntry.usecase';
 import type { ListLedgerEntriesUseCase } from '@/models/ledger/usecases/ListLedgerEntries.usecase';
 import type { UpdateLedgerEntryUseCase } from '@/models/ledger/usecases/UpdateLedgerEntry.usecase';
 import type { DeleteLedgerEntryUseCase } from '@/models/ledger/usecases/DeleteLedgerEntry.usecase';
+import type { ListAllLedgerEntriesUseCase } from '@/models/ledger/usecases/ListAllLedgerEntriesUseCase';
 import type { SignInUseCase } from '@/models/auth/usecases/SignInUseCase';
 import type { RefreshTokenUseCase } from '@/models/auth/usecases/RefreshTokenUseCase';
 import type { PaymentProviderFactory } from '@/common/providers/payment/PaymentProviderFactory';
@@ -50,6 +52,10 @@ import type { ListAllUsersUseCase } from '@/models/auth/usecases/ListAllUsersUse
 import type { ListAllProfilesUseCase } from '@/models/auth/usecases/ListAllProfilesUseCase';
 import type { DeleteProfileUseCase } from '@/models/auth/usecases/DeleteProfileUseCase';
 import type { DeleteUserUseCase } from '@/models/auth/usecases/DeleteUserUseCase';
+import type { ListTenantsByUserRepository } from '@/models/tenant/infra/repositories/ListTenantsByUserRepository';
+import type { ListAllTenantsRepository } from '@/models/tenant/infra/repositories/ListAllTenantsRepository';
+import type { ListTenantsByUserUseCase } from '@/models/tenant/usecases/ListTenantsByUserUseCase';
+import type { ListAllTenantsUseCase } from '@/models/tenant/usecases/ListAllTenantsUseCase';
 
 /**
  * Application container interface defining all available providers.
@@ -78,12 +84,14 @@ export interface IAppContainer {
   listLedgerEntriesRepository: ListLedgerEntriesRepository;
   updateLedgerEntryRepository: UpdateLedgerEntryRepository;
   deleteLedgerEntryRepository: DeleteLedgerEntryRepository;
+  listAllLedgerEntriesRepository: ListAllLedgerEntriesRepository;
   // Ledger use cases
   createLedgerEntryUseCase: CreateLedgerEntryUseCase;
   getLedgerEntryUseCase: GetLedgerEntryUseCase;
   listLedgerEntriesUseCase: ListLedgerEntriesUseCase;
   updateLedgerEntryUseCase: UpdateLedgerEntryUseCase;
   deleteLedgerEntryUseCase: DeleteLedgerEntryUseCase;
+  listAllLedgerEntriesUseCase: ListAllLedgerEntriesUseCase;
   // Auth repositories
   createUserRepository: CreateUserRepository;
   getUserRepository: GetUserRepository;
@@ -111,6 +119,12 @@ export interface IAppContainer {
   listAllProfilesUseCase: ListAllProfilesUseCase;
   deleteProfileUseCase: DeleteProfileUseCase;
   deleteUserUseCase: DeleteUserUseCase;
+  // Tenant repositories
+  listTenantsByUserRepository: ListTenantsByUserRepository;
+  listAllTenantsRepository: ListAllTenantsRepository;
+  // Tenant use cases
+  listTenantsByUserUseCase: ListTenantsByUserUseCase;
+  listAllTenantsUseCase: ListAllTenantsUseCase;
   // Payment providers
   paymentProviderFactory: PaymentProviderFactory;
   paymentManager: PaymentManager;

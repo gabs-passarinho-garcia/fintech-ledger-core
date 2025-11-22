@@ -42,17 +42,39 @@ export default function Layout({ children }: LayoutProps): JSX.Element {
                   Profile
                 </Link>
                 <Link
-                  to="/users"
+                  to="/tenants"
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
-                  Users
+                  Tenants
                 </Link>
-                <Link
-                  to="/profiles"
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                >
-                  Profiles
-                </Link>
+                {user?.isMaster && (
+                  <>
+                    <Link
+                      to="/users"
+                      className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    >
+                      Users
+                    </Link>
+                    <Link
+                      to="/profiles"
+                      className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    >
+                      Profiles
+                    </Link>
+                    <Link
+                      to="/admin/tenants"
+                      className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    >
+                      All Tenants
+                    </Link>
+                    <Link
+                      to="/admin/ledgers"
+                      className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    >
+                      All Ledgers
+                    </Link>
+                  </>
+                )}
               </nav>
             </div>
             <div className="flex items-center gap-4">

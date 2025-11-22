@@ -9,12 +9,14 @@ import {
   ListLedgerEntriesRepository,
   UpdateLedgerEntryRepository,
   DeleteLedgerEntryRepository,
+  ListAllLedgerEntriesRepository,
 } from './infra/repositories';
 import { CreateLedgerEntryUseCase } from './usecases/CreateLedgerEntry.usecase';
 import { GetLedgerEntryUseCase } from './usecases/GetLedgerEntry.usecase';
 import { ListLedgerEntriesUseCase } from './usecases/ListLedgerEntries.usecase';
 import { UpdateLedgerEntryUseCase } from './usecases/UpdateLedgerEntry.usecase';
 import { DeleteLedgerEntryUseCase } from './usecases/DeleteLedgerEntry.usecase';
+import { ListAllLedgerEntriesUseCase } from './usecases/ListAllLedgerEntriesUseCase';
 
 export const LedgerModule: ModuleDefinition = {
   name: 'LedgerModule',
@@ -45,6 +47,10 @@ export const LedgerModule: ModuleDefinition = {
       DeleteLedgerEntryRepository,
       Lifecycle.SCOPED,
     ),
+    [AppProviders.listAllLedgerEntriesRepository]: provideClass(
+      ListAllLedgerEntriesRepository,
+      Lifecycle.SCOPED,
+    ),
     // Use cases
     [AppProviders.createLedgerEntryUseCase]: provideClass(
       CreateLedgerEntryUseCase,
@@ -61,6 +67,10 @@ export const LedgerModule: ModuleDefinition = {
     ),
     [AppProviders.deleteLedgerEntryUseCase]: provideClass(
       DeleteLedgerEntryUseCase,
+      Lifecycle.SCOPED,
+    ),
+    [AppProviders.listAllLedgerEntriesUseCase]: provideClass(
+      ListAllLedgerEntriesUseCase,
       Lifecycle.SCOPED,
     ),
   },

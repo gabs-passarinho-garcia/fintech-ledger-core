@@ -124,5 +124,29 @@ export const endpoints = {
       withAuthRefresh(() =>
         api.ledger.entries[":id"].delete({ params: { id } }),
       ),
+
+    listAllEntries: async (query?: {
+      status?: "PENDING" | "COMPLETED" | "FAILED";
+      type?: "DEPOSIT" | "WITHDRAWAL" | "TRANSFER";
+      dateFrom?: Date | string;
+      dateTo?: Date | string;
+      tenantId?: string;
+      page?: number;
+      limit?: number;
+      includeDeleted?: boolean;
+    }) => withAuthRefresh(() => api.ledger.entries.all.get({ query })),
+  },
+
+  /**
+   * Tenant endpoints
+   */
+  tenants: {
+    listTenants: async () => withAuthRefresh(() => api.tenants.get()),
+
+    listAllTenants: async (query?: {
+      page?: number;
+      limit?: number;
+      includeDeleted?: boolean;
+    }) => withAuthRefresh(() => api.tenants.all.get({ query })),
   },
 };

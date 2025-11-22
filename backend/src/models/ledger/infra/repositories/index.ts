@@ -5,3 +5,4 @@ export * from './GetLedgerEntryRepository';
 export * from './ListLedgerEntriesRepository';
 export * from './UpdateLedgerEntryRepository';
 export * from './DeleteLedgerEntryRepository';
+export * from './ListAllLedgerEntriesRepository';

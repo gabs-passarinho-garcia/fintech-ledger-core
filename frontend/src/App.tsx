@@ -8,6 +8,9 @@ import Profile from "./pages/Profile";
 import ProfileEdit from "./pages/ProfileEdit";
 import UsersManagement from "./pages/UsersManagement";
 import ProfilesManagement from "./pages/ProfilesManagement";
+import TenantsList from "./pages/TenantsList";
+import TenantsManagement from "./pages/TenantsManagement";
+import LedgersManagement from "./pages/LedgersManagement";
 import LedgerEntryCreate from "./pages/LedgerEntryCreate";
 import LedgerEntryDetail from "./pages/LedgerEntryDetail";
 import LedgerEntryEdit from "./pages/LedgerEntryEdit";
@@ -58,6 +61,30 @@ function App(): JSX.Element {
           element={
             <ProtectedRoute>
               <ProfilesManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/tenants"
+          element={
+            <ProtectedRoute>
+              <TenantsList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/tenants"
+          element={
+            <ProtectedRoute>
+              <TenantsManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/ledgers"
+          element={
+            <ProtectedRoute>
+              <LedgersManagement />
             </ProtectedRoute>
           }
         />

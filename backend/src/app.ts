@@ -17,6 +17,7 @@ import { AppModule } from './AppModule';
 import { LedgerController } from './models/ledger/infra/controllers/LedgerController';
 import { AuthController } from './models/auth/infra/controllers/AuthController';
 import { UserController } from './models/auth/infra/controllers/UserController';
+import { TenantController } from './models/tenant/infra/controllers/TenantController';
 import * as Sentry from '@sentry/bun';
 import { instrumentation } from './instrumentation';
 import { AppEnvironment, AppEnvironmentType } from '@/common';
@@ -27,8 +28,8 @@ import { AppEnvironment, AppEnvironmentType } from '@/common';
  *
  * @returns The configured Elysia app instance
  */
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
-export function createApp() {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function buildApp() {
   // Initialize DI container and register modules before middlewares use scope
   ContainerHandler.init();
   ContainerHandler.registerModule(AppModule);
@@ -161,7 +162,29 @@ export function createApp() {
     )
     .use(AuthController)
     .use(UserController)
-    .use(LedgerController);
+    .use(LedgerController)
+    .use(TenantController);
 }
 
-export type App = ReturnType<typeof createApp>;
+/**
+ * Elysia app instance for type inference
+ * This is used by Eden Treaty for end-to-end type safety
+ */
+export const app = buildApp();
+
+/**
+ * App type for Eden Treaty client
+ * Export the type directly from the app instance for better type inference
+ */
+export type App = typeof app;
+
+/**
+ * Creates and configures the Elysia application.
+ * Initializes DI container, registers modules, and applies all middlewares.
+ * This function is used at runtime to create a new app instance.
+ *
+ * @returns The configured Elysia app instance
+ */
+export function createApp(): ReturnType<typeof buildApp> {
+  return buildApp();
+}

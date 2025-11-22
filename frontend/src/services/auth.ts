@@ -1,5 +1,6 @@
 import { endpoints } from "../api/endpoints";
 import { storage } from "../utils/storage";
+import { extractUserFromToken } from "../utils/jwt";
 import type { SignInResponse, SignUpResponse, User } from "../types";
 
 /**
@@ -47,11 +48,17 @@ export async function signIn(input: SignInInput): Promise<SignInResponse> {
     storage.setTenantId(data.tenantId);
   }
 
+  // Extract user info from token
+  const tokenUser = data.accessToken
+    ? extractUserFromToken(data.accessToken)
+    : null;
+
   // Store user data
   storage.setUserData({
     username: data.username,
     email: data.userEmail,
     tenantId: data.tenantId,
+    isMaster: tokenUser?.isMaster ?? false,
   });
 
   return data;
@@ -109,6 +116,22 @@ export async function refreshToken(): Promise<{
   if (data.accessToken && data.refreshToken) {
     storage.setAccessToken(data.accessToken);
     storage.setRefreshToken(data.refreshToken);
+
+    // Update user data with isMaster from new token
+    const tokenUser = extractUserFromToken(data.accessToken);
+    const currentUserData = storage.getUserData<{
+      username?: string;
+      email?: string;
+      tenantId?: string;
+      isMaster?: boolean;
+    }>();
+
+    if (currentUserData) {
+      storage.setUserData({
+        ...currentUserData,
+        isMaster: tokenUser?.isMaster ?? currentUserData.isMaster ?? false,
+      });
+    }
   }
 
   return {
@@ -135,9 +158,23 @@ export function getCurrentUser(): User | null {
     email?: string;
     tenantId?: string;
     createdAt?: Date | string;
+    isMaster?: boolean;
   }>();
 
   if (!userData || !userData.username) {
+    // Try to extract from token if available
+    const token = storage.getAccessToken();
+    if (token) {
+      const tokenUser = extractUserFromToken(token);
+      if (tokenUser?.username) {
+        return {
+          id: tokenUser.userId || "",
+          username: tokenUser.username,
+          createdAt: new Date().toISOString(),
+          isMaster: tokenUser.isMaster ?? false,
+        };
+      }
+    }
     return null;
   }
 
@@ -146,6 +183,7 @@ export function getCurrentUser(): User | null {
     id: userData.id || "",
     username: userData.username,
     createdAt: userData.createdAt || new Date().toISOString(),
+    isMaster: userData.isMaster ?? false,
   };
 }
 
