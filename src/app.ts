@@ -16,6 +16,7 @@ import { rateLimit, rateLimitConfigs } from './common/middlewares/rateLimiting';
 import { AppModule } from './AppModule';
 import { LedgerController } from './models/ledger/infra/controllers/LedgerController';
 import { AuthController } from './models/auth/infra/controllers/AuthController';
+import { UserController } from './models/auth/infra/controllers/UserController';
 import * as Sentry from '@sentry/bun';
 import { instrumentation } from './instrumentation';
 import { AppEnvironment, AppEnvironmentType } from '@/common';
@@ -158,6 +159,7 @@ export function createApp(): Elysia {
       },
     )
     .use(AuthController)
+    .use(UserController)
     .use(LedgerController);
 
   return app as never;

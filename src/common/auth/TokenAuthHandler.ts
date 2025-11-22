@@ -104,7 +104,7 @@ export class TokenAuthHandler implements IAuthHandler {
    * Validates user exists and is not deleted.
    *
    * @param userId - The user ID
-   * @returns The user data
+   * @returns The user entity
    * @throws {NotSignedError} If user is not found or deleted
    */
   private async validateUser(userId: string): Promise<{
@@ -120,7 +120,11 @@ export class TokenAuthHandler implements IAuthHandler {
       });
     }
 
-    return user;
+    return {
+      id: user.id,
+      isMaster: user.isMaster,
+      deletedAt: user.deletedAt,
+    };
   }
 
   /**

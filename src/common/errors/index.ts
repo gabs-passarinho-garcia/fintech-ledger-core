@@ -4,6 +4,7 @@ export * from './DomainError';
 export * from './ExternalSourceError';
 export * from './NotFoundError';
 export * from './NotSignedError';
+export * from './ForbiddenError';
 export * from './UnsupportedPaymentProviderError';
 export * from './ErrorSchema';
 export * from './ErrorFactory';

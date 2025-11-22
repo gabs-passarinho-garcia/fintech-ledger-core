@@ -1,22 +1,11 @@
 import { Prisma } from 'prisma/client';
 import type { PrismaHandler } from '@/common/providers/PrismaHandler';
 import { AppProviders } from '@/common/interfaces/IAppContainer';
-
-export interface ProfileData {
-  id: string;
-  userId: string;
-  tenantId: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date | null;
-}
+import { Profile, ProfileFactory } from '../../domain';
 
 /**
  * Repository for listing profiles by user ID.
- * Handles data access for listing user profiles.
+ * Handles data access for listing user profiles and returns domain entities.
  */
 export class ListProfilesByUserIdRepository {
   private readonly prisma: PrismaHandler;
@@ -31,15 +20,15 @@ export class ListProfilesByUserIdRepository {
    * @param args - Query parameters
    * @param args.userId - The user ID
    * @param args.tx - Optional transaction context
-   * @returns Array of profile data
+   * @returns Array of profile entities
    */
   public async listByUserId(args: {
     userId: string;
     tx?: Prisma.TransactionClient;
-  }): Promise<ProfileData[]> {
+  }): Promise<Profile[]> {
     const client = args.tx || this.prisma;
 
-    return await client.profile.findMany({
+    const profilesData = await client.profile.findMany({
       where: {
         userId: args.userId,
         deletedAt: null,
@@ -59,5 +48,19 @@ export class ListProfilesByUserIdRepository {
         createdAt: 'desc',
       },
     });
+
+    return profilesData.map((profileData) =>
+      ProfileFactory.reconstruct({
+        id: profileData.id,
+        userId: profileData.userId,
+        tenantId: profileData.tenantId,
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+        email: profileData.email,
+        createdAt: profileData.createdAt,
+        updatedAt: profileData.updatedAt,
+        deletedAt: profileData.deletedAt,
+      }),
+    );
   }
 }

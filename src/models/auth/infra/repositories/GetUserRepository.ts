@@ -2,20 +2,11 @@ import { Prisma } from 'prisma/client';
 import type { PrismaHandler } from '@/common/providers/PrismaHandler';
 import { AppProviders } from '@/common/interfaces/IAppContainer';
 import { NotFoundError } from '@/common/errors';
-
-export interface UserData {
-  id: string;
-  username: string;
-  passwordHash: string;
-  isMaster: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date | null;
-}
+import { User, UserFactory } from '../../domain';
 
 /**
- * Repository for retrieving user data.
- * Handles data access for user queries.
+ * Repository for retrieving user entities.
+ * Handles data access for user queries and returns domain entities.
  */
 export class GetUserRepository {
   private readonly prisma: PrismaHandler;
@@ -30,15 +21,15 @@ export class GetUserRepository {
    * @param args - Query parameters
    * @param args.userId - The user ID
    * @param args.tx - Optional transaction context
-   * @returns The user data or null if not found
+   * @returns The user entity or null if not found
    */
   public async findById(args: {
     userId: string;
     tx?: Prisma.TransactionClient;
-  }): Promise<UserData | null> {
+  }): Promise<User | null> {
     const client = args.tx || this.prisma;
 
-    return await client.user.findFirst({
+    const userData = await client.user.findFirst({
       where: {
         id: args.userId,
         deletedAt: null,
@@ -53,6 +44,20 @@ export class GetUserRepository {
         deletedAt: true,
       },
     });
+
+    if (!userData) {
+      return null;
+    }
+
+    return UserFactory.reconstruct({
+      id: userData.id,
+      username: userData.username,
+      passwordHash: userData.passwordHash,
+      isMaster: userData.isMaster,
+      createdAt: userData.createdAt,
+      updatedAt: userData.updatedAt,
+      deletedAt: userData.deletedAt,
+    });
   }
 
   /**
@@ -61,13 +66,13 @@ export class GetUserRepository {
    * @param args - Query parameters
    * @param args.userId - The user ID
    * @param args.tx - Optional transaction context
-   * @returns The user data
+   * @returns The user entity
    * @throws {NotFoundError} If the user is not found
    */
   public async findByIdOrThrow(args: {
     userId: string;
     tx?: Prisma.TransactionClient;
-  }): Promise<UserData> {
+  }): Promise<User> {
     const user = await this.findById(args);
 
     if (!user) {

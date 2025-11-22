@@ -2,22 +2,11 @@ import { Prisma } from 'prisma/client';
 import type { PrismaHandler } from '@/common/providers/PrismaHandler';
 import { AppProviders } from '@/common/interfaces/IAppContainer';
 import { NotFoundError } from '@/common/errors';
-
-export interface ProfileData {
-  id: string;
-  userId: string;
-  tenantId: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date | null;
-}
+import { Profile, ProfileFactory } from '../../domain';
 
 /**
- * Repository for retrieving profile data.
- * Handles data access for profile queries.
+ * Repository for retrieving profile entities.
+ * Handles data access for profile queries and returns domain entities.
  */
 export class GetProfileRepository {
   private readonly prisma: PrismaHandler;
@@ -32,15 +21,15 @@ export class GetProfileRepository {
    * @param args - Query parameters
    * @param args.profileId - The profile ID
    * @param args.tx - Optional transaction context
-   * @returns The profile data or null if not found
+   * @returns The profile entity or null if not found
    */
   public async findById(args: {
     profileId: string;
     tx?: Prisma.TransactionClient;
-  }): Promise<ProfileData | null> {
+  }): Promise<Profile | null> {
     const client = args.tx || this.prisma;
 
-    return await client.profile.findFirst({
+    const profileData = await client.profile.findFirst({
       where: {
         id: args.profileId,
         deletedAt: null,
@@ -57,6 +46,22 @@ export class GetProfileRepository {
         deletedAt: true,
       },
     });
+
+    if (!profileData) {
+      return null;
+    }
+
+    return ProfileFactory.reconstruct({
+      id: profileData.id,
+      userId: profileData.userId,
+      tenantId: profileData.tenantId,
+      firstName: profileData.firstName,
+      lastName: profileData.lastName,
+      email: profileData.email,
+      createdAt: profileData.createdAt,
+      updatedAt: profileData.updatedAt,
+      deletedAt: profileData.deletedAt,
+    });
   }
 
   /**
@@ -66,16 +71,16 @@ export class GetProfileRepository {
    * @param args.userId - The user ID
    * @param args.tenantId - The tenant ID
    * @param args.tx - Optional transaction context
-   * @returns The profile data or null if not found
+   * @returns The profile entity or null if not found
    */
   public async findByUserIdAndTenantId(args: {
     userId: string;
     tenantId: string;
     tx?: Prisma.TransactionClient;
-  }): Promise<ProfileData | null> {
+  }): Promise<Profile | null> {
     const client = args.tx || this.prisma;
 
-    return await client.profile.findFirst({
+    const profileData = await client.profile.findFirst({
       where: {
         userId: args.userId,
         tenantId: args.tenantId,
@@ -93,6 +98,22 @@ export class GetProfileRepository {
         deletedAt: true,
       },
     });
+
+    if (!profileData) {
+      return null;
+    }
+
+    return ProfileFactory.reconstruct({
+      id: profileData.id,
+      userId: profileData.userId,
+      tenantId: profileData.tenantId,
+      firstName: profileData.firstName,
+      lastName: profileData.lastName,
+      email: profileData.email,
+      createdAt: profileData.createdAt,
+      updatedAt: profileData.updatedAt,
+      deletedAt: profileData.deletedAt,
+    });
   }
 
   /**
@@ -102,14 +123,14 @@ export class GetProfileRepository {
    * @param args.userId - The user ID
    * @param args.tenantId - The tenant ID
    * @param args.tx - Optional transaction context
-   * @returns The profile data
+   * @returns The profile entity
    * @throws {NotFoundError} If the profile is not found
    */
   public async findByUserIdAndTenantIdOrThrow(args: {
     userId: string;
     tenantId: string;
     tx?: Prisma.TransactionClient;
-  }): Promise<ProfileData> {
+  }): Promise<Profile> {
     const profile = await this.findByUserIdAndTenantId(args);
 
     if (!profile) {

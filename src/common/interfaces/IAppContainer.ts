@@ -34,9 +34,22 @@ import type { UpdateUserPasswordRepository } from '@/models/auth/infra/repositor
 import type { CreateProfileRepository } from '@/models/auth/infra/repositories/CreateProfileRepository';
 import type { GetProfileRepository } from '@/models/auth/infra/repositories/GetProfileRepository';
 import type { ListProfilesByUserIdRepository } from '@/models/auth/infra/repositories/ListProfilesByUserIdRepository';
+import type { UpdateProfileRepository } from '@/models/auth/infra/repositories/UpdateProfileRepository';
+import type { DeleteProfileRepository } from '@/models/auth/infra/repositories/DeleteProfileRepository';
+import type { DeleteUserRepository } from '@/models/auth/infra/repositories/DeleteUserRepository';
+import type { ListAllUsersRepository } from '@/models/auth/infra/repositories/ListAllUsersRepository';
+import type { ListAllProfilesRepository } from '@/models/auth/infra/repositories/ListAllProfilesRepository';
 import type { CreateRefreshTokenRepository } from '@/models/auth/infra/repositories/CreateRefreshTokenRepository';
 import type { GetRefreshTokenRepository } from '@/models/auth/infra/repositories/GetRefreshTokenRepository';
 import type { DeleteRefreshTokenRepository } from '@/models/auth/infra/repositories/DeleteRefreshTokenRepository';
+import type { SignUpUseCase } from '@/models/auth/usecases/SignUpUseCase';
+import type { GetProfileUseCase } from '@/models/auth/usecases/GetProfileUseCase';
+import type { UpdateProfileUseCase } from '@/models/auth/usecases/UpdateProfileUseCase';
+import type { ListProfilesByUserUseCase } from '@/models/auth/usecases/ListProfilesByUserUseCase';
+import type { ListAllUsersUseCase } from '@/models/auth/usecases/ListAllUsersUseCase';
+import type { ListAllProfilesUseCase } from '@/models/auth/usecases/ListAllProfilesUseCase';
+import type { DeleteProfileUseCase } from '@/models/auth/usecases/DeleteProfileUseCase';
+import type { DeleteUserUseCase } from '@/models/auth/usecases/DeleteUserUseCase';
 
 /**
  * Application container interface defining all available providers.
@@ -79,12 +92,25 @@ export interface IAppContainer {
   createProfileRepository: CreateProfileRepository;
   getProfileRepository: GetProfileRepository;
   listProfilesByUserIdRepository: ListProfilesByUserIdRepository;
+  updateProfileRepository: UpdateProfileRepository;
+  deleteProfileRepository: DeleteProfileRepository;
+  deleteUserRepository: DeleteUserRepository;
+  listAllUsersRepository: ListAllUsersRepository;
+  listAllProfilesRepository: ListAllProfilesRepository;
   createRefreshTokenRepository: CreateRefreshTokenRepository;
   getRefreshTokenRepository: GetRefreshTokenRepository;
   deleteRefreshTokenRepository: DeleteRefreshTokenRepository;
   // Auth use cases
   signInUseCase: SignInUseCase;
   refreshTokenUseCase: RefreshTokenUseCase;
+  signUpUseCase: SignUpUseCase;
+  getProfileUseCase: GetProfileUseCase;
+  updateProfileUseCase: UpdateProfileUseCase;
+  listProfilesByUserUseCase: ListProfilesByUserUseCase;
+  listAllUsersUseCase: ListAllUsersUseCase;
+  listAllProfilesUseCase: ListAllProfilesUseCase;
+  deleteProfileUseCase: DeleteProfileUseCase;
+  deleteUserUseCase: DeleteUserUseCase;
   // Payment providers
   paymentProviderFactory: PaymentProviderFactory;
   paymentManager: PaymentManager;

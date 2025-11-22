@@ -1,20 +1,11 @@
 import { Prisma } from 'prisma/client';
 import type { PrismaHandler } from '@/common/providers/PrismaHandler';
 import { AppProviders } from '@/common/interfaces/IAppContainer';
-
-export interface UserData {
-  id: string;
-  username: string;
-  passwordHash: string;
-  isMaster: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date | null;
-}
+import { User, UserFactory } from '../../domain';
 
 /**
- * Repository for retrieving user data by username.
- * Handles data access for user queries by username.
+ * Repository for retrieving user entities by username.
+ * Handles data access for user queries by username and returns domain entities.
  */
 export class GetUserByUsernameRepository {
   private readonly prisma: PrismaHandler;
@@ -29,15 +20,15 @@ export class GetUserByUsernameRepository {
    * @param args - Query parameters
    * @param args.username - The username
    * @param args.tx - Optional transaction context
-   * @returns The user data or null if not found
+   * @returns The user entity or null if not found
    */
   public async findByUsername(args: {
     username: string;
     tx?: Prisma.TransactionClient;
-  }): Promise<UserData | null> {
+  }): Promise<User | null> {
     const client = args.tx || this.prisma;
 
-    return await client.user.findFirst({
+    const userData = await client.user.findFirst({
       where: {
         username: args.username,
         deletedAt: null,
@@ -51,6 +42,20 @@ export class GetUserByUsernameRepository {
         updatedAt: true,
         deletedAt: true,
       },
+    });
+
+    if (!userData) {
+      return null;
+    }
+
+    return UserFactory.reconstruct({
+      id: userData.id,
+      username: userData.username,
+      passwordHash: userData.passwordHash,
+      isMaster: userData.isMaster,
+      createdAt: userData.createdAt,
+      updatedAt: userData.updatedAt,
+      deletedAt: userData.deletedAt,
     });
   }
 }
