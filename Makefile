@@ -73,6 +73,13 @@ dev: ## Start application in development mode (with hot reload)
 		echo "$(YELLOW)Run 'make status' to check service status$(NC)"; \
 		exit 1; \
 	fi
+	@echo "$(YELLOW)📋 Copying .env to backend...$(NC)"
+	@if [ -f .env ]; then \
+		cp .env backend/.env; \
+		echo "$(GREEN)✅ .env copied to backend$(NC)"; \
+	else \
+		echo "$(YELLOW)⚠️  .env file not found in root$(NC)"; \
+	fi
 	@echo "$(YELLOW)Server will be available at:$(NC)"
 	@echo "  • http://localhost:$${SERVER_PORT:-3000}"
 	@echo "  • API Docs: http://localhost:$${SERVER_PORT:-3000}/docs"

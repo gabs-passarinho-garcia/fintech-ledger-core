@@ -69,7 +69,7 @@ services:
       - .:/app
     networks:
       - ledger-core-network
-    command: sh -c "bun install && bun db:init && bun db:deploy && bun db:seed"
+    command: sh -c "cd backend && bun install && bun db:init && bun db:deploy && bun db:seed"
     restart: "no"
 
 volumes:
