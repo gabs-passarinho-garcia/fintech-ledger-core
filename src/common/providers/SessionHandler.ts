@@ -15,6 +15,7 @@ export type SessionData = {
   accessType: AccessType;
   correlationId?: string;
   endpoint?: string;
+  masterUserId?: string;
 };
 
 /**

@@ -25,6 +25,18 @@ import type { RefreshTokenUseCase } from '@/models/auth/usecases/RefreshTokenUse
 import type { PaymentProviderFactory } from '@/common/providers/payment/PaymentProviderFactory';
 import type { PaymentManager } from '@/common/providers/payment/PaymentManager';
 import type { IPaymentProvider } from './IPaymentProvider';
+import type { PasswordHandler } from '../providers/auth/PasswordHandler';
+import type { JwtHelper } from '../providers/auth/JwtHelper';
+import type { CreateUserRepository } from '@/models/auth/infra/repositories/CreateUserRepository';
+import type { GetUserRepository } from '@/models/auth/infra/repositories/GetUserRepository';
+import type { GetUserByUsernameRepository } from '@/models/auth/infra/repositories/GetUserByUsernameRepository';
+import type { UpdateUserPasswordRepository } from '@/models/auth/infra/repositories/UpdateUserPasswordRepository';
+import type { CreateProfileRepository } from '@/models/auth/infra/repositories/CreateProfileRepository';
+import type { GetProfileRepository } from '@/models/auth/infra/repositories/GetProfileRepository';
+import type { ListProfilesByUserIdRepository } from '@/models/auth/infra/repositories/ListProfilesByUserIdRepository';
+import type { CreateRefreshTokenRepository } from '@/models/auth/infra/repositories/CreateRefreshTokenRepository';
+import type { GetRefreshTokenRepository } from '@/models/auth/infra/repositories/GetRefreshTokenRepository';
+import type { DeleteRefreshTokenRepository } from '@/models/auth/infra/repositories/DeleteRefreshTokenRepository';
 
 /**
  * Application container interface defining all available providers.
@@ -40,6 +52,8 @@ export interface IAppContainer {
   envVariableHandler: EnvVariableHandler;
   secretsHandler: SecretsHandler;
   oauthHandler: IOAuth;
+  passwordHandler: PasswordHandler;
+  jwtHelper: JwtHelper;
   // Authentication handlers
   tokenAuthHandler: TokenAuthHandler;
   keyAuthHandler: KeyAuthHandler;
@@ -57,6 +71,17 @@ export interface IAppContainer {
   listLedgerEntriesUseCase: ListLedgerEntriesUseCase;
   updateLedgerEntryUseCase: UpdateLedgerEntryUseCase;
   deleteLedgerEntryUseCase: DeleteLedgerEntryUseCase;
+  // Auth repositories
+  createUserRepository: CreateUserRepository;
+  getUserRepository: GetUserRepository;
+  getUserByUsernameRepository: GetUserByUsernameRepository;
+  updateUserPasswordRepository: UpdateUserPasswordRepository;
+  createProfileRepository: CreateProfileRepository;
+  getProfileRepository: GetProfileRepository;
+  listProfilesByUserIdRepository: ListProfilesByUserIdRepository;
+  createRefreshTokenRepository: CreateRefreshTokenRepository;
+  getRefreshTokenRepository: GetRefreshTokenRepository;
+  deleteRefreshTokenRepository: DeleteRefreshTokenRepository;
   // Auth use cases
   signInUseCase: SignInUseCase;
   refreshTokenUseCase: RefreshTokenUseCase;

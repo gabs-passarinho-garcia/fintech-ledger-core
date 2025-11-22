@@ -21,6 +21,7 @@ model Tenant {
 
   accounts      Account[]
   ledgerEntries LedgerEntry[]
+  profiles      Profile[]
 
   @@index([deletedAt])
   @@map("tenants")
@@ -85,5 +86,59 @@ model LedgerEntry {
   @@index([createdAt])
   @@index([deletedAt])
   @@map("ledger_entries")
+}
+
+model User {
+  id          String    @id @default(uuid()) @db.Uuid
+  username    String    @unique
+  passwordHash String
+  isMaster   Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  profiles      Profile[]
+  refreshTokens RefreshToken[]
+
+  @@index([username])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+model Profile {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  tenantId  String   @db.Uuid
+  firstName String
+  lastName  String
+  email     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  user   User   @relation(fields: [userId], references: [id])
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([userId, tenantId])
+  @@index([userId])
+  @@index([tenantId])
+  @@index([deletedAt])
+  @@map("profiles")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  token     String   @unique
+  userId    String   @db.Uuid
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
 }
 

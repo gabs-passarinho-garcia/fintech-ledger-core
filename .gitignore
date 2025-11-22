@@ -53,3 +53,7 @@ terraform/*_override.tf.json
 # Temporary files
 *.tmp
 *.temp
+
+# JWT Keys (never commit private keys!)
+keys/
+*.pem

@@ -7,5 +7,3 @@ export * from './NotSignedError';
 export * from './UnsupportedPaymentProviderError';
 export * from './ErrorSchema';
 export * from './ErrorFactory';
-export { AppEnvironment } from '../enums/AppEnvironment';
-export type { AppEnvironmentType } from '../enums/AppEnvironment';

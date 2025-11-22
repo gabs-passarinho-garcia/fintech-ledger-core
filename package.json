@@ -31,6 +31,7 @@
     "@elysiajs/opentelemetry": "^1.1.0",
     "@elysiajs/server-timing": "^1.1.0",
     "@elysiajs/swagger": "1.2.0",
+    "@noble/hashes": "^2.0.1",
     "@opentelemetry/auto-instrumentations-node": "0.65.0",
     "@opentelemetry/exporter-otlp-http": "0.26.0",
     "@opentelemetry/exporter-trace-otlp-proto": "0.206.0",
@@ -41,6 +42,7 @@
     "@sentry/bun": "^8.45.1",
     "@sentry/opentelemetry": "^8.45.1",
     "@sinclair/typebox": "0.34.41",
+    "argon2": "^0.44.0",
     "awilix": "12.0.5",
     "aws-jwt-verify": "^5.0.0",
     "decimal.js": "10.6.0",
@@ -71,6 +73,7 @@
   "trustedDependencies": [
     "@prisma/client",
     "@prisma/engines",
+    "argon2",
     "prisma",
     "protobufjs"
   ]

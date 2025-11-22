@@ -2,6 +2,7 @@ import { PrismaClient } from './client/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Decimal } from 'decimal.js';
 import { uuidv7 } from 'uuidv7';
+import argon2 from 'argon2';
 
 const adapter = new PrismaPg({
   connectionString: Bun.env.DATABASE_URL,
@@ -432,6 +433,51 @@ async function displayStatistics(): Promise<void> {
 }
 
 // ============================================================================
+// MASTER USER CREATION
+// ============================================================================
+
+/**
+ * Creates a master user for authentication.
+ * Master users have elevated privileges and can impersonate other users.
+ */
+async function createMasterUser(): Promise<void> {
+  const username = Bun.env.MASTER_USER_USERNAME || 'admin';
+  const password = Bun.env.MASTER_USER_PASSWORD || 'ChangeMe123!';
+
+  // Check if master user already exists
+  const existingUser = await prisma.user.findUnique({
+    where: { username },
+  });
+
+  if (existingUser) {
+    console.log(`⚠️  Master user "${username}" already exists, skipping creation`);
+    return;
+  }
+
+  // Hash password using Argon2id (same as PasswordHandler)
+  const passwordHash = await argon2.hash(password, {
+    type: argon2.argon2id,
+    memoryCost: 65536, // 64 MB
+    timeCost: 3,
+    parallelism: 4,
+    hashLength: 32,
+  });
+
+  // Create master user
+  const masterUser = await prisma.user.create({
+    data: {
+      id: uuidv7(),
+      username,
+      passwordHash,
+      isMaster: true,
+    },
+  });
+
+  console.log(`✅ Created master user: ${masterUser.username} (ID: ${masterUser.id})`);
+  console.log(`   ⚠️  Please change the default password immediately!`);
+}
+
+// ============================================================================
 // MAIN SEED FUNCTION
 // ============================================================================
 
@@ -442,6 +488,10 @@ async function main(): Promise<void> {
   console.log('🌱 Starting rich database seed...\n');
 
   try {
+    // Step 0: Create master user
+    await createMasterUser();
+    console.log('');
+
     // Step 1: Create tenants and accounts
     const tenants = await createTenants();
     console.log(`\n✅ Created ${tenants.length} tenants with accounts\n`);

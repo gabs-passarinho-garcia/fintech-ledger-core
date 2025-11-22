@@ -3,6 +3,7 @@ import { AppProviders } from '../interfaces/IAppContainer';
 import { KeyAuthHandler } from '../auth/KeyAuthHandler';
 import { TokenAuthHandler } from '../auth/TokenAuthHandler';
 import { ProvidersModule } from './ProvidersModule';
+import { AuthModule as ModelsAuthModule } from '../../models/auth/AuthModule';
 
 /**
  * Authentication module for dependency injection.
@@ -14,5 +15,5 @@ export const AuthModule: ModuleDefinition = {
     [AppProviders.keyAuthHandler]: provideClass(KeyAuthHandler, Lifecycle.SCOPED),
     [AppProviders.tokenAuthHandler]: provideClass(TokenAuthHandler, Lifecycle.SCOPED),
   },
-  imports: [ProvidersModule],
+  imports: [ProvidersModule, ModelsAuthModule],
 };

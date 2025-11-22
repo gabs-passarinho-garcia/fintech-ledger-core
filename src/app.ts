@@ -9,7 +9,7 @@ import {
   sessionContextMiddleware,
   correlationIdMiddleware,
 } from './common/middlewares';
-import { AppEnvironment, AppEnvironmentType, ErrorFactory } from './common/errors';
+import { ErrorFactory } from './common/errors';
 import { security, securityPresets } from './common/middlewares/security';
 import { swaggerPlugin } from './common/middlewares/swaggerPlugin';
 import { rateLimit, rateLimitConfigs } from './common/middlewares/rateLimiting';
@@ -18,6 +18,7 @@ import { LedgerController } from './models/ledger/infra/controllers/LedgerContro
 import { AuthController } from './models/auth/infra/controllers/AuthController';
 import * as Sentry from '@sentry/bun';
 import { instrumentation } from './instrumentation';
+import { AppEnvironment, AppEnvironmentType } from '@/common';
 
 /**
  * Creates and configures the Elysia application.
