@@ -1,5 +1,7 @@
 import winston from 'winston';
 import type { ILogger, LogLevelType } from '../adapters';
+import type { SessionHandler } from './SessionHandler';
+import { AppProviders } from '../interfaces/IAppContainer';
 
 export interface StandardLogEntry {
   timestamp: string;
@@ -39,10 +41,20 @@ const productionFormat = winston.format.json();
 export class Logger implements ILogger {
   private service: string;
   private readonly winstonLogger: winston.Logger;
+  private readonly sessionHandler?: SessionHandler;
   private static staticLoggerInstance: Logger | null = null;
 
-  constructor() {
+  /**
+   * Creates a new Logger instance.
+   * SessionHandler is optional to maintain compatibility with static logger usage.
+   * When provided via dependency injection, correlationId will be automatically included in logs.
+   *
+   * @param opts - Optional dependency injection options
+   * @param opts.sessionHandler - Optional SessionHandler for automatic correlationId injection
+   */
+  constructor(opts?: { [AppProviders.sessionHandler]?: SessionHandler }) {
     this.service = 'Logger';
+    this.sessionHandler = opts?.[AppProviders.sessionHandler];
     const appEnv = process.env.APP_ENV || process.env.NODE_ENV || 'dev';
     const isProduction = ['prod', 'production'].includes(appEnv);
     const isLocal = appEnv === 'local' || appEnv === 'dev';
@@ -71,6 +83,7 @@ export class Logger implements ILogger {
 
   /**
    * Logs a message at the specified level.
+   * Automatically includes correlationId from SessionHandler when available.
    *
    * @param level - The log level
    * @param body - The log message or object
@@ -79,12 +92,26 @@ export class Logger implements ILogger {
    */
   public log(level: LogLevelType, body: unknown, type: string, service?: string): void {
     const serviceName = service || this.service;
+
+    // Automatically get correlationId from SessionHandler if available
+    let correlationId: string | undefined;
+    if (this.sessionHandler) {
+      try {
+        const sessionData = this.sessionHandler.get();
+        correlationId = sessionData.correlationId;
+      } catch {
+        // SessionHandler context might not be initialized (e.g., static logger)
+        // Silently ignore and continue without correlationId
+      }
+    }
+
     const entry: StandardLogEntry = {
       timestamp: new Date().toISOString(),
       body,
       service: serviceName,
       type,
       level,
+      cid: correlationId,
     };
     this.winstonLogger.log(level, `[${type}] ${serviceName}`, entry);
   }
