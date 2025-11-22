@@ -6,6 +6,6 @@ import { SessionHandler } from './SessionHandler';
 export const SessionModule: ModuleDefinition = {
   name: 'SessionModule',
   providers: {
-    [AppProviders.sessionHandler]: provideClass(SessionHandler, Lifecycle.SCOPED),
+    [AppProviders.sessionHandler]: provideClass(SessionHandler, Lifecycle.SINGLETON),
   },
 };

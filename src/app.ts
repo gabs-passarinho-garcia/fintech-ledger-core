@@ -6,6 +6,7 @@ import { AppProviders } from './common/interfaces/IAppContainer';
 import {
   createScopeMiddleware,
   scopeResolver,
+  sessionContextMiddleware,
   correlationIdMiddleware,
 } from './common/middlewares';
 import { AppEnvironment, AppEnvironmentType, ErrorFactory } from './common/errors';
@@ -35,6 +36,7 @@ export function createApp(): Elysia {
     },
   })
     .use(createScopeMiddleware)
+    .use(sessionContextMiddleware)
     .use(correlationIdMiddleware)
     .resolve(scopeResolver)
     .onError(({ error, path, body, params, query, scope }) => {

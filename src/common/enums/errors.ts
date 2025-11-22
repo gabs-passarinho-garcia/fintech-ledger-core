@@ -18,6 +18,7 @@ export const ErrorCode = {
   DOMAIN_ERROR: 600,
   INSUFFICIENT_BALANCE: 601,
   INVALID_TRANSACTION: 602,
+  UNSUPPORTED_PAYMENT_PROVIDER: 603,
   // 900 - 999: General errors
   INTERNAL_ERROR: 900,
 } as const;
@@ -41,6 +42,7 @@ export const ErrorName = {
   [ErrorCode.DOMAIN_ERROR]: 'DOMAIN_ERROR',
   [ErrorCode.INSUFFICIENT_BALANCE]: 'INSUFFICIENT_BALANCE',
   [ErrorCode.INVALID_TRANSACTION]: 'INVALID_TRANSACTION',
+  [ErrorCode.UNSUPPORTED_PAYMENT_PROVIDER]: 'UNSUPPORTED_PAYMENT_PROVIDER',
 } as const;
 
 export type ErrorName = (typeof ErrorName)[keyof typeof ErrorName];
@@ -62,4 +64,5 @@ export const ErrorMessage = {
   [ErrorCode.DOMAIN_ERROR]: 'Domain rule violation',
   [ErrorCode.INSUFFICIENT_BALANCE]: 'Insufficient balance',
   [ErrorCode.INVALID_TRANSACTION]: 'Invalid transaction',
+  [ErrorCode.UNSUPPORTED_PAYMENT_PROVIDER]: 'Unsupported payment provider',
 } as const;

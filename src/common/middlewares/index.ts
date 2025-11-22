@@ -1,5 +1,6 @@
 export * from './createScope';
 export { createScopeMiddleware, scopeResolver } from './createScope';
+export * from './sessionContext';
 export * from './correlationId';
 export * from './rateLimiting';
 export * from './security';

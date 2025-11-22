@@ -22,6 +22,9 @@ import type { UpdateLedgerEntryUseCase } from '@/models/ledger/usecases/UpdateLe
 import type { DeleteLedgerEntryUseCase } from '@/models/ledger/usecases/DeleteLedgerEntry.usecase';
 import type { SignInUseCase } from '@/models/auth/usecases/SignInUseCase';
 import type { RefreshTokenUseCase } from '@/models/auth/usecases/RefreshTokenUseCase';
+import type { PaymentProviderFactory } from '@/common/providers/payment/PaymentProviderFactory';
+import type { PaymentManager } from '@/common/providers/payment/PaymentManager';
+import type { IPaymentProvider } from './IPaymentProvider';
 
 /**
  * Application container interface defining all available providers.
@@ -57,6 +60,10 @@ export interface IAppContainer {
   // Auth use cases
   signInUseCase: SignInUseCase;
   refreshTokenUseCase: RefreshTokenUseCase;
+  // Payment providers
+  paymentProviderFactory: PaymentProviderFactory;
+  paymentManager: PaymentManager;
+  mockPaymentProvider: IPaymentProvider;
 }
 
 /**
