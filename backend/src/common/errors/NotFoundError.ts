@@ -22,6 +22,7 @@ export class NotFoundError extends CustomError {
       query?: Record<string, unknown>;
       body?: unknown;
     };
+    correlationId?: string;
   }) {
     super({
       statusCode: HTTPStatusCode.NOT_FOUND,
@@ -30,6 +31,7 @@ export class NotFoundError extends CustomError {
       message: data.message || ErrorMessage[ErrorCode.NOT_FOUND],
       path: data.path,
       data: data.data,
+      correlationId: data.correlationId,
     });
   }
 }

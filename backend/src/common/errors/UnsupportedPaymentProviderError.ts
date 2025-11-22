@@ -13,7 +13,11 @@ export class UnsupportedPaymentProviderError extends CustomError {
    * @param data.originalError - An optional original error for context.
    * @param data.additionalMessage - An optional additional message to provide more context.
    */
-  public constructor(data?: { originalError?: unknown; additionalMessage?: string }) {
+  public constructor(data?: {
+    originalError?: unknown;
+    additionalMessage?: string;
+    correlationId?: string;
+  }) {
     super({
       statusCode: HTTPStatusCode.UNPROCESSABLE_ENTITY,
       errorCode: ErrorCode.UNSUPPORTED_PAYMENT_PROVIDER,
@@ -22,6 +26,7 @@ export class UnsupportedPaymentProviderError extends CustomError {
         ? ErrorMessage[ErrorCode.UNSUPPORTED_PAYMENT_PROVIDER] + ': ' + data.additionalMessage
         : ErrorMessage[ErrorCode.UNSUPPORTED_PAYMENT_PROVIDER],
       originalError: data?.originalError,
+      correlationId: data?.correlationId,
     });
   }
 }

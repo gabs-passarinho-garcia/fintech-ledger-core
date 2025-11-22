@@ -14,7 +14,11 @@ export class NotSignedError extends CustomError {
    * @param data.originalError - An optional original error for context.
    * @param data.additionalMessage - An optional additional message to provide more context.
    */
-  public constructor(data?: { originalError?: unknown; additionalMessage?: string }) {
+  public constructor(data?: {
+    originalError?: unknown;
+    additionalMessage?: string;
+    correlationId?: string;
+  }) {
     super({
       statusCode: HTTPStatusCode.UNAUTHORIZED,
       errorCode: ErrorCode.NOT_SIGNED,
@@ -23,6 +27,7 @@ export class NotSignedError extends CustomError {
         ? ErrorMessage[ErrorCode.NOT_SIGNED] + ': ' + data.additionalMessage
         : ErrorMessage[ErrorCode.NOT_SIGNED],
       originalError: data?.originalError,
+      correlationId: data?.correlationId,
     });
   }
 }

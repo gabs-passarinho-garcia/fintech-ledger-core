@@ -19,6 +19,7 @@ export class ErrorFactory {
   public static createError(
     error: unknown,
     path?: string,
+    correlationId?: string,
     data?: {
       params?: Record<string, unknown>;
       query?: Record<string, unknown>;
@@ -36,6 +37,7 @@ export class ErrorFactory {
         originalError: error,
         additionalMessage: error.message,
         path,
+        correlationId,
         data,
       });
     }
@@ -44,6 +46,7 @@ export class ErrorFactory {
       additionalMessage: `Unknown error, ${error}`,
       path,
       data,
+      correlationId,
     });
   }
 }

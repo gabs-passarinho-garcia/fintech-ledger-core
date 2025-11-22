@@ -22,6 +22,7 @@ export class DomainError extends CustomError {
       query?: Record<string, unknown>;
       body?: unknown;
     };
+    correlationId?: string;
   }) {
     super({
       statusCode: HTTPStatusCode.UNPROCESSABLE_ENTITY,
@@ -30,6 +31,7 @@ export class DomainError extends CustomError {
       message: data.message,
       path: data.path,
       data: data.data,
+      correlationId: data.correlationId,
     });
   }
 }

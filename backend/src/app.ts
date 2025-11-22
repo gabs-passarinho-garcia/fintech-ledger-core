@@ -9,7 +9,7 @@ import {
   sessionContextMiddleware,
   correlationIdMiddleware,
 } from './common/middlewares';
-import { ErrorFactory } from './common/errors';
+import { ErrorFactory, CustomError } from './common/errors';
 import { security, securityPresets } from './common/middlewares/security';
 import { swaggerPlugin } from './common/middlewares/swaggerPlugin';
 import { rateLimit, rateLimitConfigs } from './common/middlewares/rateLimiting';
@@ -44,23 +44,46 @@ function buildApp() {
     .use(correlationIdMiddleware)
     .resolve(scopeResolver)
     .onError(({ error, path, body, params, query, scope }) => {
-      const err = ErrorFactory.createError(error, path, { params, query, body });
-
       const logger = scope?.resolve(AppProviders.logger);
+
+      const sessionHandler = scope?.resolve(AppProviders.sessionHandler);
+      const correlationId = sessionHandler?.get()?.correlationId;
+
+      const err = ErrorFactory.createError(error, path, correlationId, { params, query, body });
+
+      // Log error details for debugging
+      if (logger) {
+        logger.error(
+          {
+            error: err,
+            path,
+            statusCode: err.statusCode,
+            errorCode: err.errorCode,
+            errorName: err.errorName,
+            originalErrorType: error instanceof Error ? error.constructor.name : typeof error,
+            isCustomError: error instanceof CustomError,
+          },
+          'global_error_handler',
+        );
+      } else {
+        console.error('Error details:', {
+          error: err,
+          statusCode: err.statusCode,
+          errorCode: err.errorCode,
+          originalErrorType: error instanceof Error ? error.constructor.name : typeof error,
+        });
+      }
 
       Sentry.captureException(err);
 
-      if (logger) {
-        logger.error({ error: err, path }, 'global_error_handler');
-      } else {
-        console.error(err);
-      }
+      const statusCode = err.statusCode;
+      const errorJson = err.toJSON();
 
-      return new Response(JSON.stringify(err.toJSON()), {
-        status: err.statusCode,
+      return new Response(JSON.stringify(errorJson), {
         headers: {
           'Content-Type': 'application/json',
         },
+        status: statusCode,
       });
     })
     .onStart((app) => {

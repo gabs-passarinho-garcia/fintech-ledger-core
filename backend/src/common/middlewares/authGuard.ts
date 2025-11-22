@@ -23,10 +23,15 @@ export const AuthGuardPlugin = new Elysia<
     }
 
     return {
-      async beforeHandle({ headers, scope }): Promise<void> {
-        const handler = scope.resolve(AppProviders.tokenAuthHandler);
-
-        await handler.auth({ headers });
+      async beforeHandle({ headers, scope, error }): Promise<void> {
+        try {
+          const handler = scope.resolve(AppProviders.tokenAuthHandler);
+          await handler.auth({ headers });
+        } catch (authError) {
+          // Re-throw the error to ensure it's properly caught by onError handler
+          // This ensures the error maintains its original type and status code
+          throw authError;
+        }
       },
     };
   },

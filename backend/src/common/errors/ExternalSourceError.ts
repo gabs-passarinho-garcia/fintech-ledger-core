@@ -24,6 +24,7 @@ export class ExternalSourceError extends CustomError {
       query?: Record<string, unknown>;
       body?: unknown;
     };
+    correlationId?: string;
   }) {
     super({
       statusCode: HTTPStatusCode.INTERNAL_SERVER_ERROR,
@@ -35,6 +36,7 @@ export class ExternalSourceError extends CustomError {
       originalError: data?.originalError,
       path: data?.path,
       data: data?.data,
+      correlationId: data?.correlationId,
     });
   }
 }
