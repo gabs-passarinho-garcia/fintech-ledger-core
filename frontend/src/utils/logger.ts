@@ -73,6 +73,7 @@ export class Logger {
   /**
    * Logs a message at the specified level.
    * Automatically includes correlationId from sessionStorage.
+   * Silences logs during test execution.
    *
    * @param level - The log level
    * @param body - The log message or object
@@ -85,6 +86,16 @@ export class Logger {
     type: string,
     service?: string,
   ): void {
+    // Silence logs during test execution
+    if (
+      typeof process !== "undefined" &&
+      (process.env.NODE_ENV === "test" ||
+        process.env.BUN_ENV === "test" ||
+        globalThis.Bun?.env?.NODE_ENV === "test")
+    ) {
+      return;
+    }
+
     const serviceName = service || this.service;
 
     // Automatically get correlationId

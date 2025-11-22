@@ -5,6 +5,17 @@
 import { afterEach } from "bun:test";
 import "@testing-library/jest-dom";
 
+// Set test environment variables to silence logs
+if (typeof process !== "undefined") {
+  process.env.NODE_ENV = "test";
+  process.env.BUN_ENV = "test";
+}
+
+// Set Bun environment if available
+if (typeof globalThis.Bun !== "undefined" && globalThis.Bun.env) {
+  globalThis.Bun.env.NODE_ENV = "test";
+}
+
 // Initialize DOM environment with happy-dom
 const { Window } = await import("happy-dom");
 const win = new Window();

@@ -12,7 +12,7 @@ mock.module("../../hooks/useAuth", () => ({
 
 describe("Layout", () => {
   beforeEach(() => {
-    mock.restore();
+    mockUseAuth.mockClear();
   });
 
   const renderLayout = () => {
@@ -44,9 +44,9 @@ describe("Layout", () => {
 
     renderLayout();
 
-    expect(screen.getByText("Dashboard")).toBeDefined();
-    expect(screen.getByText("Profile")).toBeDefined();
-    expect(screen.getByText("Tenants")).toBeDefined();
+    expect(screen.getByText("Dashboard")).toBeInTheDocument();
+    expect(screen.getByText("Profile")).toBeInTheDocument();
+    expect(screen.getByText("Tenants")).toBeInTheDocument();
   });
 
   it("should show admin links when user is master", () => {
@@ -68,10 +68,10 @@ describe("Layout", () => {
 
     renderLayout();
 
-    expect(screen.getByText("Users")).toBeDefined();
-    expect(screen.getByText("Profiles")).toBeDefined();
-    expect(screen.getByText("All Tenants")).toBeDefined();
-    expect(screen.getByText("All Ledgers")).toBeDefined();
+    expect(screen.getByText("Users")).toBeInTheDocument();
+    expect(screen.getByText("Profiles")).toBeInTheDocument();
+    expect(screen.getByText("All Tenants")).toBeInTheDocument();
+    expect(screen.getByText("All Ledgers")).toBeInTheDocument();
   });
 
   it("should not show admin links when user is not master", () => {
@@ -93,10 +93,10 @@ describe("Layout", () => {
 
     renderLayout();
 
-    expect(screen.queryByText("Users")).toBeNull();
-    expect(screen.queryByText("Profiles")).toBeNull();
-    expect(screen.queryByText("All Tenants")).toBeNull();
-    expect(screen.queryByText("All Ledgers")).toBeNull();
+    expect(screen.queryByText("Users")).not.toBeInTheDocument();
+    expect(screen.queryByText("Profiles")).not.toBeInTheDocument();
+    expect(screen.queryByText("All Tenants")).not.toBeInTheDocument();
+    expect(screen.queryByText("All Ledgers")).not.toBeInTheDocument();
   });
 
   it("should display username", () => {
@@ -118,7 +118,7 @@ describe("Layout", () => {
 
     renderLayout();
 
-    expect(screen.getByText("testuser")).toBeDefined();
+    expect(screen.getByText("testuser")).toBeInTheDocument();
   });
 
   it("should render children content", () => {
@@ -140,6 +140,6 @@ describe("Layout", () => {
 
     renderLayout();
 
-    expect(screen.getByText("Test Content")).toBeDefined();
+    expect(screen.getByText("Test Content")).toBeInTheDocument();
   });
 });

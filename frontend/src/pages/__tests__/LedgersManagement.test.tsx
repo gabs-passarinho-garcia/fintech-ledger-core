@@ -32,10 +32,9 @@ describe("LedgersManagement", () => {
 
     renderComponent();
 
-    // Loading state should be shown
-    expect(
-      screen.getByText(/loading/i) || screen.queryByRole("progressbar"),
-    ).toBeDefined();
+    // Loading component renders an SVG spinner, check for it
+    const spinner = document.querySelector("svg.animate-spin");
+    expect(spinner).toBeInTheDocument();
   });
 
   it("should render ledger entries list", async () => {
@@ -85,10 +84,10 @@ describe("LedgersManagement", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("TRANSFER")).toBeDefined();
-      expect(screen.getByText("DEPOSIT")).toBeDefined();
-      expect(screen.getByText("COMPLETED")).toBeDefined();
-      expect(screen.getByText("PENDING")).toBeDefined();
+      expect(screen.getByText("TRANSFER")).toBeInTheDocument();
+      expect(screen.getByText("DEPOSIT")).toBeInTheDocument();
+      expect(screen.getByText("COMPLETED")).toBeInTheDocument();
+      expect(screen.getByText("PENDING")).toBeInTheDocument();
     });
   });
 
@@ -112,7 +111,7 @@ describe("LedgersManagement", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/no ledger entries found/i)).toBeDefined();
+      expect(screen.getByText(/no ledger entries found/i)).toBeInTheDocument();
     });
   });
 
@@ -122,7 +121,7 @@ describe("LedgersManagement", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/failed to load entries/i)).toBeDefined();
+      expect(screen.getByText(/failed to load entries/i)).toBeInTheDocument();
     });
   });
 
@@ -146,7 +145,7 @@ describe("LedgersManagement", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("Ledgers Management")).toBeDefined();
+      expect(screen.getByText("Ledgers Management")).toBeInTheDocument();
     });
   });
 
@@ -210,9 +209,9 @@ describe("LedgersManagement", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("COMPLETED")).toBeDefined();
-      expect(screen.getByText("PENDING")).toBeDefined();
-      expect(screen.getByText("FAILED")).toBeDefined();
+      expect(screen.getByText("COMPLETED")).toBeInTheDocument();
+      expect(screen.getByText("PENDING")).toBeInTheDocument();
+      expect(screen.getByText("FAILED")).toBeInTheDocument();
     });
   });
 });

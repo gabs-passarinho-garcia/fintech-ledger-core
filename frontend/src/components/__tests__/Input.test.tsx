@@ -5,22 +5,22 @@ import Input from "../Input";
 describe("Input", () => {
   it("should render input with label", () => {
     render(<Input label="Username" name="username" />);
-    expect(screen.getByLabelText("Username")).toBeDefined();
+    expect(screen.getByLabelText("Username")).toBeInTheDocument();
   });
 
   it("should render input with error message", () => {
     render(<Input name="username" error="This field is required" />);
-    expect(screen.getByText("This field is required")).toBeDefined();
+    expect(screen.getByText("This field is required")).toBeInTheDocument();
   });
 
   it("should render input with helper text", () => {
     render(<Input name="username" helperText="Enter your username" />);
-    expect(screen.getByText("Enter your username")).toBeDefined();
+    expect(screen.getByText("Enter your username")).toBeInTheDocument();
   });
 
   it("should apply error styling when error is present", () => {
     render(<Input name="username" error="Error" />);
     const input = screen.getByRole("textbox");
-    expect(input.className).toContain("border-red-500");
+    expect(input).toHaveClass("border-red-500");
   });
 });

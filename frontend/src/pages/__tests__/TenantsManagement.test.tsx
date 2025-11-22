@@ -28,10 +28,9 @@ describe("TenantsManagement", () => {
 
     renderComponent();
 
-    // Loading state should be shown
-    expect(
-      screen.getByText(/loading/i) || screen.queryByRole("progressbar"),
-    ).toBeDefined();
+    // Loading component renders an SVG spinner, check for it
+    const spinner = document.querySelector("svg.animate-spin");
+    expect(spinner).toBeInTheDocument();
   });
 
   it("should render tenants list", async () => {
@@ -66,8 +65,8 @@ describe("TenantsManagement", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("Tenant 1")).toBeDefined();
-      expect(screen.getByText("Tenant 2")).toBeDefined();
+      expect(screen.getByText("Tenant 1")).toBeInTheDocument();
+      expect(screen.getByText("Tenant 2")).toBeInTheDocument();
     });
   });
 
@@ -93,7 +92,7 @@ describe("TenantsManagement", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("Active")).toBeDefined();
+      expect(screen.getByText("Active")).toBeInTheDocument();
     });
   });
 
@@ -119,7 +118,7 @@ describe("TenantsManagement", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("Deleted")).toBeDefined();
+      expect(screen.getByText("Deleted")).toBeInTheDocument();
     });
   });
 
@@ -129,7 +128,7 @@ describe("TenantsManagement", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/no tenants found/i)).toBeDefined();
+      expect(screen.getByText(/no tenants found/i)).toBeInTheDocument();
     });
   });
 
@@ -139,7 +138,7 @@ describe("TenantsManagement", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/failed to load tenants/i)).toBeDefined();
+      expect(screen.getByText(/failed to load tenants/i)).toBeInTheDocument();
     });
   });
 
@@ -149,7 +148,7 @@ describe("TenantsManagement", () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText("Tenants Management")).toBeDefined();
+      expect(screen.getByText("Tenants Management")).toBeInTheDocument();
     });
   });
 });

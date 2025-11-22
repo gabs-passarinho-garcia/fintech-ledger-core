@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, mock } from "bun:test";
 import { listTenants, listAllTenants } from "../tenants";
-import * as endpointsModule from "../../api/endpoints";
 
 // Mock endpoints
 const mockListTenants = mock();
@@ -17,7 +16,8 @@ mock.module("../../api/endpoints", () => ({
 
 describe("tenants service", () => {
   beforeEach(() => {
-    mock.restore();
+    mockListTenants.mockClear();
+    mockListAllTenants.mockClear();
   });
 
   describe("listTenants", () => {
@@ -54,9 +54,7 @@ describe("tenants service", () => {
     it("should throw error when response is invalid", async () => {
       mockListTenants.mockResolvedValue({});
 
-      await expect(async () => {
-        await listTenants();
-      }).toThrow("Failed to list tenants");
+      await expect(listTenants()).rejects.toThrow("Failed to list tenants");
     });
   });
 
@@ -110,6 +108,7 @@ describe("tenants service", () => {
 
       await listAllTenants({ page: 2, limit: 50, includeDeleted: true });
 
+      expect(mockListAllTenants).toHaveBeenCalledTimes(1);
       expect(mockListAllTenants).toHaveBeenCalledWith({
         page: 2,
         limit: 50,
@@ -120,9 +119,7 @@ describe("tenants service", () => {
     it("should throw error when response is invalid", async () => {
       mockListAllTenants.mockResolvedValue({});
 
-      await expect(async () => {
-        await listAllTenants();
-      }).toThrow("Failed to list all tenants");
+      await expect(listAllTenants()).rejects.toThrow("Failed to list all tenants");
     });
   });
 });
