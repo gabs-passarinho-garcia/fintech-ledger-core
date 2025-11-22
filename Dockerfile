@@ -24,8 +24,14 @@ RUN bun install --frozen-lockfile
 FROM base AS prerelease
 # Copy node_modules from install stage
 COPY --from=install /usr/src/app/node_modules ./node_modules
-# Copy all source files
-COPY ./backend ./backend
+# Copy only backend source files (exclude frontend and other unnecessary files)
+COPY ./backend/src ./backend/src
+COPY ./backend/prisma ./backend/prisma
+COPY ./backend/tsconfig.json ./backend/
+COPY ./backend/eslint.config.mjs ./backend/
+COPY ./backend/.prettierrc ./backend/
+COPY ./backend/prisma.config.ts ./backend/
+COPY ./backend/package.json ./backend/
 COPY ./package.json bun.lock ./
 # Copy .env to backend if it exists (optional, can be overridden by docker-compose)
 COPY ./.env* ./
