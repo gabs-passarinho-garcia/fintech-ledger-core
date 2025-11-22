@@ -8,7 +8,6 @@ import { MockCognitoHandler } from './MockCognitoHandler';
 import { JwtOAuthHandler } from '../auth/JwtOAuthHandler';
 import { LOCAL_DEVELOPMENT } from '../../enums';
 import { Resolver } from 'awilix';
-import { AuthModule as ModelsAuthModule } from '@/models/auth/AuthModule';
 
 /**
  * Determines which OAuth handler to use based on environment.
@@ -37,11 +36,17 @@ function createOAuthHandlerFactory(): Resolver<IAppContainer['oauthHandler']> {
   return provideClass(JwtOAuthHandler, Lifecycle.SINGLETON);
 }
 
+/**
+ * AWS module for dependency injection.
+ * Registers SQS handler and OAuth handler.
+ * Note: AuthModule (ModelsAuthModule) must be imported before this module
+ * in ProvidersModule, as JwtOAuthHandler depends on AuthModule repositories.
+ */
 export const AwsModule: ModuleDefinition = {
   name: 'AwsModule',
   providers: {
     [AppProviders.queueProducer]: provideClass(SQSHandler, Lifecycle.SINGLETON),
     [AppProviders.oauthHandler]: createOAuthHandlerFactory(),
   },
-  imports: [ModelsAuthModule], // JwtOAuthHandler needs repositories from AuthModule
+  // AuthModule is imported by ProvidersModule before AwsModule, so repositories are available
 };

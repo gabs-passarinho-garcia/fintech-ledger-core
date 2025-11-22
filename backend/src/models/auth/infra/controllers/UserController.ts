@@ -75,6 +75,36 @@ export const UserController = new Elysia({ prefix: '/users' })
   // Protected endpoints - authentication required
   .use(AuthGuardPlugin)
   .get(
+    `${PROFILES_PATH}${ME_PATH}`,
+    async function getMyProfile({ scope }) {
+      const getMyProfileUseCase = scope.resolve(AppProviders.getMyProfileUseCase);
+      const result = await getMyProfileUseCase.execute({});
+
+      return {
+        statusCode: HTTPStatusCode.OK,
+        data: result,
+      };
+    },
+    {
+      headers: TokenAuthSchema,
+      response: {
+        [HTTPStatusCode.OK]: t.Object({
+          statusCode: t.Literal(HTTPStatusCode.OK),
+          data: GetProfileResponseSchema,
+        }),
+        [HTTPStatusCode.UNAUTHORIZED]: ErrorSchema,
+        [HTTPStatusCode.NOT_FOUND]: ErrorSchema,
+        [HTTPStatusCode.INTERNAL_SERVER_ERROR]: ErrorSchema,
+      },
+      detail: {
+        summary: 'Get My Profile',
+        description: "Retrieves the authenticated user's profile for the current tenant.",
+        tags: [USER_TAG],
+      },
+      isSignIn: true,
+    },
+  )
+  .get(
     PROFILES_ID_PATH,
     async function getProfile({ params, scope }) {
       const getProfileUseCase = scope.resolve(AppProviders.getProfileUseCase);

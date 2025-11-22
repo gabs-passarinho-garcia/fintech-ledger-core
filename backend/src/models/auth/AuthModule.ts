@@ -4,6 +4,7 @@ import { SignInUseCase } from './usecases/SignInUseCase';
 import { RefreshTokenUseCase } from './usecases/RefreshTokenUseCase';
 import { SignUpUseCase } from './usecases/SignUpUseCase';
 import { GetProfileUseCase } from './usecases/GetProfileUseCase';
+import { GetMyProfileUseCase } from './usecases/GetMyProfileUseCase';
 import { UpdateProfileUseCase } from './usecases/UpdateProfileUseCase';
 import { ListProfilesByUserUseCase } from './usecases/ListProfilesByUserUseCase';
 import { ListAllUsersUseCase } from './usecases/ListAllUsersUseCase';
@@ -30,55 +31,71 @@ export const AuthModule: ModuleDefinition = {
   name: 'AuthModule',
   providers: {
     // Repositories
-    [AppProviders.createUserRepository]: provideClass(CreateUserRepository, Lifecycle.SCOPED),
-    [AppProviders.getUserRepository]: provideClass(GetUserRepository, Lifecycle.SCOPED),
+    [AppProviders.createUserRepository]: provideClass(CreateUserRepository, Lifecycle.SINGLETON),
+    [AppProviders.getUserRepository]: provideClass(GetUserRepository, Lifecycle.SINGLETON),
     [AppProviders.getUserByUsernameRepository]: provideClass(
       GetUserByUsernameRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.updateUserPasswordRepository]: provideClass(
       UpdateUserPasswordRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
-    [AppProviders.createProfileRepository]: provideClass(CreateProfileRepository, Lifecycle.SCOPED),
-    [AppProviders.getProfileRepository]: provideClass(GetProfileRepository, Lifecycle.SCOPED),
+    [AppProviders.createProfileRepository]: provideClass(
+      CreateProfileRepository,
+      Lifecycle.SINGLETON,
+    ),
+    [AppProviders.getProfileRepository]: provideClass(GetProfileRepository, Lifecycle.SINGLETON),
     [AppProviders.listProfilesByUserIdRepository]: provideClass(
       ListProfilesByUserIdRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
-    [AppProviders.updateProfileRepository]: provideClass(UpdateProfileRepository, Lifecycle.SCOPED),
-    [AppProviders.deleteProfileRepository]: provideClass(DeleteProfileRepository, Lifecycle.SCOPED),
-    [AppProviders.deleteUserRepository]: provideClass(DeleteUserRepository, Lifecycle.SCOPED),
-    [AppProviders.listAllUsersRepository]: provideClass(ListAllUsersRepository, Lifecycle.SCOPED),
+    [AppProviders.updateProfileRepository]: provideClass(
+      UpdateProfileRepository,
+      Lifecycle.SINGLETON,
+    ),
+    [AppProviders.deleteProfileRepository]: provideClass(
+      DeleteProfileRepository,
+      Lifecycle.SINGLETON,
+    ),
+    [AppProviders.deleteUserRepository]: provideClass(DeleteUserRepository, Lifecycle.SINGLETON),
+    [AppProviders.listAllUsersRepository]: provideClass(
+      ListAllUsersRepository,
+      Lifecycle.SINGLETON,
+    ),
     [AppProviders.listAllProfilesRepository]: provideClass(
       ListAllProfilesRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.createRefreshTokenRepository]: provideClass(
       CreateRefreshTokenRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.getRefreshTokenRepository]: provideClass(
       GetRefreshTokenRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.deleteRefreshTokenRepository]: provideClass(
       DeleteRefreshTokenRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     // Use cases
-    [AppProviders.signInUseCase]: provideClass(SignInUseCase, Lifecycle.SCOPED),
-    [AppProviders.refreshTokenUseCase]: provideClass(RefreshTokenUseCase, Lifecycle.SCOPED),
-    [AppProviders.signUpUseCase]: provideClass(SignUpUseCase, Lifecycle.SCOPED),
-    [AppProviders.getProfileUseCase]: provideClass(GetProfileUseCase, Lifecycle.SCOPED),
-    [AppProviders.updateProfileUseCase]: provideClass(UpdateProfileUseCase, Lifecycle.SCOPED),
+    [AppProviders.signInUseCase]: provideClass(SignInUseCase, Lifecycle.SINGLETON),
+    [AppProviders.refreshTokenUseCase]: provideClass(RefreshTokenUseCase, Lifecycle.SINGLETON),
+    [AppProviders.signUpUseCase]: provideClass(SignUpUseCase, Lifecycle.SINGLETON),
+    [AppProviders.getProfileUseCase]: provideClass(GetProfileUseCase, Lifecycle.SINGLETON),
+    [AppProviders.getMyProfileUseCase]: provideClass(GetMyProfileUseCase, Lifecycle.SINGLETON),
+    [AppProviders.updateProfileUseCase]: provideClass(UpdateProfileUseCase, Lifecycle.SINGLETON),
     [AppProviders.listProfilesByUserUseCase]: provideClass(
       ListProfilesByUserUseCase,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
-    [AppProviders.listAllUsersUseCase]: provideClass(ListAllUsersUseCase, Lifecycle.SCOPED),
-    [AppProviders.listAllProfilesUseCase]: provideClass(ListAllProfilesUseCase, Lifecycle.SCOPED),
-    [AppProviders.deleteProfileUseCase]: provideClass(DeleteProfileUseCase, Lifecycle.SCOPED),
-    [AppProviders.deleteUserUseCase]: provideClass(DeleteUserUseCase, Lifecycle.SCOPED),
+    [AppProviders.listAllUsersUseCase]: provideClass(ListAllUsersUseCase, Lifecycle.SINGLETON),
+    [AppProviders.listAllProfilesUseCase]: provideClass(
+      ListAllProfilesUseCase,
+      Lifecycle.SINGLETON,
+    ),
+    [AppProviders.deleteProfileUseCase]: provideClass(DeleteProfileUseCase, Lifecycle.SINGLETON),
+    [AppProviders.deleteUserUseCase]: provideClass(DeleteUserUseCase, Lifecycle.SINGLETON),
   },
 };

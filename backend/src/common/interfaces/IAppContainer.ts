@@ -46,6 +46,7 @@ import type { GetRefreshTokenRepository } from '@/models/auth/infra/repositories
 import type { DeleteRefreshTokenRepository } from '@/models/auth/infra/repositories/DeleteRefreshTokenRepository';
 import type { SignUpUseCase } from '@/models/auth/usecases/SignUpUseCase';
 import type { GetProfileUseCase } from '@/models/auth/usecases/GetProfileUseCase';
+import type { GetMyProfileUseCase } from '@/models/auth/usecases/GetMyProfileUseCase';
 import type { UpdateProfileUseCase } from '@/models/auth/usecases/UpdateProfileUseCase';
 import type { ListProfilesByUserUseCase } from '@/models/auth/usecases/ListProfilesByUserUseCase';
 import type { ListAllUsersUseCase } from '@/models/auth/usecases/ListAllUsersUseCase';
@@ -113,6 +114,7 @@ export interface IAppContainer {
   refreshTokenUseCase: RefreshTokenUseCase;
   signUpUseCase: SignUpUseCase;
   getProfileUseCase: GetProfileUseCase;
+  getMyProfileUseCase: GetMyProfileUseCase;
   updateProfileUseCase: UpdateProfileUseCase;
   listProfilesByUserUseCase: ListProfilesByUserUseCase;
   listAllUsersUseCase: ListAllUsersUseCase;

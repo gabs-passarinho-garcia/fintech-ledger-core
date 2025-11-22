@@ -11,17 +11,17 @@ export const TenantModule: ModuleDefinition = {
     // Repositories
     [AppProviders.listTenantsByUserRepository]: provideClass(
       ListTenantsByUserRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.listAllTenantsRepository]: provideClass(
       ListAllTenantsRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     // Use cases
     [AppProviders.listTenantsByUserUseCase]: provideClass(
       ListTenantsByUserUseCase,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
-    [AppProviders.listAllTenantsUseCase]: provideClass(ListAllTenantsUseCase, Lifecycle.SCOPED),
+    [AppProviders.listAllTenantsUseCase]: provideClass(ListAllTenantsUseCase, Lifecycle.SINGLETON),
   },
 };

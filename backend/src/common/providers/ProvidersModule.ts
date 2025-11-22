@@ -9,6 +9,7 @@ import { SessionModule } from './SessionModule';
 import { PrismaModule } from './PrismaModule';
 import { LoggerModule } from './LoggerModule';
 import { AwsModule } from './AWS/AwsModule';
+import { AuthModule as ModelsAuthModule } from '@/models/auth/AuthModule';
 
 export const ProvidersModule: ModuleDefinition = {
   name: 'ProvidersModule',
@@ -18,5 +19,11 @@ export const ProvidersModule: ModuleDefinition = {
     [AppProviders.passwordHandler]: provideFactory(providePasswordHandler, Lifecycle.SINGLETON),
     [AppProviders.jwtHelper]: provideFactory(provideJwtHelper, Lifecycle.SINGLETON),
   },
-  imports: [SessionModule, PrismaModule, LoggerModule, AwsModule],
+  imports: [
+    SessionModule,
+    PrismaModule,
+    LoggerModule,
+    AwsModule,
+    ModelsAuthModule, // Must be after AwsModule in list (but processed before due to LIFO) as AwsModule depends on AuthModule repositories
+  ],
 };

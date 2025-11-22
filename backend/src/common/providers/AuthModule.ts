@@ -10,7 +10,7 @@ import { AuthModule as ModelsAuthModule } from '../../models/auth/AuthModule';
  * Registers authentication handlers (KeyAuthHandler and TokenAuthHandler).
  */
 export const AuthModule: ModuleDefinition = {
-  name: 'AuthModule',
+  name: 'CommonAuthModule',
   providers: {
     [AppProviders.keyAuthHandler]: provideClass(KeyAuthHandler, Lifecycle.SINGLETON),
     [AppProviders.tokenAuthHandler]: provideClass(TokenAuthHandler, Lifecycle.SINGLETON),

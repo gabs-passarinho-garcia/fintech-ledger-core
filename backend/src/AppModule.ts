@@ -9,11 +9,11 @@ import { TenantModule } from './models/tenant/TenantModule';
 export const AppModule: ModuleDefinition = {
   name: 'AppModule',
   imports: [
-    ProvidersModule,
-    AuthModule, // ModelsAuthModule - must be before CommonAuthModule
-    CommonAuthModule, // Must be after AuthModule (ModelsAuthModule) as it depends on it
-    PaymentModule,
-    LedgerModule,
     TenantModule,
+    LedgerModule,
+    PaymentModule,
+    CommonAuthModule, // Must be after AuthModule (ModelsAuthModule) as it depends on it
+    ProvidersModule, // Must be after ModelsAuthModule so repositories are available when AwsModule registers oauthHandler
+    AuthModule, // ModelsAuthModule - must be last (processed first due to LIFO) to ensure repositories are registered before AwsModule
   ],
 };

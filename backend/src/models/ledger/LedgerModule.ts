@@ -22,56 +22,56 @@ export const LedgerModule: ModuleDefinition = {
   name: 'LedgerModule',
   providers: {
     // Repositories
-    [AppProviders.getAccountRepository]: provideClass(GetAccountRepository, Lifecycle.SCOPED),
+    [AppProviders.getAccountRepository]: provideClass(GetAccountRepository, Lifecycle.SINGLETON),
     [AppProviders.updateAccountBalanceRepository]: provideClass(
       UpdateAccountBalanceRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.createLedgerEntryRepository]: provideClass(
       CreateLedgerEntryRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.getLedgerEntryRepository]: provideClass(
       GetLedgerEntryRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.listLedgerEntriesRepository]: provideClass(
       ListLedgerEntriesRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.updateLedgerEntryRepository]: provideClass(
       UpdateLedgerEntryRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.deleteLedgerEntryRepository]: provideClass(
       DeleteLedgerEntryRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.listAllLedgerEntriesRepository]: provideClass(
       ListAllLedgerEntriesRepository,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     // Use cases
     [AppProviders.createLedgerEntryUseCase]: provideClass(
       CreateLedgerEntryUseCase,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
-    [AppProviders.getLedgerEntryUseCase]: provideClass(GetLedgerEntryUseCase, Lifecycle.SCOPED),
+    [AppProviders.getLedgerEntryUseCase]: provideClass(GetLedgerEntryUseCase, Lifecycle.SINGLETON),
     [AppProviders.listLedgerEntriesUseCase]: provideClass(
       ListLedgerEntriesUseCase,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.updateLedgerEntryUseCase]: provideClass(
       UpdateLedgerEntryUseCase,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.deleteLedgerEntryUseCase]: provideClass(
       DeleteLedgerEntryUseCase,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
     [AppProviders.listAllLedgerEntriesUseCase]: provideClass(
       ListAllLedgerEntriesUseCase,
-      Lifecycle.SCOPED,
+      Lifecycle.SINGLETON,
     ),
   },
 };
