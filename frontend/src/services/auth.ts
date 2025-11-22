@@ -7,6 +7,8 @@ import type { SignInResponse, SignUpResponse, User } from "../types";
  * Handles sign in, sign up, token refresh, and session management
  */
 
+const INVALID_RESPONSE_MESSAGE = "Invalid response from server";
+
 export interface SignInInput {
   username: string;
   password: string;
@@ -29,7 +31,7 @@ export async function signIn(input: SignInInput): Promise<SignInResponse> {
   const response = await endpoints.auth.signIn(input);
 
   if (!response.data?.data) {
-    throw new Error("Invalid response from server");
+    throw new Error(INVALID_RESPONSE_MESSAGE);
   }
 
   const data = response.data.data;
@@ -61,11 +63,19 @@ export async function signIn(input: SignInInput): Promise<SignInResponse> {
 export async function signUp(input: SignUpInput): Promise<SignUpResponse> {
   const response = await endpoints.auth.signUp(input);
 
-  if (!response.data?.data) {
-    throw new Error("Invalid response from server");
+  if (
+    !response ||
+    typeof response !== "object" ||
+    !("data" in response) ||
+    !response.data ||
+    typeof response.data !== "object" ||
+    !("data" in response.data) ||
+    !response.data.data
+  ) {
+    throw new Error(INVALID_RESPONSE_MESSAGE);
   }
 
-  return response.data.data;
+  return response.data.data as SignUpResponse;
 }
 
 /**
@@ -82,8 +92,16 @@ export async function refreshToken(): Promise<{
 
   const response = await endpoints.auth.refreshToken(refreshTokenValue);
 
-  if (!response.data?.data) {
-    throw new Error("Invalid response from server");
+  if (
+    !response ||
+    typeof response !== "object" ||
+    !("data" in response) ||
+    !response.data ||
+    typeof response.data !== "object" ||
+    !("data" in response.data) ||
+    !response.data.data
+  ) {
+    throw new Error(INVALID_RESPONSE_MESSAGE);
   }
 
   const data = response.data.data;
@@ -108,9 +126,27 @@ export function signOut(): void {
 
 /**
  * Gets the current authenticated user
+ * Returns a partial User object if full user data is not available
  */
 export function getCurrentUser(): User | null {
-  return storage.getUserData<User>();
+  const userData = storage.getUserData<{
+    id?: string;
+    username?: string;
+    email?: string;
+    tenantId?: string;
+    createdAt?: Date | string;
+  }>();
+
+  if (!userData || !userData.username) {
+    return null;
+  }
+
+  // Return a User object, using defaults for missing fields
+  return {
+    id: userData.id || "",
+    username: userData.username,
+    createdAt: userData.createdAt || new Date().toISOString(),
+  };
 }
 
 /**

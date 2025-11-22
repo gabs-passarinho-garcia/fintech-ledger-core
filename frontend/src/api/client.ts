@@ -16,8 +16,8 @@ const API_BASE_URL =
  * Automatically adds correlation ID and authorization headers
  * @returns Configured Eden Treaty client instance
  */
-function createApiClient() {
-  return treaty<App>(API_BASE_URL, {
+function createApiClient(): ReturnType<typeof treaty<App>> {
+  const client= treaty<App>(API_BASE_URL, {
     headers: () => {
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
@@ -38,6 +38,10 @@ function createApiClient() {
       return headers;
     },
   });
+
+  console.log("client", client);
+
+  return client;
 }
 
 /**

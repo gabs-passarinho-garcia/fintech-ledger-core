@@ -92,7 +92,7 @@ export function useAuth(): UseAuthReturn {
 
   return {
     user,
-    isAuthenticated: !!user && checkAuth(),
+    isAuthenticated: checkAuth(), // Only check token, user can be loaded later
     isLoading,
     signIn,
     signUp,
