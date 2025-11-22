@@ -41,6 +41,9 @@ export class JwtHelper {
    */
   public sign(payload: Omit<JwtPayload, 'iat' | 'exp'>, expiresInSeconds: number): string {
     try {
+      // Validate private key format before attempting to sign
+      this.validatePrivateKey();
+
       const now = Math.floor(Date.now() / 1000);
       const exp = now + expiresInSeconds;
 
@@ -61,9 +64,20 @@ export class JwtHelper {
 
       // Create signature
       const signatureInput = `${encodedHeader}.${encodedPayload}`;
-      const signature = crypto.createSign('SHA256').update(signatureInput).sign(
+
+      // Create a KeyObject from the private key to ensure proper formatting
+      // This helps avoid BAD_BASE64_DECODE errors by validating the key format first
+      const privateKeyObject = crypto.createPrivateKey({
+        key: this.privateKey,
+        format: 'pem',
+      });
+
+      const sign = crypto.createSign('SHA256');
+      sign.update(signatureInput);
+
+      const signature = sign.sign(
         {
-          key: this.privateKey,
+          key: privateKeyObject,
           dsaEncoding: 'ieee-p1363',
         },
         'base64url',
@@ -99,9 +113,19 @@ export class JwtHelper {
 
       // Verify signature
       const signatureInput = `${encodedHeader}.${encodedPayload}`;
-      const isValid = crypto.createVerify('SHA256').update(signatureInput).verify(
+
+      // Create a KeyObject from the public key to ensure proper formatting
+      const publicKeyObject = crypto.createPublicKey({
+        key: this.publicKey,
+        format: 'pem',
+      });
+
+      const verify = crypto.createVerify('SHA256');
+      verify.update(signatureInput);
+
+      const isValid = verify.verify(
         {
-          key: this.publicKey,
+          key: publicKeyObject,
           dsaEncoding: 'ieee-p1363',
         },
         signature,
@@ -168,5 +192,46 @@ export class JwtHelper {
     }
 
     return Buffer.from(base64, 'base64').toString('utf-8');
+  }
+
+  /**
+   * Validates that the private key is in the correct PEM format.
+   * This helps catch formatting issues before attempting to sign.
+   *
+   * @throws {DomainError} If the private key format is invalid
+   */
+  private validatePrivateKey(): void {
+    const key = this.privateKey.trim();
+
+    // Check for required PEM markers
+    // Accept both "EC PRIVATE KEY" (traditional format) and "PRIVATE KEY" (PKCS8 format)
+    const hasEcPrivateKey =
+      key.includes('-----BEGIN EC PRIVATE KEY-----') &&
+      key.includes('-----END EC PRIVATE KEY-----');
+    const hasPrivateKey =
+      key.includes('-----BEGIN PRIVATE KEY-----') && key.includes('-----END PRIVATE KEY-----');
+
+    if (!hasEcPrivateKey && !hasPrivateKey) {
+      throw new DomainError({
+        message:
+          'Invalid private key format: missing PEM markers. ' +
+          'Expected either "-----BEGIN EC PRIVATE KEY-----" or "-----BEGIN PRIVATE KEY-----". ' +
+          'Ensure the key is properly formatted PEM key.',
+      });
+    }
+
+    // Try to create a key object to validate it's parseable
+    try {
+      crypto.createPrivateKey({
+        key: this.privateKey,
+        format: 'pem',
+      });
+    } catch (error) {
+      throw new DomainError({
+        message:
+          `Invalid private key format: ${error instanceof Error ? error.message : String(error)}. ` +
+          'The key must be a valid EC private key in PEM format.',
+      });
+    }
   }
 }

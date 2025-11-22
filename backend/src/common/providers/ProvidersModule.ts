@@ -3,7 +3,7 @@ import { provideClass, provideFactory, Lifecycle } from '../container/ContainerH
 import { AppProviders } from '../interfaces/IAppContainer';
 import { EnvVariableHandler } from './EnvVariableHandler';
 import { SecretsHandler } from './AWS/SecretsHandler';
-import { PasswordHandler } from './auth/PasswordHandler';
+import { providePasswordHandler } from './auth/PasswordHandlerFactory';
 import { provideJwtHelper } from './auth/JwtHelperFactory';
 import { SessionModule } from './SessionModule';
 import { PrismaModule } from './PrismaModule';
@@ -15,7 +15,7 @@ export const ProvidersModule: ModuleDefinition = {
   providers: {
     [AppProviders.envVariableHandler]: provideClass(EnvVariableHandler, Lifecycle.SINGLETON),
     [AppProviders.secretsHandler]: provideClass(SecretsHandler, Lifecycle.SINGLETON),
-    [AppProviders.passwordHandler]: provideClass(PasswordHandler, Lifecycle.SINGLETON),
+    [AppProviders.passwordHandler]: provideFactory(providePasswordHandler, Lifecycle.SINGLETON),
     [AppProviders.jwtHelper]: provideFactory(provideJwtHelper, Lifecycle.SINGLETON),
   },
   imports: [SessionModule, PrismaModule, LoggerModule, AwsModule],

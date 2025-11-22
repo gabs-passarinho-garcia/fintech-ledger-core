@@ -75,7 +75,7 @@ export function provideClass<T, Ctor extends InjectableClassCtor<T>>(
 /**
  * Creates a factory-based provider resolver with the specified lifecycle.
  */
-export function provideFactory<T, D extends object, F extends (deps: D) => T>(
+export function provideFactory<T, D extends IAppContainer, F extends (deps: D) => T>(
   factory: F,
   lifecycle: Lifecycle,
 ): Resolver<T> {
