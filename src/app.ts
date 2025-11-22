@@ -27,12 +27,13 @@ import { AppEnvironment, AppEnvironmentType } from '@/common';
  *
  * @returns The configured Elysia app instance
  */
-export function createApp(): Elysia {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types
+export function createApp() {
   // Initialize DI container and register modules before middlewares use scope
   ContainerHandler.init();
   ContainerHandler.registerModule(AppModule);
 
-  const app = new Elysia({
+  return new Elysia({
     serve: {
       idleTimeout: 120,
     },
@@ -161,6 +162,6 @@ export function createApp(): Elysia {
     .use(AuthController)
     .use(UserController)
     .use(LedgerController);
-
-  return app as never;
 }
+
+export type App = ReturnType<typeof createApp>;

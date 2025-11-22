@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="bun test" tests="20" assertions="28" failures="2" skipped="0" time="0.43040054">
+  <testsuite name="src/utils/__tests__/correlationId.test.ts" file="src/utils/__tests__/correlationId.test.ts" tests="5" assertions="9" failures="0" skipped="0" time="0" hostname="pc-do-gabs">
+    <testsuite name="correlationId" file="src/utils/__tests__/correlationId.test.ts" line="10" tests="5" assertions="9" failures="0" skipped="0" time="0" hostname="pc-do-gabs">
+      <testcase name="should generate a correlation ID" classname="correlationId" time="0" file="src/utils/__tests__/correlationId.test.ts" line="15" assertions="3" />
+      <testcase name="should get correlation ID from storage" classname="correlationId" time="0.001" file="src/utils/__tests__/correlationId.test.ts" line="22" assertions="1" />
+      <testcase name="should generate new ID if none exists" classname="correlationId" time="0" file="src/utils/__tests__/correlationId.test.ts" line="29" assertions="2" />
+      <testcase name="should clear correlation ID" classname="correlationId" time="0" file="src/utils/__tests__/correlationId.test.ts" line="36" assertions="1" />
+      <testcase name="should reset correlation ID" classname="correlationId" time="0" file="src/utils/__tests__/correlationId.test.ts" line="44" assertions="2" />
+    </testsuite>
+  </testsuite>
+  <testsuite name="src/components/__tests__/Input.test.tsx" file="src/components/__tests__/Input.test.tsx" tests="4" assertions="4" failures="0" skipped="0" time="0" hostname="pc-do-gabs">
+    <testsuite name="Input" file="src/components/__tests__/Input.test.tsx" line="5" tests="4" assertions="4" failures="0" skipped="0" time="0.027" hostname="pc-do-gabs">
+      <testcase name="should render input with label" classname="Input" time="0.019" file="src/components/__tests__/Input.test.tsx" line="6" assertions="1" />
+      <testcase name="should render input with error message" classname="Input" time="0.003" file="src/components/__tests__/Input.test.tsx" line="11" assertions="1" />
+      <testcase name="should render input with helper text" classname="Input" time="0.002" file="src/components/__tests__/Input.test.tsx" line="16" assertions="1" />
+      <testcase name="should apply error styling when error is present" classname="Input" time="0.007" file="src/components/__tests__/Input.test.tsx" line="21" assertions="1" />
+    </testsuite>
+  </testsuite>
+  <testsuite name="src/components/__tests__/Button.test.tsx" file="src/components/__tests__/Button.test.tsx" tests="6" assertions="5" failures="1" skipped="0" time="0" hostname="pc-do-gabs">
+    <testsuite name="Button" file="src/components/__tests__/Button.test.tsx" line="5" tests="6" assertions="5" failures="1" skipped="0" time="0.009" hostname="pc-do-gabs">
+      <testcase name="should render button with text" classname="Button" time="0.002" file="src/components/__tests__/Button.test.tsx" line="6" assertions="1" />
+      <testcase name="should render with primary variant by default" classname="Button" time="0.001" file="src/components/__tests__/Button.test.tsx" line="11" assertions="1" />
+      <testcase name="should render with secondary variant" classname="Button" time="0.001" file="src/components/__tests__/Button.test.tsx" line="17" assertions="1" />
+      <testcase name="should render with danger variant" classname="Button" time="0.001" file="src/components/__tests__/Button.test.tsx" line="23" assertions="1" />
+      <testcase name="should show loading state" classname="Button" time="0.002" file="src/components/__tests__/Button.test.tsx" line="29" assertions="1" />
+      <testcase name="should be disabled when loading" classname="Button" time="0.008" file="src/components/__tests__/Button.test.tsx" line="34" assertions="0">
+        <failure type="AssertionError" />
+      </testcase>
+    </testsuite>
+  </testsuite>
+  <testsuite name="src/services/__tests__/auth.test.ts" file="src/services/__tests__/auth.test.ts" tests="5" assertions="10" failures="1" skipped="0" time="0" hostname="pc-do-gabs">
+    <testsuite name="auth service" file="src/services/__tests__/auth.test.ts" line="17" tests="5" assertions="10" failures="1" skipped="0" time="0" hostname="pc-do-gabs">
+      <testcase name="should sign in successfully" classname="auth service" time="0" file="src/services/__tests__/auth.test.ts" line="23" assertions="3" />
+      <testcase name="should sign up successfully" classname="auth service" time="0.001" file="src/services/__tests__/auth.test.ts" line="47" assertions="0">
+        <failure type="AssertionError" />
+      </testcase>
+      <testcase name="should sign out and clear storage" classname="auth service" time="0" file="src/services/__tests__/auth.test.ts" line="73" assertions="4" />
+      <testcase name="should check authentication status" classname="auth service" time="0" file="src/services/__tests__/auth.test.ts" line="85" assertions="2" />
+      <testcase name="should get current user" classname="auth service" time="0" file="src/services/__tests__/auth.test.ts" line="91" assertions="1" />
+    </testsuite>
+  </testsuite>
+</testsuites>

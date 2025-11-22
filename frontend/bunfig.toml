@@ -1,0 +1,24 @@
+[test]
+preload = ["./src/test/setup.ts"]
+coverageSkipTestFiles = true
+coverageThreshold = 1
+coverageIgnoreSourcemaps = true
+coverageReporter = ["text", "lcov"]
+coverageDir = "./coverage"
+root = "src"
+smol = true
+coveragePathIgnorePatterns = [
+  "**/*.spec.ts",
+  "**/*.test.ts",
+  "**/*.spec.tsx",
+  "**/*.test.tsx",
+  "*.config.js",
+  "*.config.ts",
+  "*.config.mjs",
+  "src/test/**",
+  "src/vite-env.d.ts"
+]
+
+[test.reporter]
+junit = "junit.xml"
+
