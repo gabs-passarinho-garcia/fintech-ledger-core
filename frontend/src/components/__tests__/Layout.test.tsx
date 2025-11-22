@@ -1,16 +1,16 @@
-import { describe, it, expect, beforeEach, mock } from 'bun:test';
-import { render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import Layout from '../Layout';
+import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { render, screen } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
+import Layout from "../Layout";
 
 // Mock useAuth hook
 const mockUseAuth = mock();
 
-mock.module('../../hooks/useAuth', () => ({
+mock.module("../../hooks/useAuth", () => ({
   useAuth: mockUseAuth,
 }));
 
-describe('Layout', () => {
+describe("Layout", () => {
   beforeEach(() => {
     mock.restore();
   });
@@ -25,9 +25,14 @@ describe('Layout', () => {
     );
   };
 
-  it('should render navigation links', () => {
+  it("should render navigation links", () => {
     mockUseAuth.mockReturnValue({
-      user: { id: 'user-1', username: 'testuser', createdAt: new Date(), isMaster: false },
+      user: {
+        id: "user-1",
+        username: "testuser",
+        createdAt: new Date(),
+        isMaster: false,
+      },
       signOut: mock(),
       isAuthenticated: true,
       isLoading: false,
@@ -39,14 +44,19 @@ describe('Layout', () => {
 
     renderLayout();
 
-    expect(screen.getByText('Dashboard')).toBeDefined();
-    expect(screen.getByText('Profile')).toBeDefined();
-    expect(screen.getByText('Tenants')).toBeDefined();
+    expect(screen.getByText("Dashboard")).toBeDefined();
+    expect(screen.getByText("Profile")).toBeDefined();
+    expect(screen.getByText("Tenants")).toBeDefined();
   });
 
-  it('should show admin links when user is master', () => {
+  it("should show admin links when user is master", () => {
     mockUseAuth.mockReturnValue({
-      user: { id: 'user-1', username: 'admin', createdAt: new Date(), isMaster: true },
+      user: {
+        id: "user-1",
+        username: "admin",
+        createdAt: new Date(),
+        isMaster: true,
+      },
       signOut: mock(),
       isAuthenticated: true,
       isLoading: false,
@@ -58,15 +68,20 @@ describe('Layout', () => {
 
     renderLayout();
 
-    expect(screen.getByText('Users')).toBeDefined();
-    expect(screen.getByText('Profiles')).toBeDefined();
-    expect(screen.getByText('All Tenants')).toBeDefined();
-    expect(screen.getByText('All Ledgers')).toBeDefined();
+    expect(screen.getByText("Users")).toBeDefined();
+    expect(screen.getByText("Profiles")).toBeDefined();
+    expect(screen.getByText("All Tenants")).toBeDefined();
+    expect(screen.getByText("All Ledgers")).toBeDefined();
   });
 
-  it('should not show admin links when user is not master', () => {
+  it("should not show admin links when user is not master", () => {
     mockUseAuth.mockReturnValue({
-      user: { id: 'user-1', username: 'user', createdAt: new Date(), isMaster: false },
+      user: {
+        id: "user-1",
+        username: "user",
+        createdAt: new Date(),
+        isMaster: false,
+      },
       signOut: mock(),
       isAuthenticated: true,
       isLoading: false,
@@ -78,15 +93,20 @@ describe('Layout', () => {
 
     renderLayout();
 
-    expect(screen.queryByText('Users')).toBeNull();
-    expect(screen.queryByText('Profiles')).toBeNull();
-    expect(screen.queryByText('All Tenants')).toBeNull();
-    expect(screen.queryByText('All Ledgers')).toBeNull();
+    expect(screen.queryByText("Users")).toBeNull();
+    expect(screen.queryByText("Profiles")).toBeNull();
+    expect(screen.queryByText("All Tenants")).toBeNull();
+    expect(screen.queryByText("All Ledgers")).toBeNull();
   });
 
-  it('should display username', () => {
+  it("should display username", () => {
     mockUseAuth.mockReturnValue({
-      user: { id: 'user-1', username: 'testuser', createdAt: new Date(), isMaster: false },
+      user: {
+        id: "user-1",
+        username: "testuser",
+        createdAt: new Date(),
+        isMaster: false,
+      },
       signOut: mock(),
       isAuthenticated: true,
       isLoading: false,
@@ -98,12 +118,17 @@ describe('Layout', () => {
 
     renderLayout();
 
-    expect(screen.getByText('testuser')).toBeDefined();
+    expect(screen.getByText("testuser")).toBeDefined();
   });
 
-  it('should render children content', () => {
+  it("should render children content", () => {
     mockUseAuth.mockReturnValue({
-      user: { id: 'user-1', username: 'testuser', createdAt: new Date(), isMaster: false },
+      user: {
+        id: "user-1",
+        username: "testuser",
+        createdAt: new Date(),
+        isMaster: false,
+      },
       signOut: mock(),
       isAuthenticated: true,
       isLoading: false,
@@ -115,7 +140,6 @@ describe('Layout', () => {
 
     renderLayout();
 
-    expect(screen.getByText('Test Content')).toBeDefined();
+    expect(screen.getByText("Test Content")).toBeDefined();
   });
 });
-

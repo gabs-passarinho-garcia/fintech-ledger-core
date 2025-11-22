@@ -8,6 +8,7 @@ import { MockCognitoHandler } from './MockCognitoHandler';
 import { JwtOAuthHandler } from '../auth/JwtOAuthHandler';
 import { LOCAL_DEVELOPMENT } from '../../enums';
 import { Resolver } from 'awilix';
+import { AuthModule as ModelsAuthModule } from '@/models/auth/AuthModule';
 
 /**
  * Determines which OAuth handler to use based on environment.
@@ -42,4 +43,5 @@ export const AwsModule: ModuleDefinition = {
     [AppProviders.queueProducer]: provideClass(SQSHandler, Lifecycle.SINGLETON),
     [AppProviders.oauthHandler]: createOAuthHandlerFactory(),
   },
+  imports: [ModelsAuthModule], // JwtOAuthHandler needs repositories from AuthModule
 };

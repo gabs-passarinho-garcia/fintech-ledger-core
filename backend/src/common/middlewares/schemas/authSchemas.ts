@@ -2,17 +2,19 @@ import { Static, t } from 'elysia';
 
 /**
  * Schema for Bearer token authentication headers.
- * Validates authorization header with Bearer token and required tenant ID.
+ * Validates authorization header with Bearer token and optional tenant ID.
  */
 export const TokenAuthSchema = t.Object({
   authorization: t.String({
     pattern: 'Bearer\\s+[A-Za-z0-9_-]+',
     error: 'Invalid authorization header',
   }),
-  'x-tenant-id': t.String({
-    format: 'uuid',
-    error: 'Invalid tenant id',
-  }),
+  'x-tenant-id': t.Optional(
+    t.String({
+      format: 'uuid',
+      error: 'Invalid tenant id',
+    }),
+  ),
   'x-correlation-id': t.Optional(t.String()),
 });
 

@@ -2,11 +2,11 @@
  * Global test setup file
  * Configures testing environment and utilities
  */
-import { afterEach } from 'bun:test';
-import '@testing-library/jest-dom';
+import { afterEach } from "bun:test";
+import "@testing-library/jest-dom";
 
 // Initialize DOM environment with happy-dom
-const { Window } = await import('happy-dom');
+const { Window } = await import("happy-dom");
 const win = new Window();
 const doc = win.document;
 
@@ -19,7 +19,7 @@ globalThis.document = doc;
 globalThis.navigator = win.navigator;
 
 // Mock window.matchMedia
-Object.defineProperty(win, 'matchMedia', {
+Object.defineProperty(win, "matchMedia", {
   writable: true,
   value: (query: string) => ({
     matches: false,
@@ -51,7 +51,7 @@ const localStorageMock = (() => {
   };
 })();
 
-Object.defineProperty(win, 'localStorage', {
+Object.defineProperty(win, "localStorage", {
   value: localStorageMock,
   writable: true,
   configurable: true,
@@ -78,7 +78,7 @@ const sessionStorageMock = (() => {
   };
 })();
 
-Object.defineProperty(win, 'sessionStorage', {
+Object.defineProperty(win, "sessionStorage", {
   value: sessionStorageMock,
   writable: true,
   configurable: true,
@@ -92,4 +92,3 @@ afterEach(() => {
   localStorageMock.clear();
   sessionStorageMock.clear();
 });
-

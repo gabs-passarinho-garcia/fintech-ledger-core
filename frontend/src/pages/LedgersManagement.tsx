@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { endpoints } from "../api/endpoints";
-import Button from "../components/Button";
 import Table from "../components/Table";
 import Loading from "../components/Loading";
 import type { LedgerEntry } from "../types";
@@ -10,7 +8,6 @@ import type { LedgerEntry } from "../types";
  * Ledgers management page (master/admin)
  */
 export default function LedgersManagement(): JSX.Element {
-  const navigate = useNavigate();
   const [entries, setEntries] = useState<LedgerEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -109,33 +106,21 @@ export default function LedgersManagement(): JSX.Element {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Ledgers Management
-            </h1>
-            <Button variant="secondary" onClick={() => navigate("/dashboard")}>
-              Back to Dashboard
-            </Button>
-          </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Ledgers Management</h1>
+      </div>
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+          {error}
         </div>
-      </header>
+      )}
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-            {error}
-          </div>
-        )}
-
-        <Table
-          columns={columns}
-          data={entries}
-          emptyMessage="No ledger entries found"
-        />
-      </main>
+      <Table
+        columns={columns}
+        data={entries}
+        emptyMessage="No ledger entries found"
+      />
     </div>
   );
 }

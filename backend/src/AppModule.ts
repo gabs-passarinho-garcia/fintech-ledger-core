@@ -10,10 +10,10 @@ export const AppModule: ModuleDefinition = {
   name: 'AppModule',
   imports: [
     ProvidersModule,
-    CommonAuthModule,
+    AuthModule, // ModelsAuthModule - must be before CommonAuthModule
+    CommonAuthModule, // Must be after AuthModule (ModelsAuthModule) as it depends on it
     PaymentModule,
     LedgerModule,
-    AuthModule,
     TenantModule,
   ],
 };

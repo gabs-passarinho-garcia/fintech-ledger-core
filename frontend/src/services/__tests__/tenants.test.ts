@@ -1,12 +1,12 @@
-import { describe, it, expect, beforeEach, mock } from 'bun:test';
-import { listTenants, listAllTenants } from '../tenants';
-import * as endpointsModule from '../../api/endpoints';
+import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { listTenants, listAllTenants } from "../tenants";
+import * as endpointsModule from "../../api/endpoints";
 
 // Mock endpoints
 const mockListTenants = mock();
 const mockListAllTenants = mock();
 
-mock.module('../../api/endpoints', () => ({
+mock.module("../../api/endpoints", () => ({
   endpoints: {
     tenants: {
       listTenants: mockListTenants,
@@ -15,24 +15,24 @@ mock.module('../../api/endpoints', () => ({
   },
 }));
 
-describe('tenants service', () => {
+describe("tenants service", () => {
   beforeEach(() => {
     mock.restore();
   });
 
-  describe('listTenants', () => {
-    it('should list tenants successfully', async () => {
+  describe("listTenants", () => {
+    it("should list tenants successfully", async () => {
       const mockResponse = {
         data: {
           data: {
             tenants: [
               {
-                id: 'tenant-1',
-                name: 'Tenant 1',
-                createdBy: 'user-1',
-                createdAt: new Date('2024-01-01'),
+                id: "tenant-1",
+                name: "Tenant 1",
+                createdBy: "user-1",
+                createdAt: new Date("2024-01-01"),
                 updatedBy: null,
-                updatedAt: new Date('2024-01-01'),
+                updatedAt: new Date("2024-01-01"),
                 deletedBy: null,
                 deletedAt: null,
               },
@@ -47,32 +47,32 @@ describe('tenants service', () => {
 
       expect(result.tenants).toBeDefined();
       expect(result.tenants.length).toBe(1);
-      expect(result.tenants[0]?.id).toBe('tenant-1');
-      expect(result.tenants[0]?.name).toBe('Tenant 1');
+      expect(result.tenants[0]?.id).toBe("tenant-1");
+      expect(result.tenants[0]?.name).toBe("Tenant 1");
     });
 
-    it('should throw error when response is invalid', async () => {
+    it("should throw error when response is invalid", async () => {
       mockListTenants.mockResolvedValue({});
 
       await expect(async () => {
         await listTenants();
-      }).toThrow('Failed to list tenants');
+      }).toThrow("Failed to list tenants");
     });
   });
 
-  describe('listAllTenants', () => {
-    it('should list all tenants successfully', async () => {
+  describe("listAllTenants", () => {
+    it("should list all tenants successfully", async () => {
       const mockResponse = {
         data: {
           data: {
             tenants: [
               {
-                id: 'tenant-1',
-                name: 'Tenant 1',
-                createdBy: 'user-1',
-                createdAt: new Date('2024-01-01'),
+                id: "tenant-1",
+                name: "Tenant 1",
+                createdBy: "user-1",
+                createdAt: new Date("2024-01-01"),
                 updatedBy: null,
-                updatedAt: new Date('2024-01-01'),
+                updatedAt: new Date("2024-01-01"),
                 deletedBy: null,
                 deletedAt: null,
               },
@@ -96,7 +96,7 @@ describe('tenants service', () => {
       expect(result.pagination).toBeDefined();
     });
 
-    it('should pass query parameters', async () => {
+    it("should pass query parameters", async () => {
       const mockResponse = {
         data: {
           data: {
@@ -117,13 +117,12 @@ describe('tenants service', () => {
       });
     });
 
-    it('should throw error when response is invalid', async () => {
+    it("should throw error when response is invalid", async () => {
       mockListAllTenants.mockResolvedValue({});
 
       await expect(async () => {
         await listAllTenants();
-      }).toThrow('Failed to list all tenants');
+      }).toThrow("Failed to list all tenants");
     });
   });
 });
-

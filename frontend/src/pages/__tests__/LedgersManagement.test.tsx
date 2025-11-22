@@ -1,12 +1,12 @@
-import { describe, it, expect, beforeEach, mock } from 'bun:test';
-import { render, screen, waitFor } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import LedgersManagement from '../LedgersManagement';
+import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { render, screen, waitFor } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
+import LedgersManagement from "../LedgersManagement";
 
 // Mock endpoints
 const mockListAllEntries = mock();
 
-mock.module('../../api/endpoints', () => ({
+mock.module("../../api/endpoints", () => ({
   endpoints: {
     ledger: {
       listAllEntries: mockListAllEntries,
@@ -14,7 +14,7 @@ mock.module('../../api/endpoints', () => ({
   },
 }));
 
-describe('LedgersManagement', () => {
+describe("LedgersManagement", () => {
   beforeEach(() => {
     mock.restore();
   });
@@ -27,45 +27,47 @@ describe('LedgersManagement', () => {
     );
   };
 
-  it('should render loading state initially', () => {
+  it("should render loading state initially", () => {
     mockListAllEntries.mockImplementation(() => new Promise(() => {})); // Never resolves
 
     renderComponent();
 
     // Loading state should be shown
-    expect(screen.getByText(/loading/i) || screen.queryByRole('progressbar')).toBeDefined();
+    expect(
+      screen.getByText(/loading/i) || screen.queryByRole("progressbar"),
+    ).toBeDefined();
   });
 
-  it('should render ledger entries list', async () => {
+  it("should render ledger entries list", async () => {
     const mockResponse = {
       data: {
         data: {
           entries: [
             {
-              id: 'entry-1',
-              tenantId: 'tenant-1',
-              fromAccountId: 'account-1',
-              toAccountId: 'account-2',
-              amount: '100.00',
-              type: 'TRANSFER',
-              status: 'COMPLETED',
-              createdBy: 'user-1',
-              createdAt: new Date('2024-01-01'),
+              id: "entry-1",
+              tenantId: "tenant-1",
+              fromAccountId: "account-1",
+              toAccountId: "account-2",
+              amount: "100.00",
+              type: "TRANSFER",
+              status: "COMPLETED",
+              createdBy: "user-1",
+              createdAt: new Date("2024-01-01"),
               updatedBy: null,
-              updatedAt: new Date('2024-01-01'),
+              updatedAt: new Date("2024-01-01"),
             },
             {
-              id: 'entry-2',
-              tenantId: 'tenant-2',
+              id: "entry-2",
+              tenantId: "tenant-2",
               fromAccountId: null,
-              toAccountId: 'account-3',
-              amount: '50.00',
-              type: 'DEPOSIT',
-              status: 'PENDING',
-              createdBy: 'user-2',
-              createdAt: new Date('2024-01-02'),
+              toAccountId: "account-3",
+              amount: "50.00",
+              type: "DEPOSIT",
+              status: "PENDING",
+              createdBy: "user-2",
+              createdAt: new Date("2024-01-02"),
               updatedBy: null,
-              updatedAt: new Date('2024-01-02'),
+              updatedAt: new Date("2024-01-02"),
             },
           ],
           pagination: {
@@ -83,14 +85,14 @@ describe('LedgersManagement', () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText('TRANSFER')).toBeDefined();
-      expect(screen.getByText('DEPOSIT')).toBeDefined();
-      expect(screen.getByText('COMPLETED')).toBeDefined();
-      expect(screen.getByText('PENDING')).toBeDefined();
+      expect(screen.getByText("TRANSFER")).toBeDefined();
+      expect(screen.getByText("DEPOSIT")).toBeDefined();
+      expect(screen.getByText("COMPLETED")).toBeDefined();
+      expect(screen.getByText("PENDING")).toBeDefined();
     });
   });
 
-  it('should render empty state when no entries', async () => {
+  it("should render empty state when no entries", async () => {
     const mockResponse = {
       data: {
         data: {
@@ -114,8 +116,8 @@ describe('LedgersManagement', () => {
     });
   });
 
-  it('should render error message on error', async () => {
-    mockListAllEntries.mockRejectedValue(new Error('Failed to load entries'));
+  it("should render error message on error", async () => {
+    mockListAllEntries.mockRejectedValue(new Error("Failed to load entries"));
 
     renderComponent();
 
@@ -124,7 +126,7 @@ describe('LedgersManagement', () => {
     });
   });
 
-  it('should render page title', async () => {
+  it("should render page title", async () => {
     const mockResponse = {
       data: {
         data: {
@@ -144,53 +146,53 @@ describe('LedgersManagement', () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText('Ledgers Management')).toBeDefined();
+      expect(screen.getByText("Ledgers Management")).toBeDefined();
     });
   });
 
-  it('should display status badges with correct colors', async () => {
+  it("should display status badges with correct colors", async () => {
     const mockResponse = {
       data: {
         data: {
           entries: [
             {
-              id: 'entry-1',
-              tenantId: 'tenant-1',
+              id: "entry-1",
+              tenantId: "tenant-1",
               fromAccountId: null,
               toAccountId: null,
-              amount: '100.00',
-              type: 'DEPOSIT',
-              status: 'COMPLETED',
-              createdBy: 'user-1',
-              createdAt: new Date('2024-01-01'),
+              amount: "100.00",
+              type: "DEPOSIT",
+              status: "COMPLETED",
+              createdBy: "user-1",
+              createdAt: new Date("2024-01-01"),
               updatedBy: null,
-              updatedAt: new Date('2024-01-01'),
+              updatedAt: new Date("2024-01-01"),
             },
             {
-              id: 'entry-2',
-              tenantId: 'tenant-1',
+              id: "entry-2",
+              tenantId: "tenant-1",
               fromAccountId: null,
               toAccountId: null,
-              amount: '50.00',
-              type: 'WITHDRAWAL',
-              status: 'PENDING',
-              createdBy: 'user-1',
-              createdAt: new Date('2024-01-02'),
+              amount: "50.00",
+              type: "WITHDRAWAL",
+              status: "PENDING",
+              createdBy: "user-1",
+              createdAt: new Date("2024-01-02"),
               updatedBy: null,
-              updatedAt: new Date('2024-01-02'),
+              updatedAt: new Date("2024-01-02"),
             },
             {
-              id: 'entry-3',
-              tenantId: 'tenant-1',
+              id: "entry-3",
+              tenantId: "tenant-1",
               fromAccountId: null,
               toAccountId: null,
-              amount: '25.00',
-              type: 'DEPOSIT',
-              status: 'FAILED',
-              createdBy: 'user-1',
-              createdAt: new Date('2024-01-03'),
+              amount: "25.00",
+              type: "DEPOSIT",
+              status: "FAILED",
+              createdBy: "user-1",
+              createdAt: new Date("2024-01-03"),
               updatedBy: null,
-              updatedAt: new Date('2024-01-03'),
+              updatedAt: new Date("2024-01-03"),
             },
           ],
           pagination: {
@@ -208,10 +210,9 @@ describe('LedgersManagement', () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText('COMPLETED')).toBeDefined();
-      expect(screen.getByText('PENDING')).toBeDefined();
-      expect(screen.getByText('FAILED')).toBeDefined();
+      expect(screen.getByText("COMPLETED")).toBeDefined();
+      expect(screen.getByText("PENDING")).toBeDefined();
+      expect(screen.getByText("FAILED")).toBeDefined();
     });
   });
 });
-

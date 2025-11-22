@@ -134,7 +134,7 @@ export class TokenAuthHandler implements IAuthHandler {
    * @param authenticatedUserId - The authenticated user ID
    * @param headers - Request headers
    * @returns Final user ID and tenant ID
-   * @throws {NotSignedError} If impersonation fails or tenantId is missing
+   * @throws {NotSignedError} If impersonation fails
    */
   private async resolveImpersonation(
     user: { id: string; isMaster: boolean },
@@ -154,10 +154,6 @@ export class TokenAuthHandler implements IAuthHandler {
       if (impersonateTenantId) {
         finalTenantId = impersonateTenantId;
       }
-    } else if (!finalTenantId) {
-      throw new NotSignedError({
-        additionalMessage: ERROR_MESSAGE,
-      });
     }
 
     return { finalUserId, finalTenantId };

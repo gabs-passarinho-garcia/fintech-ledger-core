@@ -1,16 +1,16 @@
-import { describe, it, expect, beforeEach, mock } from 'bun:test';
-import { render, screen, waitFor } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import TenantsList from '../TenantsList';
+import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { render, screen, waitFor } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
+import TenantsList from "../TenantsList";
 
 // Mock tenants service
 const mockListTenants = mock();
 
-mock.module('../../services/tenants', () => ({
+mock.module("../../services/tenants", () => ({
   listTenants: mockListTenants,
 }));
 
-describe('TenantsList', () => {
+describe("TenantsList", () => {
   beforeEach(() => {
     mock.restore();
   });
@@ -23,35 +23,37 @@ describe('TenantsList', () => {
     );
   };
 
-  it('should render loading state initially', () => {
+  it("should render loading state initially", () => {
     mockListTenants.mockImplementation(() => new Promise(() => {})); // Never resolves
 
     renderComponent();
 
     // Loading state should be shown (checking for loading spinner or similar)
-    expect(screen.getByText(/loading/i) || screen.queryByRole('progressbar')).toBeDefined();
+    expect(
+      screen.getByText(/loading/i) || screen.queryByRole("progressbar"),
+    ).toBeDefined();
   });
 
-  it('should render tenants list', async () => {
+  it("should render tenants list", async () => {
     const mockTenants = {
       tenants: [
         {
-          id: 'tenant-1',
-          name: 'Tenant 1',
-          createdBy: 'user-1',
-          createdAt: new Date('2024-01-01'),
+          id: "tenant-1",
+          name: "Tenant 1",
+          createdBy: "user-1",
+          createdAt: new Date("2024-01-01"),
           updatedBy: null,
-          updatedAt: new Date('2024-01-01'),
+          updatedAt: new Date("2024-01-01"),
           deletedBy: null,
           deletedAt: null,
         },
         {
-          id: 'tenant-2',
-          name: 'Tenant 2',
-          createdBy: 'user-1',
-          createdAt: new Date('2024-01-02'),
+          id: "tenant-2",
+          name: "Tenant 2",
+          createdBy: "user-1",
+          createdAt: new Date("2024-01-02"),
           updatedBy: null,
-          updatedAt: new Date('2024-01-02'),
+          updatedAt: new Date("2024-01-02"),
           deletedBy: null,
           deletedAt: null,
         },
@@ -63,12 +65,12 @@ describe('TenantsList', () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText('Tenant 1')).toBeDefined();
-      expect(screen.getByText('Tenant 2')).toBeDefined();
+      expect(screen.getByText("Tenant 1")).toBeDefined();
+      expect(screen.getByText("Tenant 2")).toBeDefined();
     });
   });
 
-  it('should render empty state when no tenants', async () => {
+  it("should render empty state when no tenants", async () => {
     mockListTenants.mockResolvedValue({ tenants: [] });
 
     renderComponent();
@@ -78,8 +80,8 @@ describe('TenantsList', () => {
     });
   });
 
-  it('should render error message on error', async () => {
-    mockListTenants.mockRejectedValue(new Error('Failed to load tenants'));
+  it("should render error message on error", async () => {
+    mockListTenants.mockRejectedValue(new Error("Failed to load tenants"));
 
     renderComponent();
 
@@ -88,14 +90,13 @@ describe('TenantsList', () => {
     });
   });
 
-  it('should render page title', async () => {
+  it("should render page title", async () => {
     mockListTenants.mockResolvedValue({ tenants: [] });
 
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText('My Tenants')).toBeDefined();
+      expect(screen.getByText("My Tenants")).toBeDefined();
     });
   });
 });
-
