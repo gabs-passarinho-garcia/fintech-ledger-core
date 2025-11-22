@@ -59,3 +59,4 @@ terraform/*_override.tf.json
 keys/
 *.pem
 backend/.env.bak
+frontend/junit.xml
