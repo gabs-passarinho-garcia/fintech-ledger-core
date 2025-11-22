@@ -25,10 +25,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "backend/*": ["../src/*"]
+      "backend/*": ["../backend/src/*"]
     }
   },
-  "include": ["src", "../src/app.ts"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
 

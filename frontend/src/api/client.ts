@@ -1,7 +1,7 @@
 import { treaty } from '@elysiajs/eden';
 import { getCorrelationId } from '../utils/correlationId';
 import { storage } from '../utils/storage';
-import type { App } from 'backend/app';
+import type { App } from '../../../backend/src/app';
 
 /**
  * Base URL for the API
@@ -16,12 +16,7 @@ const API_BASE_URL =
  * Automatically adds correlation ID and authorization headers
  * @returns Configured Eden Treaty client instance
  */
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 function createApiClient() {
-  // Type error occurs due to Elysia being in separate node_modules
-  // (backend and frontend have separate installations of the same version)
-  // This is a structural issue, not a code issue - types work correctly at runtime
-  // @ts-expect-error - Elysia type incompatibility between backend/frontend node_modules
   return treaty<App>(API_BASE_URL, {
     headers: () => {
       const headers: Record<string, string> = {

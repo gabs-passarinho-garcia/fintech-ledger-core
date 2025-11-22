@@ -15,11 +15,12 @@ ENV APP_ENV=$APP_ENV
 
 FROM base AS install
 RUN mkdir -p /temp/dev
-COPY ./package.json bun.lock tsconfig.json eslint.config.mjs .prettierrc /temp/dev/
+COPY ./package.json bun.lock backend/package.json frontend/package.json /temp/dev/
+COPY ./backend/tsconfig.json ./backend/eslint.config.mjs ./backend/.prettierrc /temp/dev/backend/
 RUN cd /temp/dev && bun install --frozen-lockfile
 
 RUN mkdir -p /temp/prod
-COPY ./package.json bun.lock /temp/prod/
+COPY ./package.json bun.lock backend/package.json /temp/prod/
 RUN cd /temp/prod && bun install --frozen-lockfile --production
 
 FROM base AS prerelease
@@ -27,12 +28,17 @@ COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 ARG DATABASE_URL=none
 ENV DATABASE_URL=$DATABASE_URL
+WORKDIR /usr/src/app/backend
 RUN bun db:init
 RUN bun run build:prod
 
 FROM base AS release
 COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app .
+COPY --from=prerelease /usr/src/app/backend/dist ./backend/dist
+COPY --from=prerelease /usr/src/app/backend/prisma ./backend/prisma
+COPY --from=prerelease /usr/src/app/backend/package.json ./backend/
+COPY --from=prerelease /usr/src/app/package.json ./
+WORKDIR /usr/src/app/backend
 
 USER bun
 

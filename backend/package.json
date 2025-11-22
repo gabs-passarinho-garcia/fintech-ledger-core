@@ -1,31 +1,26 @@
 {
-  "name": "fintech-ledger-core",
+  "name": "backend",
   "version": "0.1.0",
-  "description": "High-performance financial ledger engine focused on atomic consistency and decoupled architecture",
+  "description": "Backend API for Fintech Ledger Core",
   "license": "GPL-3.0-or-later",
-  "private": true,
   "type": "module",
-  "workspaces": ["backend", "frontend"],
   "scripts": {
-    "dev": "bun --filter backend dev",
-    "dev:frontend": "bun --filter frontend dev",
-    "dev:all": "bun --filter backend --filter frontend dev",
-    "prod": "bun --filter backend prod",
-    "check:type": "bun --filter backend check:type && bun --filter frontend type-check",
-    "build": "bun --filter backend build",
-    "build:prod": "bun --filter backend build:prod",
-    "build:frontend": "bun --filter frontend build",
-    "test": "bun --filter backend test && bun --filter frontend test",
-    "test:cov": "bun --filter backend test:cov && bun --filter frontend test:cov",
-    "lint": "bun --filter backend lint && bun --filter frontend lint",
-    "lint:fix": "bun --filter backend lint:fix && bun --filter frontend lint:fix",
+    "dev": "bun run --hot --watch src/server.ts",
+    "prod": "bun run dist/server.js",
+    "check:type": "bunx --bun tsc --noEmit",
+    "build": "bunx --bun tsc --outDir dist",
+    "build:prod": "bunx --bun tsc --outDir dist",
+    "test": "bun test",
+    "test:cov": "bun test --coverage",
+    "lint": "eslint \"src/**/*.ts\"",
+    "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "check": "bun run lint && bun run check:type",
-    "db:studio": "bun --filter backend db:studio",
-    "db:update": "bun --filter backend db:update",
-    "db:migrate": "bun --filter backend db:migrate",
-    "db:deploy": "bun --filter backend db:deploy",
-    "db:init": "bun --filter backend db:init",
-    "db:seed": "bun --filter backend db:seed"
+    "db:studio": "bunx prisma studio",
+    "db:update": "bunx prisma migrate dev",
+    "db:migrate": "bunx prisma migrate dev --create-only",
+    "db:deploy": "bunx prisma migrate deploy",
+    "db:init": "bunx prisma generate",
+    "db:seed": "bunx prisma db seed"
   },
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "3.908.0",
@@ -59,6 +54,8 @@
     "winston": "3.18.3"
   },
   "devDependencies": {
+    "@types/bun": "1.3.0",
+    "@types/winston": "2.4.4",
     "@typescript-eslint/eslint-plugin": "8.46.1",
     "@typescript-eslint/parser": "8.46.1",
     "eslint": "9.37.0",
@@ -66,10 +63,12 @@
     "eslint-plugin-prettier": "5.5.4",
     "eslint-plugin-sonarjs": "3.0.5",
     "prettier": "3.6.2",
+    "prettier-plugin-prisma": "5.0.0",
+    "prisma": "7.0.0",
     "typescript": "5.9.3"
   },
   "imports": {
-    "@/*": "./*"
+    "@/*": "./src/*"
   },
   "trustedDependencies": [
     "@prisma/client",
@@ -79,3 +78,4 @@
     "protobufjs"
   ]
 }
+

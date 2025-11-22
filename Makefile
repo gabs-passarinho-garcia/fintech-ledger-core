@@ -77,7 +77,7 @@ dev: ## Start application in development mode (with hot reload)
 	@echo "  • http://localhost:$${SERVER_PORT:-3000}"
 	@echo "  • API Docs: http://localhost:$${SERVER_PORT:-3000}/docs"
 	@echo ""
-	bun dev
+	bun --filter backend dev
 
 start: build ## Start application in production mode (requires build)
 	@echo "$(BLUE)🚀 Starting application in production mode...$(NC)"
@@ -85,11 +85,11 @@ start: build ## Start application in production mode (requires build)
 	@echo "  • http://localhost:$${SERVER_PORT:-3000}"
 	@echo "  • API Docs: http://localhost:$${SERVER_PORT:-3000}/docs"
 	@echo ""
-	bun prod
+	bun --filter backend prod
 
 build: ## Build application for production
 	@echo "$(BLUE)🔨 Building application...$(NC)"
-	bun build:prod
+	bun --filter backend build:prod
 	@echo "$(GREEN)✅ Build completed!$(NC)"
 
 # ===========================================
@@ -97,30 +97,30 @@ build: ## Build application for production
 # ===========================================
 db-init: ## Generate Prisma client
 	@echo "$(BLUE)🔧 Generating Prisma client...$(NC)"
-	bun db:init
+	bun --filter backend db:init
 
 db-update: ## Run Prisma migrate dev (create and apply migrations)
 	@echo "$(BLUE)🔄 Running Prisma migrate dev...$(NC)"
-	bun db:update
+	bun --filter backend db:update
 
 db-migrate: ## Run Prisma migrations
 	@echo "$(BLUE)🔄 Running Prisma migrations...$(NC)"
-	bun db:deploy
+	bun --filter backend db:deploy
 
 db-studio: ## Open Prisma Studio
 	@echo "$(BLUE)🎨 Opening Prisma Studio...$(NC)"
-	bun db:studio
+	bun --filter backend db:studio
 
 # ===========================================
 # TESTING & QUALITY
 # ===========================================
 test: ## Run tests
 	@echo "$(BLUE)🧪 Running tests...$(NC)"
-	bun test
+	bun --filter backend test && bun --filter frontend test
 
 lint: ## Run linting
 	@echo "$(BLUE)🔍 Running linting...$(NC)"
-	bun lint
+	bun --filter backend lint && bun --filter frontend lint
 
 check: ## Run all checks (lint + type)
 	@echo "$(BLUE)✅ Running all checks...$(NC)"
