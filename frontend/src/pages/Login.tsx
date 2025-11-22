@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import Button from '../components/Button';
-import Input from '../components/Input';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import Button from "../components/Button";
+import Input from "../components/Input";
 
 /**
  * Login page
@@ -11,9 +11,9 @@ export default function Login(): JSX.Element {
   const navigate = useNavigate();
   const { signIn, isLoading, error } = useAuth();
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    tenantId: '',
+    username: "",
+    password: "",
+    tenantId: "",
   });
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -22,7 +22,7 @@ export default function Login(): JSX.Element {
     setFormError(null);
 
     if (!formData.username || !formData.password) {
-      setFormError('Username and password are required');
+      setFormError("Username and password are required");
       return;
     }
 
@@ -32,11 +32,9 @@ export default function Login(): JSX.Element {
         password: formData.password,
         tenantId: formData.tenantId || undefined,
       });
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err) {
-      setFormError(
-        err instanceof Error ? err.message : 'Failed to sign in',
-      );
+      setFormError(err instanceof Error ? err.message : "Failed to sign in");
     }
   };
 
@@ -103,7 +101,7 @@ export default function Login(): JSX.Element {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{' '}
+            Don't have an account?{" "}
             <Link
               to="/signup"
               className="text-primary-600 hover:text-primary-700 font-semibold"
@@ -116,4 +114,3 @@ export default function Login(): JSX.Element {
     </div>
   );
 }
-

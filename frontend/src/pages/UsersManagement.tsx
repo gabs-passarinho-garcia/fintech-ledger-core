@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { listAllUsers, deleteUser } from '../services/users';
-import Button from '../components/Button';
-import Table from '../components/Table';
-import Loading from '../components/Loading';
-import Modal from '../components/Modal';
-import type { User } from '../types';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { listAllUsers, deleteUser } from "../services/users";
+import Button from "../components/Button";
+import Table from "../components/Table";
+import Loading from "../components/Loading";
+import Modal from "../components/Modal";
+import type { User } from "../types";
 
 /**
  * Users management page (master/admin)
@@ -15,7 +15,10 @@ export default function UsersManagement(): JSX.Element {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; user: User | null }>({
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    user: User | null;
+  }>({
     isOpen: false,
     user: null,
   });
@@ -32,9 +35,7 @@ export default function UsersManagement(): JSX.Element {
       const response = await listAllUsers({ page: 1, limit: 100 });
       setUsers(response.users);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to load users',
-      );
+      setError(err instanceof Error ? err.message : "Failed to load users");
     } finally {
       setIsLoading(false);
     }
@@ -49,9 +50,7 @@ export default function UsersManagement(): JSX.Element {
       setDeleteModal({ isOpen: false, user: null });
       await loadUsers();
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to delete user',
-      );
+      setError(err instanceof Error ? err.message : "Failed to delete user");
     } finally {
       setIsDeleting(false);
     }
@@ -67,23 +66,25 @@ export default function UsersManagement(): JSX.Element {
 
   const columns = [
     {
-      key: 'id',
-      header: 'ID',
-      render: (user: User) => <span className="font-mono text-xs">{user.id.slice(0, 8)}...</span>,
+      key: "id",
+      header: "ID",
+      render: (user: User) => (
+        <span className="font-mono text-xs">{user.id.slice(0, 8)}...</span>
+      ),
     },
     {
-      key: 'username',
-      header: 'Username',
+      key: "username",
+      header: "Username",
       render: (user: User) => user.username,
     },
     {
-      key: 'createdAt',
-      header: 'Created At',
+      key: "createdAt",
+      header: "Created At",
       render: (user: User) => new Date(user.createdAt).toLocaleDateString(),
     },
     {
-      key: 'actions',
-      header: 'Actions',
+      key: "actions",
+      header: "Actions",
       render: (user: User) => (
         <Button
           variant="danger"
@@ -100,8 +101,10 @@ export default function UsersManagement(): JSX.Element {
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">Users Management</h1>
-            <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Users Management
+            </h1>
+            <Button variant="secondary" onClick={() => navigate("/dashboard")}>
               Back to Dashboard
             </Button>
           </div>
@@ -115,11 +118,7 @@ export default function UsersManagement(): JSX.Element {
           </div>
         )}
 
-        <Table
-          columns={columns}
-          data={users}
-          emptyMessage="No users found"
-        />
+        <Table columns={columns} data={users} emptyMessage="No users found" />
 
         <Modal
           isOpen={deleteModal.isOpen}
@@ -133,19 +132,23 @@ export default function UsersManagement(): JSX.Element {
               >
                 Cancel
               </Button>
-              <Button variant="danger" onClick={handleDelete} isLoading={isDeleting}>
+              <Button
+                variant="danger"
+                onClick={handleDelete}
+                isLoading={isDeleting}
+              >
                 Delete
               </Button>
             </>
           }
         >
           <p className="text-gray-700">
-            Are you sure you want to delete user{' '}
-            <strong>{deleteModal.user?.username}</strong>? This action cannot be undone.
+            Are you sure you want to delete user{" "}
+            <strong>{deleteModal.user?.username}</strong>? This action cannot be
+            undone.
           </p>
         </Modal>
       </main>
     </div>
   );
 }
-

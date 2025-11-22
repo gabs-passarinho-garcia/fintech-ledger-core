@@ -1,7 +1,7 @@
-import { type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { type ButtonHTMLAttributes, type ReactNode } from "react";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: "primary" | "secondary" | "danger";
   children: ReactNode;
   isLoading?: boolean;
 }
@@ -10,19 +10,20 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  * Reusable button component
  */
 export default function Button({
-  variant = 'primary',
+  variant = "primary",
   children,
   isLoading = false,
   disabled,
-  className = '',
+  className = "",
   ...props
 }: ButtonProps): JSX.Element {
-  const baseClasses = 'font-semibold text-base py-3 px-6 rounded-xl transition-all active:scale-95 shadow-sm flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed';
-  
+  const baseClasses =
+    "font-semibold text-base py-3 px-6 rounded-xl transition-all active:scale-95 shadow-sm flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed";
+
   const variantClasses = {
-    primary: 'bg-primary-500 text-white hover:bg-primary-600 hover:shadow-md',
-    secondary: 'bg-gray-200 text-gray-800 hover:bg-gray-300',
-    danger: 'bg-secondary-red text-white hover:bg-red-600',
+    primary: "bg-primary-500 text-white hover:bg-primary-600 hover:shadow-md",
+    secondary: "bg-gray-200 text-gray-800 hover:bg-gray-300",
+    danger: "bg-secondary-red text-white hover:bg-red-600",
   };
 
   return (
@@ -61,4 +62,3 @@ export default function Button({
     </button>
   );
 }
-

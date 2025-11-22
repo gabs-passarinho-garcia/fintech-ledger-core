@@ -1,16 +1,16 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import ErrorBoundary from './components/ErrorBoundary';
-import ProtectedRoute from './components/ProtectedRoute';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Dashboard from './pages/Dashboard';
-import Profile from './pages/Profile';
-import ProfileEdit from './pages/ProfileEdit';
-import UsersManagement from './pages/UsersManagement';
-import ProfilesManagement from './pages/ProfilesManagement';
-import LedgerEntryCreate from './pages/LedgerEntryCreate';
-import LedgerEntryDetail from './pages/LedgerEntryDetail';
-import LedgerEntryEdit from './pages/LedgerEntryEdit';
+import { Routes, Route, Navigate } from "react-router-dom";
+import ErrorBoundary from "./components/ErrorBoundary";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import ProfileEdit from "./pages/ProfileEdit";
+import UsersManagement from "./pages/UsersManagement";
+import ProfilesManagement from "./pages/ProfilesManagement";
+import LedgerEntryCreate from "./pages/LedgerEntryCreate";
+import LedgerEntryDetail from "./pages/LedgerEntryDetail";
+import LedgerEntryEdit from "./pages/LedgerEntryEdit";
 
 /**
  * Main App component with routing
@@ -93,4 +93,3 @@ function App(): JSX.Element {
 }
 
 export default App;
-

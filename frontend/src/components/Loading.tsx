@@ -1,5 +1,5 @@
 interface LoadingProps {
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   className?: string;
 }
 
@@ -7,13 +7,13 @@ interface LoadingProps {
  * Loading spinner component
  */
 export default function Loading({
-  size = 'md',
-  className = '',
+  size = "md",
+  className = "",
 }: LoadingProps): JSX.Element {
   const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-8 w-8',
-    lg: 'h-12 w-12',
+    sm: "h-4 w-4",
+    md: "h-8 w-8",
+    lg: "h-12 w-12",
   };
 
   return (
@@ -41,4 +41,3 @@ export default function Loading({
     </div>
   );
 }
-

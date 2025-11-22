@@ -1,4 +1,4 @@
-import { type InputHTMLAttributes, type ReactNode } from 'react';
+import { type InputHTMLAttributes, type ReactNode } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -17,7 +17,7 @@ export default function Input({
   helperText,
   leftIcon,
   rightIcon,
-  className = '',
+  className = "",
   id,
   ...props
 }: InputProps): JSX.Element {
@@ -42,7 +42,7 @@ export default function Input({
         )}
         <input
           id={inputId}
-          className={`input-field ${leftIcon ? 'pl-10' : ''} ${rightIcon ? 'pr-10' : ''} ${hasError ? 'border-red-500 focus:ring-red-500' : ''} ${className}`}
+          className={`input-field ${leftIcon ? "pl-10" : ""} ${rightIcon ? "pr-10" : ""} ${hasError ? "border-red-500 focus:ring-red-500" : ""} ${className}`}
           {...props}
         />
         {rightIcon && (
@@ -51,13 +51,10 @@ export default function Input({
           </div>
         )}
       </div>
-      {error && (
-        <p className="mt-1 text-sm text-red-600">{error}</p>
-      )}
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
       {helperText && !error && (
         <p className="mt-1 text-sm text-gray-500">{helperText}</p>
       )}
     </div>
   );
 }
-

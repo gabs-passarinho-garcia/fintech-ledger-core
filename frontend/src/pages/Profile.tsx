@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getMyProfile } from '../services/profile';
-import Button from '../components/Button';
-import Loading from '../components/Loading';
-import type { Profile } from '../types';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getMyProfile } from "../services/profile";
+import Button from "../components/Button";
+import Loading from "../components/Loading";
+import type { Profile } from "../types";
 
 /**
  * Profile page - view and edit own profile
@@ -25,9 +25,7 @@ export default function Profile(): JSX.Element {
       const data = await getMyProfile();
       setProfile(data);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to load profile',
-      );
+      setError(err instanceof Error ? err.message : "Failed to load profile");
     } finally {
       setIsLoading(false);
     }
@@ -45,8 +43,10 @@ export default function Profile(): JSX.Element {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="card text-center max-w-md w-full">
-          <p className="text-red-600 mb-4">{error || 'Profile not found'}</p>
-          <Button onClick={() => navigate('/dashboard')}>Back to Dashboard</Button>
+          <p className="text-red-600 mb-4">{error || "Profile not found"}</p>
+          <Button onClick={() => navigate("/dashboard")}>
+            Back to Dashboard
+          </Button>
         </div>
       </div>
     );
@@ -58,7 +58,7 @@ export default function Profile(): JSX.Element {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
-            <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+            <Button variant="secondary" onClick={() => navigate("/dashboard")}>
               Back to Dashboard
             </Button>
           </div>
@@ -113,7 +113,7 @@ export default function Profile(): JSX.Element {
           </div>
 
           <div className="mt-6">
-            <Button onClick={() => navigate('/profile/edit')}>
+            <Button onClick={() => navigate("/profile/edit")}>
               Edit Profile
             </Button>
           </div>
@@ -122,4 +122,3 @@ export default function Profile(): JSX.Element {
     </div>
   );
 }
-

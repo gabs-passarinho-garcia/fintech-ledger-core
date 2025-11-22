@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createLedgerEntry } from '../services/ledger';
-import { storage } from '../utils/storage';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import type { CreateLedgerEntryInput } from '../services/ledger';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createLedgerEntry } from "../services/ledger";
+import { storage } from "../utils/storage";
+import Button from "../components/Button";
+import Input from "../components/Input";
+import type { CreateLedgerEntryInput } from "../services/ledger";
 
 /**
  * Create ledger entry page
@@ -12,12 +12,12 @@ import type { CreateLedgerEntryInput } from '../services/ledger';
 export default function LedgerEntryCreate(): JSX.Element {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<CreateLedgerEntryInput>({
-    tenantId: storage.getTenantId() || '',
-    fromAccountId: '',
-    toAccountId: '',
-    amount: '',
-    type: 'DEPOSIT',
-    createdBy: '',
+    tenantId: storage.getTenantId() || "",
+    fromAccountId: "",
+    toAccountId: "",
+    amount: "",
+    type: "DEPOSIT",
+    createdBy: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,15 +28,18 @@ export default function LedgerEntryCreate(): JSX.Element {
     setError(null);
 
     if (!formData.tenantId || !formData.amount || !formData.type) {
-      setError('Tenant ID, amount, and type are required');
+      setError("Tenant ID, amount, and type are required");
       setIsLoading(false);
       return;
     }
 
     try {
-      const amount = typeof formData.amount === 'string' ? parseFloat(formData.amount) : formData.amount;
+      const amount =
+        typeof formData.amount === "string"
+          ? parseFloat(formData.amount)
+          : formData.amount;
       if (isNaN(amount) || amount <= 0) {
-        setError('Amount must be a positive number');
+        setError("Amount must be a positive number");
         setIsLoading(false);
         return;
       }
@@ -47,10 +50,10 @@ export default function LedgerEntryCreate(): JSX.Element {
         fromAccountId: formData.fromAccountId || null,
         toAccountId: formData.toAccountId || null,
       });
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Failed to create ledger entry',
+        err instanceof Error ? err.message : "Failed to create ledger entry",
       );
     } finally {
       setIsLoading(false);
@@ -71,8 +74,10 @@ export default function LedgerEntryCreate(): JSX.Element {
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">Create Ledger Entry</h1>
-            <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Create Ledger Entry
+            </h1>
+            <Button variant="secondary" onClick={() => navigate("/dashboard")}>
               Cancel
             </Button>
           </div>
@@ -161,7 +166,7 @@ export default function LedgerEntryCreate(): JSX.Element {
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate("/dashboard")}
               >
                 Cancel
               </Button>
@@ -172,4 +177,3 @@ export default function LedgerEntryCreate(): JSX.Element {
     </div>
   );
 }
-

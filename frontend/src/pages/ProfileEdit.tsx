@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getMyProfile, updateProfile } from '../services/profile';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import Loading from '../components/Loading';
-import type { Profile } from '../types';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getMyProfile, updateProfile } from "../services/profile";
+import Button from "../components/Button";
+import Input from "../components/Input";
+import Loading from "../components/Loading";
+import type { Profile } from "../types";
 
 /**
  * Profile edit page
@@ -13,9 +13,9 @@ export default function ProfileEdit(): JSX.Element {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
+    firstName: "",
+    lastName: "",
+    email: "",
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -37,9 +37,7 @@ export default function ProfileEdit(): JSX.Element {
         email: data.email,
       });
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to load profile',
-      );
+      setError(err instanceof Error ? err.message : "Failed to load profile");
     } finally {
       setIsLoading(false);
     }
@@ -54,11 +52,9 @@ export default function ProfileEdit(): JSX.Element {
 
     try {
       await updateProfile(profile.id, formData);
-      navigate('/profile');
+      navigate("/profile");
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to update profile',
-      );
+      setError(err instanceof Error ? err.message : "Failed to update profile");
     } finally {
       setIsSaving(false);
     }
@@ -84,7 +80,9 @@ export default function ProfileEdit(): JSX.Element {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="card text-center max-w-md w-full">
           <p className="text-red-600 mb-4">{error}</p>
-          <Button onClick={() => navigate('/dashboard')}>Back to Dashboard</Button>
+          <Button onClick={() => navigate("/dashboard")}>
+            Back to Dashboard
+          </Button>
         </div>
       </div>
     );
@@ -96,7 +94,7 @@ export default function ProfileEdit(): JSX.Element {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-gray-900">Edit Profile</h1>
-            <Button variant="secondary" onClick={() => navigate('/profile')}>
+            <Button variant="secondary" onClick={() => navigate("/profile")}>
               Cancel
             </Button>
           </div>
@@ -146,7 +144,7 @@ export default function ProfileEdit(): JSX.Element {
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => navigate('/profile')}
+                onClick={() => navigate("/profile")}
               >
                 Cancel
               </Button>
@@ -157,4 +155,3 @@ export default function ProfileEdit(): JSX.Element {
     </div>
   );
 }
-

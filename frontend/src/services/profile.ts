@@ -1,5 +1,5 @@
-import { endpoints } from '../api/endpoints';
-import type { Profile } from '../types';
+import { endpoints } from "../api/endpoints";
+import type { Profile } from "../types";
 
 /**
  * Profile service
@@ -19,7 +19,7 @@ export async function getProfile(profileId: string): Promise<Profile> {
   const response = await endpoints.users.getProfile(profileId);
 
   if (!response.data?.data) {
-    throw new Error('Profile not found');
+    throw new Error("Profile not found");
   }
 
   return response.data.data;
@@ -32,7 +32,7 @@ export async function getMyProfile(): Promise<Profile> {
   const response = await endpoints.users.getMyProfile();
 
   if (!response.data?.data) {
-    throw new Error('Profile not found');
+    throw new Error("Profile not found");
   }
 
   return response.data.data;
@@ -48,7 +48,7 @@ export async function updateProfile(
   const response = await endpoints.users.updateProfile(profileId, data);
 
   if (!response.data?.data) {
-    throw new Error('Failed to update profile');
+    throw new Error("Failed to update profile");
   }
 
   return response.data.data;
@@ -64,9 +64,8 @@ export async function listProfiles(query?: {
   const response = await endpoints.users.listProfiles(query);
 
   if (!response.data?.data) {
-    throw new Error('Failed to list profiles');
+    throw new Error("Failed to list profiles");
   }
 
   return response.data.data;
 }
-

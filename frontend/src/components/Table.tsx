@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { type ReactNode } from "react";
 
 interface Column<T> {
   key: string;
@@ -21,9 +21,9 @@ interface TableProps<T> {
 export default function Table<T extends { id: string }>({
   columns,
   data,
-  emptyMessage = 'No data available',
+  emptyMessage = "No data available",
   onRowClick,
-  className = '',
+  className = "",
 }: TableProps<T>): JSX.Element {
   if (data.length === 0) {
     return (
@@ -41,7 +41,7 @@ export default function Table<T extends { id: string }>({
             {columns.map((column) => (
               <th
                 key={column.key}
-                className={`px-4 py-3 text-left text-sm font-semibold text-gray-700 ${column.className || ''}`}
+                className={`px-4 py-3 text-left text-sm font-semibold text-gray-700 ${column.className || ""}`}
               >
                 {column.header}
               </th>
@@ -53,12 +53,12 @@ export default function Table<T extends { id: string }>({
             <tr
               key={item.id}
               onClick={() => onRowClick?.(item)}
-              className={`border-b border-gray-100 ${onRowClick ? 'cursor-pointer hover:bg-gray-50 transition-colors' : ''}`}
+              className={`border-b border-gray-100 ${onRowClick ? "cursor-pointer hover:bg-gray-50 transition-colors" : ""}`}
             >
               {columns.map((column) => (
                 <td
                   key={column.key}
-                  className={`px-4 py-3 text-sm text-gray-900 ${column.className || ''}`}
+                  className={`px-4 py-3 text-sm text-gray-900 ${column.className || ""}`}
                 >
                   {column.render(item)}
                 </td>
@@ -70,4 +70,3 @@ export default function Table<T extends { id: string }>({
     </div>
   );
 }
-

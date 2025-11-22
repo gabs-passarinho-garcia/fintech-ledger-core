@@ -1,6 +1,6 @@
-import { uuidv7 } from 'uuidv7';
+import { uuidv7 } from "uuidv7";
 
-const CORRELATION_ID_KEY = 'x-correlation-id';
+const CORRELATION_ID_KEY = "x-correlation-id";
 
 /**
  * Generates a new correlation ID using uuidv7
@@ -49,4 +49,3 @@ export function resetCorrelationId(): string {
   setCorrelationId(newId);
   return newId;
 }
-

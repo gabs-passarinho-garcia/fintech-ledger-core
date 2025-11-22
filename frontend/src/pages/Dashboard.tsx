@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import Button from '../components/Button';
-import Loading from '../components/Loading';
-import { endpoints } from '../api/endpoints';
-import type { LedgerEntry } from '../types';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import Button from "../components/Button";
+import Loading from "../components/Loading";
+import { endpoints } from "../api/endpoints";
+import type { LedgerEntry } from "../types";
 
 /**
  * Dashboard page
@@ -18,7 +18,7 @@ export default function Dashboard(): JSX.Element {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
 
@@ -37,9 +37,7 @@ export default function Dashboard(): JSX.Element {
         setEntries(response.data.data.entries);
       }
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to load entries',
-      );
+      setError(err instanceof Error ? err.message : "Failed to load entries");
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +45,7 @@ export default function Dashboard(): JSX.Element {
 
   const handleSignOut = (): void => {
     signOut();
-    navigate('/login');
+    navigate("/login");
   };
 
   if (isLoading) {
@@ -68,7 +66,7 @@ export default function Dashboard(): JSX.Element {
             </h1>
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600">
-                {user?.username || 'User'}
+                {user?.username || "User"}
               </span>
               <Button variant="secondary" onClick={handleSignOut}>
                 Sign Out
@@ -83,7 +81,7 @@ export default function Dashboard(): JSX.Element {
           <h2 className="text-xl font-semibold text-gray-900">
             Ledger Entries
           </h2>
-          <Button onClick={() => navigate('/ledger/create')}>
+          <Button onClick={() => navigate("/ledger/create")}>
             Create Entry
           </Button>
         </div>
@@ -97,7 +95,7 @@ export default function Dashboard(): JSX.Element {
         {entries.length === 0 ? (
           <div className="card text-center py-12">
             <p className="text-gray-500 mb-4">No ledger entries found</p>
-            <Button onClick={() => navigate('/ledger/create')}>
+            <Button onClick={() => navigate("/ledger/create")}>
               Create Your First Entry
             </Button>
           </div>
@@ -143,11 +141,11 @@ export default function Dashboard(): JSX.Element {
                       <td className="px-4 py-3 text-sm">
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                            entry.status === 'COMPLETED'
-                              ? 'bg-green-100 text-green-800'
-                              : entry.status === 'PENDING'
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : 'bg-red-100 text-red-800'
+                            entry.status === "COMPLETED"
+                              ? "bg-green-100 text-green-800"
+                              : entry.status === "PENDING"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
                           }`}
                         >
                           {entry.status}
@@ -167,4 +165,3 @@ export default function Dashboard(): JSX.Element {
     </div>
   );
 }
-

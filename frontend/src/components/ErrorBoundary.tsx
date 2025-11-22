@@ -1,5 +1,5 @@
-import { Component, type ReactNode } from 'react';
-import Button from './Button';
+import { Component, type ReactNode } from "react";
+import Button from "./Button";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -34,7 +34,7 @@ export default class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: unknown): void {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
   }
 
   handleReset = (): void => {
@@ -57,7 +57,7 @@ export default class ErrorBoundary extends Component<
               Something went wrong
             </h1>
             <p className="text-gray-600 mb-6">
-              {this.state.error?.message || 'An unexpected error occurred'}
+              {this.state.error?.message || "An unexpected error occurred"}
             </p>
             <Button onClick={this.handleReset}>Try again</Button>
           </div>
@@ -68,4 +68,3 @@ export default class ErrorBoundary extends Component<
     return this.props.children;
   }
 }
-

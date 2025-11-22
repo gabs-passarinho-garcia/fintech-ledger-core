@@ -1,15 +1,15 @@
-import { treaty } from '@elysiajs/eden';
-import { getCorrelationId } from '../utils/correlationId';
-import { storage } from '../utils/storage';
-import type { App } from '../../../backend/src/app';
+import { treaty } from "@elysiajs/eden";
+import { getCorrelationId } from "../utils/correlationId";
+import { storage } from "../utils/storage";
+import type { App } from "../../../backend/src/app";
 
 /**
  * Base URL for the API
  * Can be overridden via environment variable
  */
 const API_BASE_URL =
-  (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) ||
-  'http://localhost:3000';
+  (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_BASE_URL) ||
+  "http://localhost:3000";
 
 /**
  * Creates and configures the Eden Treaty client
@@ -20,19 +20,19 @@ function createApiClient() {
   return treaty<App>(API_BASE_URL, {
     headers: () => {
       const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       };
 
       // Add correlation ID
       const correlationId = getCorrelationId();
       if (correlationId) {
-        headers['x-correlation-id'] = correlationId;
+        headers["x-correlation-id"] = correlationId;
       }
 
       // Add authorization token
       const accessToken = storage.getAccessToken();
       if (accessToken) {
-        headers['Authorization'] = `Bearer ${accessToken}`;
+        headers["Authorization"] = `Bearer ${accessToken}`;
       }
 
       return headers;
@@ -92,12 +92,19 @@ export async function refreshAccessToken(): Promise<{
  * @param apiCall - The API call function
  * @returns Promise with the API response
  */
-export async function withAuthRefresh<T>(apiCall: () => Promise<T>): Promise<T> {
+export async function withAuthRefresh<T>(
+  apiCall: () => Promise<T>,
+): Promise<T> {
   try {
     return await apiCall();
   } catch (error) {
     // Check if error is 401 Unauthorized
-    if (error && typeof error === 'object' && 'status' in error && error.status === 401) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "status" in error &&
+      error.status === 401
+    ) {
       // Try to refresh token
       const newTokens = await refreshAccessToken();
       if (newTokens) {

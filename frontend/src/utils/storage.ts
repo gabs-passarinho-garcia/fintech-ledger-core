@@ -1,7 +1,7 @@
-const ACCESS_TOKEN_KEY = 'access_token';
-const REFRESH_TOKEN_KEY = 'refresh_token';
-const USER_DATA_KEY = 'user_data';
-const TENANT_ID_KEY = 'tenant_id';
+const ACCESS_TOKEN_KEY = "access_token";
+const REFRESH_TOKEN_KEY = "refresh_token";
+const USER_DATA_KEY = "user_data";
+const TENANT_ID_KEY = "tenant_id";
 
 /**
  * Storage utilities for managing authentication tokens and user data
@@ -80,4 +80,3 @@ export const storage = {
     localStorage.removeItem(TENANT_ID_KEY);
   },
 };
-

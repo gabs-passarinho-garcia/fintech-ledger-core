@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 import {
   signIn as signInService,
   signUp as signUpService,
@@ -7,8 +7,8 @@ import {
   isAuthenticated as checkAuth,
   type SignInInput,
   type SignUpInput,
-} from '../services/auth';
-import type { SignInResponse, SignUpResponse, User } from '../types';
+} from "../services/auth";
+import type { SignInResponse, SignUpResponse, User } from "../types";
 
 interface UseAuthReturn {
   user: User | null;
@@ -37,7 +37,7 @@ export function useAuth(): UseAuthReturn {
           setUser(currentUser);
         }
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Auth check failed'));
+        setError(err instanceof Error ? err : new Error("Auth check failed"));
       } finally {
         setIsLoading(false);
       }
@@ -46,38 +46,43 @@ export function useAuth(): UseAuthReturn {
     checkAuthStatus();
   }, []);
 
-  const signIn = useCallback(async (input: SignInInput): Promise<SignInResponse> => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await signInService(input);
-      const currentUser = getCurrentUser();
-      setUser(currentUser);
-      return response;
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Sign in failed');
-      setError(error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const signIn = useCallback(
+    async (input: SignInInput): Promise<SignInResponse> => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await signInService(input);
+        const currentUser = getCurrentUser();
+        setUser(currentUser);
+        return response;
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error("Sign in failed");
+        setError(error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
 
-  const signUp = useCallback(async (input: SignUpInput): Promise<SignUpResponse> => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await signUpService(input);
-      // After signup, user needs to sign in
-      return response;
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Sign up failed');
-      setError(error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const signUp = useCallback(
+    async (input: SignUpInput): Promise<SignUpResponse> => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        // After signup, user needs to sign in
+        return await signUpService(input);
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error("Sign up failed");
+        setError(error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
 
   const signOut = useCallback((): void => {
     signOutService();
@@ -95,4 +100,3 @@ export function useAuth(): UseAuthReturn {
     error,
   };
 }
-

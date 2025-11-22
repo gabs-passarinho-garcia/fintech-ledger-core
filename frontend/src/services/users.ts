@@ -1,5 +1,5 @@
-import { endpoints } from '../api/endpoints';
-import type { User, Profile } from '../types';
+import { endpoints } from "../api/endpoints";
+import type { User, Profile } from "../types";
 
 /**
  * Users service
@@ -16,7 +16,7 @@ export async function listAllUsers(query?: {
   const response = await endpoints.users.listAllUsers(query);
 
   if (!response.data?.data) {
-    throw new Error('Failed to list users');
+    throw new Error("Failed to list users");
   }
 
   return response.data.data;
@@ -32,7 +32,7 @@ export async function listAllProfiles(query?: {
   const response = await endpoints.users.listAllProfiles(query);
 
   if (!response.data?.data) {
-    throw new Error('Failed to list profiles');
+    throw new Error("Failed to list profiles");
   }
 
   return response.data.data;
@@ -45,7 +45,7 @@ export async function deleteUser(userId: string): Promise<void> {
   const response = await endpoints.users.deleteUser(userId);
 
   if (response.error) {
-    throw new Error('Failed to delete user');
+    throw new Error("Failed to delete user");
   }
 }
 
@@ -56,7 +56,6 @@ export async function deleteProfile(profileId: string): Promise<void> {
   const response = await endpoints.users.deleteProfile(profileId);
 
   if (response.error) {
-    throw new Error('Failed to delete profile');
+    throw new Error("Failed to delete profile");
   }
 }
-

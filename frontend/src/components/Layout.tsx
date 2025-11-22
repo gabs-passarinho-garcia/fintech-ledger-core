@@ -1,7 +1,7 @@
-import { type ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import Button from './Button';
+import { type ReactNode } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import Button from "./Button";
 
 interface LayoutProps {
   children: ReactNode;
@@ -16,7 +16,7 @@ export default function Layout({ children }: LayoutProps): JSX.Element {
 
   const handleSignOut = (): void => {
     signOut();
-    navigate('/login');
+    navigate("/login");
   };
 
   return (
@@ -56,7 +56,9 @@ export default function Layout({ children }: LayoutProps): JSX.Element {
               </nav>
             </div>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">{user?.username || 'User'}</span>
+              <span className="text-sm text-gray-600">
+                {user?.username || "User"}
+              </span>
               <Button variant="secondary" onClick={handleSignOut}>
                 Sign Out
               </Button>
@@ -68,4 +70,3 @@ export default function Layout({ children }: LayoutProps): JSX.Element {
     </div>
   );
 }
-

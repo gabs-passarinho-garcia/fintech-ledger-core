@@ -1,6 +1,6 @@
-import { endpoints } from '../api/endpoints';
-import { storage } from '../utils/storage';
-import type { SignInResponse, SignUpResponse, User } from '../types';
+import { endpoints } from "../api/endpoints";
+import { storage } from "../utils/storage";
+import type { SignInResponse, SignUpResponse, User } from "../types";
 
 /**
  * Authentication service
@@ -29,7 +29,7 @@ export async function signIn(input: SignInInput): Promise<SignInResponse> {
   const response = await endpoints.auth.signIn(input);
 
   if (!response.data?.data) {
-    throw new Error('Invalid response from server');
+    throw new Error("Invalid response from server");
   }
 
   const data = response.data.data;
@@ -62,7 +62,7 @@ export async function signUp(input: SignUpInput): Promise<SignUpResponse> {
   const response = await endpoints.auth.signUp(input);
 
   if (!response.data?.data) {
-    throw new Error('Invalid response from server');
+    throw new Error("Invalid response from server");
   }
 
   return response.data.data;
@@ -77,13 +77,13 @@ export async function refreshToken(): Promise<{
 }> {
   const refreshTokenValue = storage.getRefreshToken();
   if (!refreshTokenValue) {
-    throw new Error('No refresh token available');
+    throw new Error("No refresh token available");
   }
 
   const response = await endpoints.auth.refreshToken(refreshTokenValue);
 
   if (!response.data?.data) {
-    throw new Error('Invalid response from server');
+    throw new Error("Invalid response from server");
   }
 
   const data = response.data.data;
@@ -94,8 +94,8 @@ export async function refreshToken(): Promise<{
   }
 
   return {
-    accessToken: data.accessToken || '',
-    refreshToken: data.refreshToken || '',
+    accessToken: data.accessToken || "",
+    refreshToken: data.refreshToken || "",
   };
 }
 
@@ -126,4 +126,3 @@ export function isAuthenticated(): boolean {
 export function getAccessToken(): string | null {
   return storage.getAccessToken();
 }
-

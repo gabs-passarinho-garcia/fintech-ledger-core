@@ -1,5 +1,5 @@
-import { Navigate } from 'react-router-dom';
-import { isAuthenticated } from '../services/auth';
+import { Navigate } from "react-router-dom";
+import { isAuthenticated } from "../services/auth";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -18,4 +18,3 @@ export default function ProtectedRoute({
 
   return <>{children}</>;
 }
-

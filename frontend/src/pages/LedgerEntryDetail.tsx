@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getLedgerEntry, deleteLedgerEntry } from '../services/ledger';
-import Button from '../components/Button';
-import Loading from '../components/Loading';
-import Modal from '../components/Modal';
-import type { LedgerEntry } from '../types';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { getLedgerEntry, deleteLedgerEntry } from "../services/ledger";
+import Button from "../components/Button";
+import Loading from "../components/Loading";
+import Modal from "../components/Modal";
+import type { LedgerEntry } from "../types";
 
 /**
  * Ledger entry detail page
@@ -34,7 +34,7 @@ export default function LedgerEntryDetail(): JSX.Element {
       setEntry(data);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Failed to load ledger entry',
+        err instanceof Error ? err.message : "Failed to load ledger entry",
       );
     } finally {
       setIsLoading(false);
@@ -47,10 +47,10 @@ export default function LedgerEntryDetail(): JSX.Element {
     setIsDeleting(true);
     try {
       await deleteLedgerEntry(id);
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Failed to delete ledger entry',
+        err instanceof Error ? err.message : "Failed to delete ledger entry",
       );
     } finally {
       setIsDeleting(false);
@@ -70,8 +70,10 @@ export default function LedgerEntryDetail(): JSX.Element {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="card text-center max-w-md w-full">
-          <p className="text-red-600 mb-4">{error || 'Entry not found'}</p>
-          <Button onClick={() => navigate('/dashboard')}>Back to Dashboard</Button>
+          <p className="text-red-600 mb-4">{error || "Entry not found"}</p>
+          <Button onClick={() => navigate("/dashboard")}>
+            Back to Dashboard
+          </Button>
         </div>
       </div>
     );
@@ -82,8 +84,10 @@ export default function LedgerEntryDetail(): JSX.Element {
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">Ledger Entry Details</h1>
-            <Button variant="secondary" onClick={() => navigate('/dashboard')}>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Ledger Entry Details
+            </h1>
+            <Button variant="secondary" onClick={() => navigate("/dashboard")}>
               Back to Dashboard
             </Button>
           </div>
@@ -110,7 +114,9 @@ export default function LedgerEntryDetail(): JSX.Element {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Amount
             </label>
-            <p className="text-gray-900 text-lg font-semibold">{entry.amount}</p>
+            <p className="text-gray-900 text-lg font-semibold">
+              {entry.amount}
+            </p>
           </div>
 
           <div>
@@ -119,11 +125,11 @@ export default function LedgerEntryDetail(): JSX.Element {
             </label>
             <span
               className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
-                entry.status === 'COMPLETED'
-                  ? 'bg-green-100 text-green-800'
-                  : entry.status === 'PENDING'
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : 'bg-red-100 text-red-800'
+                entry.status === "COMPLETED"
+                  ? "bg-green-100 text-green-800"
+                  : entry.status === "PENDING"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : "bg-red-100 text-red-800"
               }`}
             >
               {entry.status}
@@ -135,7 +141,9 @@ export default function LedgerEntryDetail(): JSX.Element {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 From Account ID
               </label>
-              <p className="text-gray-900 font-mono text-sm">{entry.fromAccountId}</p>
+              <p className="text-gray-900 font-mono text-sm">
+                {entry.fromAccountId}
+              </p>
             </div>
           )}
 
@@ -144,7 +152,9 @@ export default function LedgerEntryDetail(): JSX.Element {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 To Account ID
               </label>
-              <p className="text-gray-900 font-mono text-sm">{entry.toAccountId}</p>
+              <p className="text-gray-900 font-mono text-sm">
+                {entry.toAccountId}
+              </p>
             </div>
           )}
 
@@ -192,18 +202,22 @@ export default function LedgerEntryDetail(): JSX.Element {
               <Button variant="secondary" onClick={() => setDeleteModal(false)}>
                 Cancel
               </Button>
-              <Button variant="danger" onClick={handleDelete} isLoading={isDeleting}>
+              <Button
+                variant="danger"
+                onClick={handleDelete}
+                isLoading={isDeleting}
+              >
                 Delete
               </Button>
             </>
           }
         >
           <p className="text-gray-700">
-            Are you sure you want to delete this ledger entry? This action cannot be undone.
+            Are you sure you want to delete this ledger entry? This action
+            cannot be undone.
           </p>
         </Modal>
       </main>
     </div>
   );
 }
-

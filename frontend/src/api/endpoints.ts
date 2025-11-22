@@ -1,6 +1,6 @@
-import { api } from './client';
-import { withAuthRefresh } from './client';
-import { storage } from '../utils/storage';
+import { api } from "./client";
+import { withAuthRefresh } from "./client";
+import { storage } from "../utils/storage";
 
 /**
  * API endpoints organized by domain
@@ -12,8 +12,11 @@ export const endpoints = {
    * Authentication endpoints
    */
   auth: {
-    signIn: async (data: { username: string; password: string; tenantId?: string }) =>
-      withAuthRefresh(() => api.auth.login.post(data)),
+    signIn: async (data: {
+      username: string;
+      password: string;
+      tenantId?: string;
+    }) => withAuthRefresh(() => api.auth.login.post(data)),
 
     signUp: async (data: {
       username: string;
@@ -27,7 +30,7 @@ export const endpoints = {
     refreshToken: async (refreshToken: string) => {
       const userData = storage.getUserData<{ username: string }>();
       if (!userData?.username) {
-        throw new Error('Username not found in storage');
+        throw new Error("Username not found in storage");
       }
       return withAuthRefresh(() =>
         api.auth.refresh.post({ refreshToken, username: userData.username }),
@@ -40,9 +43,12 @@ export const endpoints = {
    */
   users: {
     getProfile: async (profileId: string) =>
-      withAuthRefresh(() => api.users.profiles[':profileId'].get({ params: { profileId } })),
+      withAuthRefresh(() =>
+        api.users.profiles[":profileId"].get({ params: { profileId } }),
+      ),
 
-    getMyProfile: async () => withAuthRefresh(() => api.users.profiles.me.get()),
+    getMyProfile: async () =>
+      withAuthRefresh(() => api.users.profiles.me.get()),
 
     updateProfile: async (
       profileId: string,
@@ -53,7 +59,10 @@ export const endpoints = {
       },
     ) =>
       withAuthRefresh(() =>
-        api.users.profiles[':profileId'].put({ params: { profileId }, body: data }),
+        api.users.profiles[":profileId"].put({
+          params: { profileId },
+          body: data,
+        }),
       ),
 
     listProfiles: async (query?: { page?: number; limit?: number }) =>
@@ -66,10 +75,14 @@ export const endpoints = {
       withAuthRefresh(() => api.users.profiles.all.get({ query })),
 
     deleteUser: async (userId: string) =>
-      withAuthRefresh(() => api.users[':userId'].delete({ params: { userId } })),
+      withAuthRefresh(() =>
+        api.users[":userId"].delete({ params: { userId } }),
+      ),
 
     deleteProfile: async (profileId: string) =>
-      withAuthRefresh(() => api.users.profiles[':profileId'].delete({ params: { profileId } })),
+      withAuthRefresh(() =>
+        api.users.profiles[":profileId"].delete({ params: { profileId } }),
+      ),
   },
 
   /**
@@ -81,13 +94,13 @@ export const endpoints = {
       fromAccountId?: string | null;
       toAccountId?: string | null;
       amount: number | string;
-      type: 'DEPOSIT' | 'WITHDRAWAL' | 'TRANSFER';
+      type: "DEPOSIT" | "WITHDRAWAL" | "TRANSFER";
       createdBy: string;
     }) => withAuthRefresh(() => api.ledger.entries.post(data)),
 
     listEntries: async (query?: {
-      status?: 'PENDING' | 'COMPLETED' | 'FAILED';
-      type?: 'DEPOSIT' | 'WITHDRAWAL' | 'TRANSFER';
+      status?: "PENDING" | "COMPLETED" | "FAILED";
+      type?: "DEPOSIT" | "WITHDRAWAL" | "TRANSFER";
       dateFrom?: Date | string;
       dateTo?: Date | string;
       page?: number;
@@ -95,16 +108,21 @@ export const endpoints = {
     }) => withAuthRefresh(() => api.ledger.entries.get({ query })),
 
     getEntry: async (id: string) =>
-      withAuthRefresh(() => api.ledger.entries[':id'].get({ params: { id } })),
+      withAuthRefresh(() => api.ledger.entries[":id"].get({ params: { id } })),
 
     updateEntry: async (
       id: string,
       data: {
-        status: 'PENDING' | 'COMPLETED' | 'FAILED';
+        status: "PENDING" | "COMPLETED" | "FAILED";
       },
-    ) => withAuthRefresh(() => api.ledger.entries[':id'].put({ params: { id }, body: data })),
+    ) =>
+      withAuthRefresh(() =>
+        api.ledger.entries[":id"].put({ params: { id }, body: data }),
+      ),
 
     deleteEntry: async (id: string) =>
-      withAuthRefresh(() => api.ledger.entries[':id'].delete({ params: { id } })),
+      withAuthRefresh(() =>
+        api.ledger.entries[":id"].delete({ params: { id } }),
+      ),
   },
 };

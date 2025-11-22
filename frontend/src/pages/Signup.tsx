@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import Button from '../components/Button';
-import Input from '../components/Input';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import Button from "../components/Button";
+import Input from "../components/Input";
 
 /**
  * Signup page
@@ -11,12 +11,12 @@ export default function Signup(): JSX.Element {
   const navigate = useNavigate();
   const { signUp, isLoading, error } = useAuth();
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    email: '',
-    firstName: '',
-    lastName: '',
-    tenantId: '',
+    username: "",
+    password: "",
+    email: "",
+    firstName: "",
+    lastName: "",
+    tenantId: "",
   });
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -31,12 +31,12 @@ export default function Signup(): JSX.Element {
       !formData.firstName ||
       !formData.lastName
     ) {
-      setFormError('All required fields must be filled');
+      setFormError("All required fields must be filled");
       return;
     }
 
-    if (!formData.email.includes('@')) {
-      setFormError('Please enter a valid email address');
+    if (!formData.email.includes("@")) {
+      setFormError("Please enter a valid email address");
       return;
     }
 
@@ -50,10 +50,12 @@ export default function Signup(): JSX.Element {
         tenantId: formData.tenantId || undefined,
       });
       // Redirect to login after successful signup
-      navigate('/login', { state: { message: 'Account created successfully. Please sign in.' } });
+      navigate("/login", {
+        state: { message: "Account created successfully. Please sign in." },
+      });
     } catch (err) {
       setFormError(
-        err instanceof Error ? err.message : 'Failed to create account',
+        err instanceof Error ? err.message : "Failed to create account",
       );
     }
   };
@@ -154,7 +156,7 @@ export default function Signup(): JSX.Element {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            Already have an account?{' '}
+            Already have an account?{" "}
             <Link
               to="/login"
               className="text-primary-600 hover:text-primary-700 font-semibold"
@@ -167,4 +169,3 @@ export default function Signup(): JSX.Element {
     </div>
   );
 }
-

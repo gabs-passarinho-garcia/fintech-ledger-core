@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getLedgerEntry, updateLedgerEntry } from '../services/ledger';
-import Button from '../components/Button';
-import Loading from '../components/Loading';
-import type { LedgerEntry } from '../types';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { getLedgerEntry, updateLedgerEntry } from "../services/ledger";
+import Button from "../components/Button";
+import Loading from "../components/Loading";
+import type { LedgerEntry } from "../types";
 
 /**
  * Ledger entry edit page
@@ -12,7 +12,9 @@ export default function LedgerEntryEdit(): JSX.Element {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [entry, setEntry] = useState<LedgerEntry | null>(null);
-  const [status, setStatus] = useState<'PENDING' | 'COMPLETED' | 'FAILED'>('PENDING');
+  const [status, setStatus] = useState<"PENDING" | "COMPLETED" | "FAILED">(
+    "PENDING",
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,10 +33,10 @@ export default function LedgerEntryEdit(): JSX.Element {
     try {
       const data = await getLedgerEntry(id);
       setEntry(data);
-      setStatus(data.status as 'PENDING' | 'COMPLETED' | 'FAILED');
+      setStatus(data.status as "PENDING" | "COMPLETED" | "FAILED");
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Failed to load ledger entry',
+        err instanceof Error ? err.message : "Failed to load ledger entry",
       );
     } finally {
       setIsLoading(false);
@@ -53,7 +55,7 @@ export default function LedgerEntryEdit(): JSX.Element {
       navigate(`/ledger/${id}`);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : 'Failed to update ledger entry',
+        err instanceof Error ? err.message : "Failed to update ledger entry",
       );
     } finally {
       setIsSaving(false);
@@ -72,8 +74,10 @@ export default function LedgerEntryEdit(): JSX.Element {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="card text-center max-w-md w-full">
-          <p className="text-red-600 mb-4">{error || 'Entry not found'}</p>
-          <Button onClick={() => navigate('/dashboard')}>Back to Dashboard</Button>
+          <p className="text-red-600 mb-4">{error || "Entry not found"}</p>
+          <Button onClick={() => navigate("/dashboard")}>
+            Back to Dashboard
+          </Button>
         </div>
       </div>
     );
@@ -84,8 +88,13 @@ export default function LedgerEntryEdit(): JSX.Element {
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">Edit Ledger Entry</h1>
-            <Button variant="secondary" onClick={() => navigate(`/ledger/${id}`)}>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Edit Ledger Entry
+            </h1>
+            <Button
+              variant="secondary"
+              onClick={() => navigate(`/ledger/${id}`)}
+            >
               Cancel
             </Button>
           </div>
@@ -113,7 +122,9 @@ export default function LedgerEntryEdit(): JSX.Element {
               <select
                 value={status}
                 onChange={(e) =>
-                  setStatus(e.target.value as 'PENDING' | 'COMPLETED' | 'FAILED')
+                  setStatus(
+                    e.target.value as "PENDING" | "COMPLETED" | "FAILED",
+                  )
                 }
                 className="input-field"
                 required
@@ -142,4 +153,3 @@ export default function LedgerEntryEdit(): JSX.Element {
     </div>
   );
 }
-

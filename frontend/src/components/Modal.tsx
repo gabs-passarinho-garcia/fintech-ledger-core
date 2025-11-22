@@ -1,5 +1,5 @@
-import { type ReactNode, useEffect } from 'react';
-import Button from './Button';
+import { type ReactNode, useEffect } from "react";
+import Button from "./Button";
 
 interface ModalProps {
   isOpen: boolean;
@@ -23,26 +23,26 @@ export default function Modal({
 }: ModalProps): JSX.Element | null {
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
 
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [isOpen]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === "Escape" && isOpen) {
         onClose();
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener("keydown", handleEscape);
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen, onClose]);
 
@@ -95,4 +95,3 @@ export default function Modal({
     </div>
   );
 }
-
