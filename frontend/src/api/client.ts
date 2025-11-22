@@ -146,8 +146,122 @@ export async function refreshAccessToken(): Promise<{
 }
 
 /**
+ * Checks if an error object contains NOT_SIGNED error information
+ * @param errorObj - Error object to check
+ * @returns True if contains NOT_SIGNED error
+ */
+function hasNotSignedError(errorObj: Record<string, unknown>): boolean {
+  // Check for errorName: "NOT_SIGNED"
+  if (
+    "errorName" in errorObj &&
+    typeof errorObj.errorName === "string" &&
+    errorObj.errorName === "NOT_SIGNED"
+  ) {
+    return true;
+  }
+
+  // Check for statusCode: 401
+  if (
+    "statusCode" in errorObj &&
+    typeof errorObj.statusCode === "number" &&
+    errorObj.statusCode === 401
+  ) {
+    return true;
+  }
+
+  // Check for errorCode: 401
+  if (
+    "errorCode" in errorObj &&
+    typeof errorObj.errorCode === "number" &&
+    errorObj.errorCode === 401
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Gets HTTP status from error object
+ * @param errorObj - Error object
+ * @returns HTTP status code or null
+ */
+function getHttpStatus(errorObj: Record<string, unknown>): number | null {
+  if ("status" in errorObj && typeof errorObj.status === "number") {
+    return errorObj.status;
+  }
+  if ("statusCode" in errorObj && typeof errorObj.statusCode === "number") {
+    return errorObj.statusCode;
+  }
+  return null;
+}
+
+/**
+ * Checks nested object structures for NOT_SIGNED error
+ * @param errorObj - Error object to check
+ * @returns True if NOT_SIGNED found in nested structures
+ */
+function checkNestedStructures(errorObj: Record<string, unknown>): boolean {
+  // Check error.response (common in HTTP libraries)
+  if (
+    "response" in errorObj &&
+    errorObj.response !== null &&
+    typeof errorObj.response === "object" &&
+    hasNotSignedError(errorObj.response as Record<string, unknown>)
+  ) {
+    return true;
+  }
+
+  // Check error.data (common in Eden Treaty)
+  if (
+    "data" in errorObj &&
+    errorObj.data !== null &&
+    typeof errorObj.data === "object" &&
+    hasNotSignedError(errorObj.data as Record<string, unknown>)
+  ) {
+    return true;
+  }
+
+  // Check error.body
+  if (
+    "body" in errorObj &&
+    errorObj.body !== null &&
+    typeof errorObj.body === "object" &&
+    hasNotSignedError(errorObj.body as Record<string, unknown>)
+  ) {
+    return true;
+  }
+
+  // Check error.error structure
+  if (
+    "error" in errorObj &&
+    errorObj.error !== null &&
+    typeof errorObj.error === "object"
+  ) {
+    const nestedError = errorObj.error as Record<string, unknown>;
+
+    if (hasNotSignedError(nestedError)) {
+      return true;
+    }
+
+    // Check deeply nested error.error.error
+    if (
+      "error" in nestedError &&
+      nestedError.error !== null &&
+      typeof nestedError.error === "object" &&
+      hasNotSignedError(nestedError.error as Record<string, unknown>)
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
  * Checks if an error is a 401 Unauthorized error
  * Handles multiple error structures from Eden Treaty
+ * Also handles cases where server returns 500 but body contains NOT_SIGNED
  * @param error - The error to check
  * @returns True if the error is a 401 error
  */
@@ -156,64 +270,27 @@ function isUnauthorizedError(error: unknown): boolean {
     return false;
   }
 
-  // Check direct status property
-  if (
-    "status" in error &&
-    typeof error.status === "number" &&
-    error.status === 401
-  ) {
+  const errorObj = error as Record<string, unknown>;
+
+  // Check direct HTTP status (401)
+  const httpStatus = getHttpStatus(errorObj);
+  if (httpStatus === 401) {
     return true;
   }
 
-  // Check statusCode property
-  if (
-    "statusCode" in error &&
-    typeof error.statusCode === "number" &&
-    error.statusCode === 401
-  ) {
+  // Check top-level error object for NOT_SIGNED
+  if (hasNotSignedError(errorObj)) {
     return true;
   }
 
-  // Check nested error structure (error.error.statusCode)
-  if (
-    "error" in error &&
-    error.error !== null &&
-    typeof error.error === "object" &&
-    "statusCode" in error.error &&
-    typeof error.error.statusCode === "number" &&
-    error.error.statusCode === 401
-  ) {
-    return true;
+  // Check if status is 500 or any error status, but body contains NOT_SIGNED error
+  // This handles the case where backend returns wrong HTTP status but correct error in body
+  if (httpStatus === 500 || httpStatus !== null) {
+    return checkNestedStructures(errorObj);
   }
 
-  // Check nested error structure (error.error.errorCode)
-  if (
-    "error" in error &&
-    error.error !== null &&
-    typeof error.error === "object" &&
-    "errorCode" in error.error &&
-    typeof error.error.errorCode === "number" &&
-    error.error.errorCode === 401
-  ) {
-    return true;
-  }
-
-  // Check nested error structure (error.error.error.statusCode)
-  if (
-    "error" in error &&
-    error.error !== null &&
-    typeof error.error === "object" &&
-    "error" in error.error &&
-    error.error.error !== null &&
-    typeof error.error.error === "object" &&
-    "statusCode" in error.error.error &&
-    typeof error.error.error.statusCode === "number" &&
-    error.error.error.statusCode === 401
-  ) {
-    return true;
-  }
-
-  return false;
+  // Check nested structures even without explicit status
+  return checkNestedStructures(errorObj);
 }
 
 /**
