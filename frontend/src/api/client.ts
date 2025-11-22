@@ -17,12 +17,7 @@ const API_BASE_URL =
  * Automatically adds correlation ID and authorization headers
  * @returns Configured Eden Treaty client instance
  */
-/**
- * Creates and configures the Eden Treaty client
- * Automatically adds correlation ID and authorization headers
- * @returns Configured Eden Treaty client instance
- */
-function createApiClient() {
+function createApiClient(): ReturnType<typeof treaty<App>> {
   return treaty<App>(API_BASE_URL, {
     headers: () => {
       const headers: Record<string, string> = {
@@ -105,6 +100,54 @@ export async function refreshAccessToken(): Promise<{
 }
 
 /**
+ * Checks if an error is a 401 Unauthorized error
+ * @param error - The error to check
+ * @returns True if the error is a 401 error
+ */
+function isUnauthorizedError(error: unknown): boolean {
+  return (
+    error !== null &&
+    typeof error === "object" &&
+    "status" in error &&
+    typeof error.status === "number" &&
+    error.status === 401
+  );
+}
+
+/**
+ * Extracts error message from an error object
+ * @param error - The error to extract message from
+ * @returns The error message
+ */
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (error && typeof error === "object" && "status" in error) {
+    return `HTTP ${error.status}`;
+  }
+  return "Unknown error";
+}
+
+/**
+ * Handles 401 errors by attempting token refresh
+ * @param apiCall - The API call function to retry
+ * @returns Promise with the API response or null if refresh failed
+ */
+async function handleUnauthorizedError<T>(
+  apiCall: () => Promise<T>,
+): Promise<T | null> {
+  logger.warn({}, "with_auth_refresh:401_detected", "ApiClient");
+  const newTokens = await refreshAccessToken();
+  if (newTokens) {
+    logger.debug({}, "with_auth_refresh:retry_after_refresh", "ApiClient");
+    return await apiCall();
+  }
+  logger.error({}, "with_auth_refresh:refresh_failed", "ApiClient");
+  return null;
+}
+
+/**
  * Wrapper for API calls that handles token refresh on 401 errors
  * @param apiCall - The API call function
  * @returns Promise with the API response
@@ -115,33 +158,15 @@ export async function withAuthRefresh<T>(
   try {
     return await apiCall();
   } catch (error) {
-    // Check if error is 401 Unauthorized
-    if (
-      error &&
-      typeof error === "object" &&
-      "status" in error &&
-      error.status === 401
-    ) {
-      logger.warn({}, "with_auth_refresh:401_detected", "ApiClient");
-      // Try to refresh token
-      const newTokens = await refreshAccessToken();
-      if (newTokens) {
-        logger.debug({}, "with_auth_refresh:retry_after_refresh", "ApiClient");
-        // Retry the original request with new token
-        return await apiCall();
+    if (isUnauthorizedError(error)) {
+      const result = await handleUnauthorizedError(apiCall);
+      if (result !== null) {
+        return result;
       }
-      logger.error({}, "with_auth_refresh:refresh_failed", "ApiClient");
       // Refresh failed, throw original error
-    } else if (error) {
+    } else {
       logger.error(
-        {
-          error:
-            error instanceof Error
-              ? error.message
-              : typeof error === "object" && "status" in error
-                ? `HTTP ${error.status}`
-                : "Unknown error",
-        },
+        { error: getErrorMessage(error) },
         "with_auth_refresh:api_error",
         "ApiClient",
       );

@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  getCorrelationId,
-  setCorrelationId,
-  resetCorrelationId,
-  type generateCorrelationId,
-} from "../utils/correlationId";
+import { getCorrelationId, resetCorrelationId } from "../utils/correlationId";
 
 /**
  * Hook to manage correlation ID in React components

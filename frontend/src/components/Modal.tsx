@@ -1,5 +1,4 @@
 import { type ReactNode, useEffect } from "react";
-import Button from "./Button";
 
 interface ModalProps {
   isOpen: boolean;
@@ -28,7 +27,7 @@ export default function Modal({
       document.body.style.overflow = "";
     }
 
-    return () => {
+    return (): void => {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
@@ -41,7 +40,7 @@ export default function Modal({
     };
 
     document.addEventListener("keydown", handleEscape);
-    return () => {
+    return (): void => {
       document.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen, onClose]);

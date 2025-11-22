@@ -23,6 +23,7 @@ export default function LedgerEntryEdit(): JSX.Element {
     if (id) {
       loadEntry();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadEntry = async (): Promise<void> => {

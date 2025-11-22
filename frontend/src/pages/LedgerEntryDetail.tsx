@@ -18,10 +18,13 @@ export default function LedgerEntryDetail(): JSX.Element {
   const [deleteModal, setDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const DASHBOARD_PATH = "/dashboard";
+
   useEffect(() => {
     if (id) {
       loadEntry();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const loadEntry = async (): Promise<void> => {
@@ -47,7 +50,7 @@ export default function LedgerEntryDetail(): JSX.Element {
     setIsDeleting(true);
     try {
       await deleteLedgerEntry(id);
-      navigate("/dashboard");
+      navigate(DASHBOARD_PATH);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to delete ledger entry",
@@ -71,7 +74,7 @@ export default function LedgerEntryDetail(): JSX.Element {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="card text-center max-w-md w-full">
           <p className="text-red-600 mb-4">{error || "Entry not found"}</p>
-          <Button onClick={() => navigate("/dashboard")}>
+          <Button onClick={() => navigate(DASHBOARD_PATH)}>
             Back to Dashboard
           </Button>
         </div>
@@ -87,7 +90,10 @@ export default function LedgerEntryDetail(): JSX.Element {
             <h1 className="text-2xl font-bold text-gray-900">
               Ledger Entry Details
             </h1>
-            <Button variant="secondary" onClick={() => navigate("/dashboard")}>
+            <Button
+              variant="secondary"
+              onClick={() => navigate(DASHBOARD_PATH)}
+            >
               Back to Dashboard
             </Button>
           </div>

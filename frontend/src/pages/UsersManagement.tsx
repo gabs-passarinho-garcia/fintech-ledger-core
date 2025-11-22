@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { listAllUsers, deleteUser } from "../services/users";
