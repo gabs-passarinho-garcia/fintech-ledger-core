@@ -21,6 +21,7 @@ export default [
   {
     ignores: [
       "eslint.config.mjs",
+      "vite.config.ts",
       "dist",
       "build",
       "node_modules",

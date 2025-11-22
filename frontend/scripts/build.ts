@@ -1,13 +1,13 @@
 /**
  * Build script using Bun.build()
- * Builds the React app for production
+ * Builds the React app for production using Bun's native bundler
+ * Bun automatically processes CSS imports (including Tailwind) and React/JSX
  */
 
-import { $ } from "bun";
+// eslint-disable-next-line no-console
+console.log("🔨 Building frontend with Bun bundler...");
 
-console.log("🔨 Building frontend...");
-
-// Build with Bun
+// Build with Bun - CSS and JSX are automatically processed when imported
 const result = await Bun.build({
   entrypoints: ["./src/main.tsx"],
   outdir: "./dist",
@@ -16,6 +16,8 @@ const result = await Bun.build({
   format: "esm",
   splitting: true,
   sourcemap: "external",
+  // CSS is automatically bundled when imported in the code
+  // React/JSX is automatically transpiled
 });
 
 if (!result.success) {
@@ -23,11 +25,14 @@ if (!result.success) {
   process.exit(1);
 }
 
-// Copy index.html to dist
-await $`cp index.html dist/`;
+// Copy index.html to dist and update script path
+const indexHtml = await Bun.file("./index.html").text();
+// Update script path to point to the built file
+const updatedHtml = indexHtml.replace("/src/main.tsx", "/main.js");
+await Bun.write("./dist/index.html", updatedHtml);
 
-// Copy any static assets if needed
-// await $`cp -r public dist/ 2>/dev/null || true`;
+console.info("✅ Build completed successfully!");
+console.info("📦 Output directory: ./dist");
 
-console.log("✅ Build completed successfully!");
-console.log("📦 Output directory: ./dist");
+// Export empty to make this a module (required for top-level await)
+export {};

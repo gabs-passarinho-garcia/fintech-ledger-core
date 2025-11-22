@@ -1,15 +1,19 @@
 import { describe, it, expect, beforeEach, mock } from 'bun:test';
 import { signIn, signUp, signOut, isAuthenticated, getCurrentUser } from '../auth';
 import { storage } from '../../utils/storage';
-import { endpoints } from '../../api/endpoints';
+import * as endpointsModule from '../../api/endpoints';
 
 // Mock endpoints
+const mockSignIn = mock();
+const mockSignUp = mock();
+const mockRefreshToken = mock();
+
 mock.module('../../api/endpoints', () => ({
   endpoints: {
     auth: {
-      signIn: mock(),
-      signUp: mock(),
-      refreshToken: mock(),
+      signIn: mockSignIn,
+      signUp: mockSignUp,
+      refreshToken: mockRefreshToken,
     },
   },
 }));
@@ -32,7 +36,7 @@ describe('auth service', () => {
       },
     };
 
-    (endpoints.auth.signIn as ReturnType<typeof mock>).mockResolvedValue(mockResponse);
+    mockSignIn.mockResolvedValue(mockResponse);
 
     const result = await signIn({
       username: 'testuser',
@@ -57,7 +61,7 @@ describe('auth service', () => {
       },
     };
 
-    (endpoints.users.signUp as ReturnType<typeof mock>).mockResolvedValue(mockResponse);
+    mockSignUp.mockResolvedValue(mockResponse);
 
     const result = await signUp({
       username: 'testuser',

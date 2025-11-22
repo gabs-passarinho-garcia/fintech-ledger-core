@@ -1,8 +1,12 @@
-import { describe, it, expect } from 'bun:test';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, beforeEach } from 'bun:test';
+import { render, screen, cleanup } from '@testing-library/react';
 import Button from '../Button';
 
 describe('Button', () => {
+  beforeEach(() => {
+    cleanup();
+  });
+
   it('should render button with text', () => {
     render(<Button>Click me</Button>);
     expect(screen.getByText('Click me')).toBeDefined();
@@ -27,13 +31,14 @@ describe('Button', () => {
   });
 
   it('should show loading state', () => {
-    render(<Button isLoading>Submit</Button>);
-    expect(screen.getByText('Loading...')).toBeDefined();
+    const { container } = render(<Button isLoading>Submit</Button>);
+    const button = container.querySelector('button[data-testid="button"]');
+    expect(button?.textContent).toContain('Loading...');
   });
 
   it('should be disabled when loading', () => {
-    render(<Button isLoading>Submit</Button>);
-    const button = screen.getByText('Loading...').closest('button');
+    const { container } = render(<Button isLoading>Submit</Button>);
+    const button = container.querySelector('button[data-testid="button"]') as HTMLButtonElement;
     expect(button?.disabled).toBe(true);
   });
 });

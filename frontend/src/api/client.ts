@@ -5,11 +5,11 @@ import type { App } from "../../../backend/src/app";
 
 /**
  * Base URL for the API
- * Can be overridden via environment variable
+ * Vite automatically loads .env file and exposes VITE_ prefixed variables via import.meta.env
+ * The VITE_ prefix is required for client-side environment variables
  */
 const API_BASE_URL =
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_BASE_URL) ||
-  "http://localhost:3000";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3010";
 
 /**
  * Creates and configures the Eden Treaty client

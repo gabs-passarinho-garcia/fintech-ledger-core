@@ -4,6 +4,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "danger";
   children: ReactNode;
   isLoading?: boolean;
+  "data-testid"?: string;
 }
 
 /**
@@ -26,11 +27,14 @@ export default function Button({
     danger: "bg-secondary-red text-white hover:bg-red-600",
   };
 
+  const { "data-testid": testId, ...restProps } = props;
+
   return (
     <button
       className={`${baseClasses} ${variantClasses[variant]} ${className}`}
       disabled={disabled || isLoading}
-      {...props}
+      data-testid={testId || "button"}
+      {...restProps}
     >
       {isLoading ? (
         <>

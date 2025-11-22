@@ -6,7 +6,7 @@
 const PORT = 4173;
 const HOST = "0.0.0.0";
 
-const server = Bun.serve({
+Bun.serve({
   port: PORT,
   hostname: HOST,
   async fetch(req) {
@@ -29,5 +29,6 @@ const server = Bun.serve({
   },
 });
 
-console.log(`🚀 Preview server running at http://${HOST}:${PORT}`);
-console.log("📦 Serving files from ./dist");
+console.info(`🚀 Preview server running at http://${HOST}:${PORT}`);
+
+console.info("📦 Serving files from ./dist");
