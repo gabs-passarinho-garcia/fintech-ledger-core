@@ -66,10 +66,14 @@ services:
       DATABASE_URL: postgresql://ledger_user:ledger_password@postgres:5432/ledger_core_db
     working_dir: /app
     volumes:
-      - .:/app
+      # Mount only necessary files for backend initialization
+      - ./backend:/app/backend
+      - ./package.json:/app/package.json
+      - ./bun.lock:/app/bun.lock
+      - ./.env:/app/.env:ro
     networks:
       - ledger-core-network
-    command: sh -c "bun install && bun db:init && bun db:deploy && bun db:seed"
+    command: sh -c "bun install && cd backend && bun db:init && bun db:deploy && bun db:seed"
     restart: "no"
 
 volumes:

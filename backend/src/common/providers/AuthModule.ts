@@ -1,0 +1,19 @@
+import { ModuleDefinition, provideClass, Lifecycle } from '../container/ContainerHandler';
+import { AppProviders } from '../interfaces/IAppContainer';
+import { KeyAuthHandler } from '../auth/KeyAuthHandler';
+import { TokenAuthHandler } from '../auth/TokenAuthHandler';
+import { ProvidersModule } from './ProvidersModule';
+import { AuthModule as ModelsAuthModule } from '../../models/auth/AuthModule';
+
+/**
+ * Authentication module for dependency injection.
+ * Registers authentication handlers (KeyAuthHandler and TokenAuthHandler).
+ */
+export const AuthModule: ModuleDefinition = {
+  name: 'CommonAuthModule',
+  providers: {
+    [AppProviders.keyAuthHandler]: provideClass(KeyAuthHandler, Lifecycle.SINGLETON),
+    [AppProviders.tokenAuthHandler]: provideClass(TokenAuthHandler, Lifecycle.SINGLETON),
+  },
+  imports: [ProvidersModule, ModelsAuthModule],
+};

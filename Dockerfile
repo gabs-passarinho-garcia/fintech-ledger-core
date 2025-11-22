@@ -14,25 +14,49 @@ ARG APP_ENV=dev
 ENV APP_ENV=$APP_ENV
 
 FROM base AS install
-RUN mkdir -p /temp/dev
-COPY ./package.json bun.lock tsconfig.json eslint.config.mjs .prettierrc /temp/dev/
-RUN cd /temp/dev && bun install --frozen-lockfile
-
-RUN mkdir -p /temp/prod
-COPY ./package.json bun.lock /temp/prod/
-RUN cd /temp/prod && bun install --frozen-lockfile --production
+# Copy workspace configuration files
+COPY ./package.json bun.lock ./
+COPY ./backend/package.json ./backend/
+COPY ./frontend/package.json ./frontend/
+# Install all dependencies (workspace will handle deduplication)
+RUN bun install --frozen-lockfile
 
 FROM base AS prerelease
-COPY --from=install /temp/dev/node_modules node_modules
-COPY . .
+# Copy node_modules from install stage
+COPY --from=install /usr/src/app/node_modules ./node_modules
+# Copy only backend source files (exclude frontend and other unnecessary files)
+COPY ./backend/src ./backend/src
+COPY ./backend/prisma ./backend/prisma
+COPY ./backend/tsconfig.json ./backend/
+COPY ./backend/eslint.config.mjs ./backend/
+COPY ./backend/.prettierrc ./backend/
+COPY ./backend/prisma.config.ts ./backend/
+COPY ./backend/package.json ./backend/
+COPY ./package.json bun.lock ./
+# Copy .env to backend if it exists (optional, can be overridden by docker-compose)
+COPY ./.env* ./
+# Copy .env to backend directory for easier access
+RUN if [ -f .env ]; then cp .env backend/.env; fi
 ARG DATABASE_URL=none
 ENV DATABASE_URL=$DATABASE_URL
-RUN bun db:init
+WORKDIR /usr/src/app/backend
+# Generate Prisma client and build
+RUN bun db:init || true
 RUN bun run build:prod
 
 FROM base AS release
-COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app .
+# Copy production node_modules
+COPY --from=install /usr/src/app/node_modules ./node_modules
+# Copy built application
+COPY --from=prerelease /usr/src/app/backend/dist ./backend/dist
+COPY --from=prerelease /usr/src/app/backend/prisma ./backend/prisma
+COPY --from=prerelease /usr/src/app/backend/package.json ./backend/
+COPY --from=prerelease /usr/src/app/package.json ./
+# Copy .env if it exists
+COPY --from=prerelease /usr/src/app/.env* ./
+# Copy .env to backend directory for easier access
+RUN if [ -f .env ]; then cp .env backend/.env; fi
+WORKDIR /usr/src/app/backend
 
 USER bun
 

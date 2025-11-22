@@ -11,6 +11,7 @@ build/
 .env
 .env.local
 .env.*.local
+backend/.env
 
 # IDE
 .vscode/
@@ -57,3 +58,5 @@ terraform/*_override.tf.json
 # JWT Keys (never commit private keys!)
 keys/
 *.pem
+backend/.env.bak
+frontend/junit.xml
