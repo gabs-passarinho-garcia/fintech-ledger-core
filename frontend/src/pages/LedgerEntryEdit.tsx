@@ -117,10 +117,14 @@ export default function LedgerEntryEdit(): JSX.Element {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="status-select"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Status
               </label>
               <select
+                id="status-select"
                 value={status}
                 onChange={(e) =>
                   setStatus(
