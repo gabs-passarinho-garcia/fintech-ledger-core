@@ -78,19 +78,19 @@ export default function ProfileSelection(): JSX.Element {
 
   if (profiles.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
         <div className="max-w-md w-full card animate-fade-in-up">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               No Profiles Found
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               You need to create a profile to continue
             </p>
           </div>
 
           <div className="space-y-4">
-            <p className="text-sm text-gray-600 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
               Create a profile to associate your account with a tenant and start
               using the system.
             </p>
@@ -108,10 +108,12 @@ export default function ProfileSelection(): JSX.Element {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="max-w-2xl w-full card animate-fade-in-up">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Select Profile
           </h1>
-          <p className="text-gray-600">Choose which profile you want to use</p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Choose which profile you want to use
+          </p>
         </div>
 
         <div className="space-y-4 mb-6">
@@ -121,18 +123,18 @@ export default function ProfileSelection(): JSX.Element {
             return (
               <div
                 key={profile.id}
-                className="p-4 border border-gray-200 rounded-xl hover:border-primary-300 hover:shadow-md transition-all cursor-pointer"
+                className="p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-primary-300 dark:hover:border-primary-500 hover:shadow-md transition-all cursor-pointer"
                 onClick={() => handleSelectProfile(profile)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">
                       {profile.firstName} {profile.lastName}
                     </h3>
-                    <p className="text-sm text-gray-600 mt-1">
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                       {profile.email}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       Tenant: {tenantName}
                     </p>
                   </div>

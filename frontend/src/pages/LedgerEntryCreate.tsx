@@ -155,20 +155,20 @@ export default function LedgerEntryCreate(): JSX.Element {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Create Ledger Entry
         </h1>
       </div>
       <div className="card">
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+          <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-xl text-red-700 dark:text-red-300 text-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Tenant <span className="text-red-500">*</span>
             </label>
             {isLoadingTenants ? (
@@ -179,7 +179,7 @@ export default function LedgerEntryCreate(): JSX.Element {
                 </span>
               </div>
             ) : tenants.length === 0 ? (
-              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
+              <div className="p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg text-sm text-yellow-700 dark:text-yellow-300">
                 No tenants available. Please contact your administrator.
               </div>
             ) : (
@@ -202,7 +202,7 @@ export default function LedgerEntryCreate(): JSX.Element {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Type
             </label>
             <select
@@ -232,7 +232,7 @@ export default function LedgerEntryCreate(): JSX.Element {
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               From Account <span className="text-red-500">*</span>
             </label>
             {isLoadingProfiles ? (
@@ -243,7 +243,7 @@ export default function LedgerEntryCreate(): JSX.Element {
                 </span>
               </div>
             ) : profiles.length === 0 ? (
-              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
+              <div className="p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg text-sm text-yellow-700 dark:text-yellow-300">
                 No profiles available for this tenant. Please select a tenant
                 first.
               </div>
@@ -267,7 +267,7 @@ export default function LedgerEntryCreate(): JSX.Element {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               To Account
               {formData.type === "TRANSFER" && (
                 <span className="text-red-500"> *</span>
@@ -281,7 +281,7 @@ export default function LedgerEntryCreate(): JSX.Element {
                 </span>
               </div>
             ) : profiles.length === 0 ? (
-              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
+              <div className="p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg text-sm text-yellow-700 dark:text-yellow-300">
                 No profiles available for this tenant. Please select a tenant
                 first.
               </div>

@@ -98,11 +98,11 @@ export default function UsersManagement(): JSX.Element {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b border-gray-200">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Users Management
             </h1>
             <Button variant="secondary" onClick={() => navigate("/dashboard")}>
@@ -114,7 +114,7 @@ export default function UsersManagement(): JSX.Element {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {error && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+          <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-xl text-red-700 dark:text-red-300 text-sm">
             {error}
           </div>
         )}
@@ -143,7 +143,7 @@ export default function UsersManagement(): JSX.Element {
             </>
           }
         >
-          <p className="text-gray-700">
+          <p className="text-gray-700 dark:text-gray-300">
             Are you sure you want to delete user{" "}
             <strong>{deleteModal.user?.username}</strong>? This action cannot be
             undone.

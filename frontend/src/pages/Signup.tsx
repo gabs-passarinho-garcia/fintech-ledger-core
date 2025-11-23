@@ -93,17 +93,19 @@ export default function Signup(): JSX.Element {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
       <div className="max-w-md w-full card animate-fade-in-up">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Create Account
           </h1>
-          <p className="text-gray-600">Sign up for a new account</p>
+          <p className="text-gray-600 dark:text-gray-300">
+            Sign up for a new account
+          </p>
         </div>
 
         {(formError || error) && (
-          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+          <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-xl text-red-700 dark:text-red-300 text-sm">
             {formError || error?.message}
           </div>
         )}
@@ -188,7 +190,7 @@ export default function Signup(): JSX.Element {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Already have an account?{" "}
             <Link
               to="/login"

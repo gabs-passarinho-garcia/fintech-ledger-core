@@ -56,45 +56,45 @@ export default function Profile(): JSX.Element {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="card">
         <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             Profile Information
           </h2>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               First Name
             </label>
-            <p className="text-gray-900">{profile.firstName}</p>
+            <p className="text-gray-900 dark:text-white">{profile.firstName}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Last Name
             </label>
-            <p className="text-gray-900">{profile.lastName}</p>
+            <p className="text-gray-900 dark:text-white">{profile.lastName}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Email
             </label>
-            <p className="text-gray-900">{profile.email}</p>
+            <p className="text-gray-900 dark:text-white">{profile.email}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Tenant ID
             </label>
-            <p className="text-gray-900">{profile.tenantId}</p>
+            <p className="text-gray-900 dark:text-white">{profile.tenantId}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Created At
             </label>
-            <p className="text-gray-900">
+            <p className="text-gray-900 dark:text-white">
               {new Date(profile.createdAt).toLocaleString()}
             </p>
           </div>

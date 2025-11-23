@@ -83,11 +83,11 @@ export default function LedgerEntryDetail(): JSX.Element {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b border-gray-200">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Ledger Entry Details
             </h1>
             <Button
@@ -103,30 +103,32 @@ export default function LedgerEntryDetail(): JSX.Element {
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="card space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               ID
             </label>
-            <p className="text-gray-900 font-mono text-sm">{entry.id}</p>
+            <p className="text-gray-900 dark:text-white font-mono text-sm">
+              {entry.id}
+            </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Type
             </label>
-            <p className="text-gray-900">{entry.type}</p>
+            <p className="text-gray-900 dark:text-white">{entry.type}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Amount
             </label>
-            <p className="text-gray-900 text-lg font-semibold">
+            <p className="text-gray-900 dark:text-white text-lg font-semibold">
               {entry.amount}
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Status
             </label>
             <span
@@ -144,10 +146,10 @@ export default function LedgerEntryDetail(): JSX.Element {
 
           {entry.fromAccountId && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 From Account ID
               </label>
-              <p className="text-gray-900 font-mono text-sm">
+              <p className="text-gray-900 dark:text-white font-mono text-sm">
                 {entry.fromAccountId}
               </p>
             </div>
@@ -155,41 +157,41 @@ export default function LedgerEntryDetail(): JSX.Element {
 
           {entry.toAccountId && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 To Account ID
               </label>
-              <p className="text-gray-900 font-mono text-sm">
+              <p className="text-gray-900 dark:text-white font-mono text-sm">
                 {entry.toAccountId}
               </p>
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Created By
             </label>
-            <p className="text-gray-900">{entry.createdBy}</p>
+            <p className="text-gray-900 dark:text-white">{entry.createdBy}</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Created At
             </label>
-            <p className="text-gray-900">
+            <p className="text-gray-900 dark:text-white">
               {new Date(entry.createdAt).toLocaleString()}
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Updated At
             </label>
-            <p className="text-gray-900">
+            <p className="text-gray-900 dark:text-white">
               {new Date(entry.updatedAt).toLocaleString()}
             </p>
           </div>
 
-          <div className="flex gap-3 pt-4 border-t border-gray-200">
+          <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
             <Button onClick={() => navigate(`/ledger/${entry.id}/edit`)}>
               Edit Status
             </Button>
