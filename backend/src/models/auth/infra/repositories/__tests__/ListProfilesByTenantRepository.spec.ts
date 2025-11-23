@@ -86,6 +86,7 @@ describe('ListProfilesByTenantRepository', () => {
           firstName: true,
           lastName: true,
           email: true,
+          balance: true,
           createdAt: true,
           updatedAt: true,
           deletedAt: true,

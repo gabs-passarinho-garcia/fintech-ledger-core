@@ -9,6 +9,10 @@ import { DomainError } from '@/common/errors';
 import { AppProviders } from '@/common/interfaces/IAppContainer';
 import { LedgerEntry } from '@/models/ledger/domain/LedgerEntry.entity';
 import { Decimal } from 'decimal.js';
+import type { SessionHandler } from '@/common/providers/SessionHandler';
+import type { GetProfileRepository } from '@/models/auth/infra/repositories/GetProfileRepository';
+import type { ListAccountsByProfileIdRepository } from '@/models/accounts/infra/repositories/ListAccountsByProfileIdRepository';
+import type { GetUserRepository } from '@/models/auth/infra/repositories/GetUserRepository';
 
 describe('ListLedgerEntriesUseCase', () => {
   const setup = () => {
@@ -31,15 +35,48 @@ describe('ListLedgerEntriesUseCase', () => {
       list: mockList,
     } as unknown as ListLedgerEntriesRepository;
 
+    const mockSessionHandler: SessionHandler = {
+      get: mock(() => ({
+        userId: 'user-123',
+        tenantId: 'tenant-1',
+        accessType: 'AUTH_USER' as const,
+      })),
+      enrich: mock(),
+      initialize: mock(),
+      run: mock((fn) => fn()),
+      getAgent: mock(() => 'user-123'),
+      clear: mock(),
+    } as never;
+
+    const mockGetProfileRepository: GetProfileRepository = {
+      findByUserIdAndTenantId: mock(),
+    } as unknown as GetProfileRepository;
+
+    const mockListAccountsByProfileIdRepository: ListAccountsByProfileIdRepository = {
+      findByProfileId: mock(),
+    } as unknown as ListAccountsByProfileIdRepository;
+
+    const mockGetUserRepository: GetUserRepository = {
+      findById: mock(),
+    } as unknown as GetUserRepository;
+
     const useCase = new ListLedgerEntriesUseCase({
       [AppProviders.logger]: mockLogger,
       [AppProviders.listLedgerEntriesRepository]: mockRepository,
+      [AppProviders.sessionHandler]: mockSessionHandler,
+      [AppProviders.getProfileRepository]: mockGetProfileRepository,
+      [AppProviders.listAccountsByProfileIdRepository]: mockListAccountsByProfileIdRepository,
+      [AppProviders.getUserRepository]: mockGetUserRepository,
     });
 
     return {
       useCase,
       mockLogger,
       mockRepository: { list: mockList },
+      mockSessionHandler,
+      mockGetProfileRepository,
+      mockListAccountsByProfileIdRepository,
+      mockGetUserRepository,
     };
   };
 
@@ -79,8 +116,24 @@ describe('ListLedgerEntriesUseCase', () => {
     });
 
     it('should list ledger entries successfully with default pagination', async () => {
-      const { useCase, mockRepository } = setup();
+      const {
+        useCase,
+        mockRepository,
+        mockGetUserRepository,
+        mockGetProfileRepository,
+        mockListAccountsByProfileIdRepository,
+      } = setup();
       const entries = [createMockLedgerEntry('entry-1'), createMockLedgerEntry('entry-2')];
+
+      (mockGetUserRepository.findById as ReturnType<typeof mock>).mockResolvedValue({
+        id: 'user-123',
+        username: 'user',
+        passwordHash: 'hash',
+        isMaster: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      });
 
       mockRepository.list.mockResolvedValue({
         entries,
@@ -112,8 +165,18 @@ describe('ListLedgerEntriesUseCase', () => {
     });
 
     it('should use provided pagination parameters', async () => {
-      const { useCase, mockRepository } = setup();
+      const { useCase, mockRepository, mockGetUserRepository } = setup();
       const entries = [createMockLedgerEntry('entry-1')];
+
+      (mockGetUserRepository.findById as ReturnType<typeof mock>).mockResolvedValue({
+        id: 'user-123',
+        username: 'user',
+        passwordHash: 'hash',
+        isMaster: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      });
 
       mockRepository.list.mockResolvedValue({
         entries,
@@ -139,7 +202,17 @@ describe('ListLedgerEntriesUseCase', () => {
     });
 
     it('should cap limit at 100', async () => {
-      const { useCase, mockRepository } = setup();
+      const { useCase, mockRepository, mockGetUserRepository } = setup();
+
+      (mockGetUserRepository.findById as ReturnType<typeof mock>).mockResolvedValue({
+        id: 'user-123',
+        username: 'user',
+        passwordHash: 'hash',
+        isMaster: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      });
 
       mockRepository.list.mockResolvedValue({
         entries: [],
@@ -161,7 +234,17 @@ describe('ListLedgerEntriesUseCase', () => {
     });
 
     it('should apply status filter', async () => {
-      const { useCase, mockRepository } = setup();
+      const { useCase, mockRepository, mockGetUserRepository } = setup();
+
+      (mockGetUserRepository.findById as ReturnType<typeof mock>).mockResolvedValue({
+        id: 'user-123',
+        username: 'user',
+        passwordHash: 'hash',
+        isMaster: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      });
 
       mockRepository.list.mockResolvedValue({
         entries: [],
@@ -189,7 +272,17 @@ describe('ListLedgerEntriesUseCase', () => {
     });
 
     it('should apply type filter', async () => {
-      const { useCase, mockRepository } = setup();
+      const { useCase, mockRepository, mockGetUserRepository } = setup();
+
+      (mockGetUserRepository.findById as ReturnType<typeof mock>).mockResolvedValue({
+        id: 'user-123',
+        username: 'user',
+        passwordHash: 'hash',
+        isMaster: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      });
 
       mockRepository.list.mockResolvedValue({
         entries: [],
@@ -217,9 +310,19 @@ describe('ListLedgerEntriesUseCase', () => {
     });
 
     it('should apply date filters', async () => {
-      const { useCase, mockRepository } = setup();
+      const { useCase, mockRepository, mockGetUserRepository } = setup();
       const dateFrom = new Date('2024-01-01');
       const dateTo = new Date('2024-01-31');
+
+      (mockGetUserRepository.findById as ReturnType<typeof mock>).mockResolvedValue({
+        id: 'user-123',
+        username: 'user',
+        passwordHash: 'hash',
+        isMaster: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      });
 
       mockRepository.list.mockResolvedValue({
         entries: [],
@@ -250,7 +353,17 @@ describe('ListLedgerEntriesUseCase', () => {
     });
 
     it('should convert string dates to Date objects', async () => {
-      const { useCase, mockRepository } = setup();
+      const { useCase, mockRepository, mockGetUserRepository } = setup();
+
+      (mockGetUserRepository.findById as ReturnType<typeof mock>).mockResolvedValue({
+        id: 'user-123',
+        username: 'user',
+        passwordHash: 'hash',
+        isMaster: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      });
 
       mockRepository.list.mockResolvedValue({
         entries: [],
@@ -281,11 +394,21 @@ describe('ListLedgerEntriesUseCase', () => {
     });
 
     it('should map entries to DTOs correctly', async () => {
-      const { useCase, mockRepository } = setup();
+      const { useCase, mockRepository, mockGetUserRepository } = setup();
       const entries = [
         createMockLedgerEntry('entry-1'),
         createMockLedgerEntry('entry-2'),
       ];
+
+      (mockGetUserRepository.findById as ReturnType<typeof mock>).mockResolvedValue({
+        id: 'user-123',
+        username: 'user',
+        passwordHash: 'hash',
+        isMaster: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      });
 
       mockRepository.list.mockResolvedValue({
         entries,
@@ -307,7 +430,17 @@ describe('ListLedgerEntriesUseCase', () => {
     });
 
     it('should calculate totalPages correctly', async () => {
-      const { useCase, mockRepository } = setup();
+      const { useCase, mockRepository, mockGetUserRepository } = setup();
+
+      (mockGetUserRepository.findById as ReturnType<typeof mock>).mockResolvedValue({
+        id: 'user-123',
+        username: 'user',
+        passwordHash: 'hash',
+        isMaster: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      });
 
       mockRepository.list.mockResolvedValue({
         entries: [],
@@ -324,7 +457,17 @@ describe('ListLedgerEntriesUseCase', () => {
     });
 
     it('should log start and success', async () => {
-      const { useCase, mockLogger, mockRepository } = setup();
+      const { useCase, mockLogger, mockRepository, mockGetUserRepository } = setup();
+
+      (mockGetUserRepository.findById as ReturnType<typeof mock>).mockResolvedValue({
+        id: 'user-123',
+        username: 'user',
+        passwordHash: 'hash',
+        isMaster: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: null,
+      });
 
       mockRepository.list.mockResolvedValue({
         entries: [],

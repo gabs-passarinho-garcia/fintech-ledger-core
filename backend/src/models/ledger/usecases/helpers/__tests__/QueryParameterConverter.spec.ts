@@ -1,11 +1,7 @@
-import { describe, it, expect, beforeEach } from 'bun:test';
+import { describe, it, expect } from 'bun:test';
 import { QueryParameterConverter } from '../QueryParameterConverter';
 
 describe('QueryParameterConverter', () => {
-  beforeEach(() => {
-    // Ensure clean state for each test
-    // This helps prevent issues when tests run together
-  });
   describe('toDate', () => {
     it('should return Date object when value is already a Date', () => {
       const date = new Date('2024-01-15');

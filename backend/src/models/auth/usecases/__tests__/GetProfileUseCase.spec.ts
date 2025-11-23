@@ -6,6 +6,7 @@ import type { SessionHandler } from '@/common/providers/SessionHandler';
 import type { GetUserRepository } from '../../infra/repositories/GetUserRepository';
 import { AppProviders } from '@/common/interfaces/IAppContainer';
 import { ForbiddenError, NotFoundError } from '@/common/errors';
+import { Decimal } from 'decimal.js';
 
 describe('GetProfileUseCase', () => {
   const setup = () => {
@@ -75,6 +76,7 @@ describe('GetProfileUseCase', () => {
         firstName: 'John',
         lastName: 'Doe',
         email: 'john@example.com',
+        balance: new Decimal('0.00'),
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -107,6 +109,7 @@ describe('GetProfileUseCase', () => {
         firstName: 'John',
         lastName: 'Doe',
         email: 'john@example.com',
+        balance: new Decimal('0.00'),
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
@@ -137,6 +140,7 @@ describe('GetProfileUseCase', () => {
         firstName: 'John',
         lastName: 'Doe',
         email: 'john@example.com',
+        balance: new Decimal('0.00'),
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
