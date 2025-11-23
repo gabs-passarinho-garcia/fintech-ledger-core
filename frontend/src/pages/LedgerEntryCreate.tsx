@@ -116,12 +116,6 @@ export default function LedgerEntryCreate(): JSX.Element {
       return;
     }
 
-    if (formData.type === "DEPOSIT" && !formData.toAccountId) {
-      setError("To account is required for deposit transactions");
-      setIsLoading(false);
-      return;
-    }
-
     try {
       const amount =
         typeof formData.amount === "string"
@@ -275,8 +269,7 @@ export default function LedgerEntryCreate(): JSX.Element {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               To Account
-              {(formData.type === "TRANSFER" ||
-                formData.type === "DEPOSIT") && (
+              {formData.type === "TRANSFER" && (
                 <span className="text-red-500"> *</span>
               )}
             </label>
@@ -298,9 +291,7 @@ export default function LedgerEntryCreate(): JSX.Element {
                 value={formData.toAccountId || ""}
                 onChange={handleChange}
                 className="input-field"
-                required={
-                  formData.type === "TRANSFER" || formData.type === "DEPOSIT"
-                }
+                required={formData.type === "TRANSFER"}
                 aria-label="Select to account"
               >
                 <option value="">Select to account</option>
