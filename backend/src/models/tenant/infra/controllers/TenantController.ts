@@ -11,20 +11,51 @@ import {
   ListTenantsResponseSchema,
   ListAllTenantsQuerySchema,
   ListAllTenantsResponseSchema,
+  ListPublicTenantsResponseSchema,
 } from '../../dtos';
 
 const TENANTS_PATH = '';
 const ALL_PATH = '/all';
+const PUBLIC_PATH = '/public';
 
 const TENANT_TAG = 'Tenants';
 
 /**
  * Controller for tenant operations.
  * Handles HTTP requests and delegates to use cases via dependency injection.
- * Protected with Bearer token authentication.
+ * Most endpoints are protected with Bearer token authentication.
+ * The /public endpoint is accessible without authentication.
  */
 export const TenantController = new Elysia({ prefix: '/tenants' })
   .resolve(scopeResolver)
+  // Public endpoint - no authentication required
+  .get(
+    PUBLIC_PATH,
+    async function listPublicTenants({ scope }) {
+      const listPublicTenantsUseCase = scope.resolve(AppProviders.listPublicTenantsUseCase);
+      const result = await listPublicTenantsUseCase.execute({});
+
+      return {
+        statusCode: HTTPStatusCode.OK,
+        data: result,
+      };
+    },
+    {
+      response: {
+        [HTTPStatusCode.OK]: t.Object({
+          statusCode: t.Literal(HTTPStatusCode.OK),
+          data: ListPublicTenantsResponseSchema,
+        }),
+        [HTTPStatusCode.INTERNAL_SERVER_ERROR]: ErrorSchema,
+      },
+      detail: {
+        summary: 'List Public Tenants',
+        description: 'Lists all non-deleted tenants. Public endpoint, no authentication required.',
+        tags: [TENANT_TAG],
+      },
+    },
+  )
+  // Protected endpoints - authentication required
   .use(AuthGuardPlugin)
   .get(
     TENANTS_PATH,

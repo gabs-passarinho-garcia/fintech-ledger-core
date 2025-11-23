@@ -7,6 +7,29 @@ import type { Tenant } from "../types";
  */
 
 /**
+ * Lists public tenants (no authentication required)
+ */
+export async function listPublicTenants(): Promise<{
+  tenants: Array<{ id: string; name: string }>;
+}> {
+  const response = await endpoints.tenants.listPublicTenants();
+
+  if (
+    !response ||
+    typeof response !== "object" ||
+    !("data" in response) ||
+    !response.data ||
+    typeof response.data !== "object" ||
+    !("data" in response.data) ||
+    !response.data.data
+  ) {
+    throw new Error("Failed to list public tenants");
+  }
+
+  return response.data.data as { tenants: Array<{ id: string; name: string }> };
+}
+
+/**
  * Lists tenants for the authenticated user
  */
 export async function listTenants(): Promise<{ tenants: Tenant[] }> {

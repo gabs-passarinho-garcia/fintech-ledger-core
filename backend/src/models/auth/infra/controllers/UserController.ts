@@ -10,6 +10,11 @@ import {
   SignUpResponseSchema,
   type SignUpRequest,
 } from '../../dtos/SignUp.dto';
+import {
+  CreateProfileRequestSchema,
+  CreateProfileResponseSchema,
+  type CreateProfileRequest,
+} from '../../dtos/CreateProfile.dto';
 import { GetProfileResponseSchema, type GetProfileInput } from '../../dtos/GetProfile.dto';
 import {
   UpdateProfileRequestSchema,
@@ -199,6 +204,39 @@ export const UserController = new Elysia({ prefix: '/users' })
       detail: {
         summary: 'List Profiles',
         description: 'Lists all profiles for the authenticated user',
+        tags: [USER_TAG],
+      },
+      isSignIn: true,
+    },
+  )
+  .post(
+    PROFILES_PATH,
+    async function createProfile({ body, scope }) {
+      const input: CreateProfileRequest = body as CreateProfileRequest;
+      const createProfileUseCase = scope.resolve(AppProviders.createProfileUseCase);
+      const result = await createProfileUseCase.execute(input);
+
+      return {
+        statusCode: HTTPStatusCode.CREATED,
+        data: result,
+      };
+    },
+    {
+      body: CreateProfileRequestSchema,
+      headers: TokenAuthSchema,
+      response: {
+        [HTTPStatusCode.CREATED]: t.Object({
+          statusCode: t.Literal(HTTPStatusCode.CREATED),
+          data: CreateProfileResponseSchema,
+        }),
+        [HTTPStatusCode.BAD_REQUEST]: ErrorSchema,
+        [HTTPStatusCode.UNAUTHORIZED]: ErrorSchema,
+        [HTTPStatusCode.NOT_FOUND]: ErrorSchema,
+        [HTTPStatusCode.INTERNAL_SERVER_ERROR]: ErrorSchema,
+      },
+      detail: {
+        summary: 'Create Profile',
+        description: 'Creates a new profile for the authenticated user',
         tags: [USER_TAG],
       },
       isSignIn: true,

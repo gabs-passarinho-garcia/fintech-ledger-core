@@ -11,6 +11,7 @@ import { ListAllUsersUseCase } from './usecases/ListAllUsersUseCase';
 import { ListAllProfilesUseCase } from './usecases/ListAllProfilesUseCase';
 import { DeleteProfileUseCase } from './usecases/DeleteProfileUseCase';
 import { DeleteUserUseCase } from './usecases/DeleteUserUseCase';
+import { CreateProfileUseCase } from './usecases/CreateProfileUseCase';
 import { CreateUserRepository } from './infra/repositories/CreateUserRepository';
 import { GetUserRepository } from './infra/repositories/GetUserRepository';
 import { GetUserByUsernameRepository } from './infra/repositories/GetUserByUsernameRepository';
@@ -97,5 +98,6 @@ export const AuthModule: ModuleDefinition = {
     ),
     [AppProviders.deleteProfileUseCase]: provideClass(DeleteProfileUseCase, Lifecycle.SINGLETON),
     [AppProviders.deleteUserUseCase]: provideClass(DeleteUserUseCase, Lifecycle.SINGLETON),
+    [AppProviders.createProfileUseCase]: provideClass(CreateProfileUseCase, Lifecycle.SINGLETON),
   },
 };

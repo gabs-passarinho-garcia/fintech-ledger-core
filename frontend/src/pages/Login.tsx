@@ -13,7 +13,6 @@ export default function Login(): JSX.Element {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    tenantId: "",
   });
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -30,9 +29,8 @@ export default function Login(): JSX.Element {
       await signIn({
         username: formData.username,
         password: formData.password,
-        tenantId: formData.tenantId || undefined,
       });
-      navigate("/dashboard");
+      navigate("/profile-selection");
     } catch (err) {
       setFormError(err instanceof Error ? err.message : "Failed to sign in");
     }
@@ -82,16 +80,6 @@ export default function Login(): JSX.Element {
             required
             autoComplete="current-password"
             placeholder="Enter your password"
-          />
-
-          <Input
-            label="Tenant ID (Optional)"
-            name="tenantId"
-            type="text"
-            value={formData.tenantId}
-            onChange={handleChange}
-            placeholder="Enter tenant ID"
-            helperText="Leave empty if not using multi-tenant"
           />
 
           <Button type="submit" isLoading={isLoading} className="w-full">

@@ -60,11 +60,29 @@ export async function updateProfile(
 export async function listProfiles(query?: {
   page?: number;
   limit?: number;
-}): Promise<{ profiles: Profile[]; pagination: unknown }> {
+}): Promise<{ profiles: Profile[] }> {
   const response = await endpoints.users.listProfiles(query);
 
   if (!response.data?.data) {
     throw new Error("Failed to list profiles");
+  }
+
+  return response.data.data;
+}
+
+/**
+ * Creates a new profile
+ */
+export async function createProfile(data: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  tenantId: string;
+}): Promise<Profile> {
+  const response = await endpoints.users.createProfile(data);
+
+  if (!response.data?.data) {
+    throw new Error("Failed to create profile");
   }
 
   return response.data.data;

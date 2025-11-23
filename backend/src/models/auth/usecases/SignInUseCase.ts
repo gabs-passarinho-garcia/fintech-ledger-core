@@ -36,7 +36,6 @@ export class SignInUseCase implements IService<SignInInput, SignInOutput> {
     this.logger.info(
       {
         username: input.username,
-        hasTenantId: !!input.tenantId,
       },
       'sign_in:start',
       SignInUseCase.name,
@@ -62,7 +61,6 @@ export class SignInUseCase implements IService<SignInInput, SignInOutput> {
       refreshToken: result.refreshToken,
       expiresIn: result.expiresIn,
       tokenType: result.tokenType,
-      tenantId: input.tenantId || undefined,
       userEmail: result.userEmail,
       username: result.username,
       status: result.status,

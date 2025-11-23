@@ -82,7 +82,7 @@ describe('SignInUseCase', () => {
       }).toThrow(NotSignedError);
     });
 
-    it('should include tenantId in output when provided', async () => {
+    it('should not include tenantId in output', async () => {
       const { useCase, mockOAuthHandler } = setup();
 
       const mockResult = {
@@ -100,12 +100,11 @@ describe('SignInUseCase', () => {
       const input = {
         username: 'testuser',
         password: 'password123',
-        tenantId: 'tenant-123',
       };
 
       const result = await useCase.execute(input);
 
-      expect(result.tenantId).toBe('tenant-123');
+      expect(result.tenantId).toBeUndefined();
     });
   });
 });

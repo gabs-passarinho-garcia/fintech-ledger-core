@@ -53,10 +53,14 @@ import type { ListAllUsersUseCase } from '@/models/auth/usecases/ListAllUsersUse
 import type { ListAllProfilesUseCase } from '@/models/auth/usecases/ListAllProfilesUseCase';
 import type { DeleteProfileUseCase } from '@/models/auth/usecases/DeleteProfileUseCase';
 import type { DeleteUserUseCase } from '@/models/auth/usecases/DeleteUserUseCase';
+import type { CreateProfileUseCase } from '@/models/auth/usecases/CreateProfileUseCase';
 import type { ListTenantsByUserRepository } from '@/models/tenant/infra/repositories/ListTenantsByUserRepository';
 import type { ListAllTenantsRepository } from '@/models/tenant/infra/repositories/ListAllTenantsRepository';
+import type { ListPublicTenantsRepository } from '@/models/tenant/infra/repositories/ListPublicTenantsRepository';
+import type { GetTenantRepository } from '@/models/tenant/infra/repositories/GetTenantRepository';
 import type { ListTenantsByUserUseCase } from '@/models/tenant/usecases/ListTenantsByUserUseCase';
 import type { ListAllTenantsUseCase } from '@/models/tenant/usecases/ListAllTenantsUseCase';
+import type { ListPublicTenantsUseCase } from '@/models/tenant/usecases/ListPublicTenantsUseCase';
 
 /**
  * Application container interface defining all available providers.
@@ -121,12 +125,16 @@ export interface IAppContainer {
   listAllProfilesUseCase: ListAllProfilesUseCase;
   deleteProfileUseCase: DeleteProfileUseCase;
   deleteUserUseCase: DeleteUserUseCase;
+  createProfileUseCase: CreateProfileUseCase;
   // Tenant repositories
   listTenantsByUserRepository: ListTenantsByUserRepository;
   listAllTenantsRepository: ListAllTenantsRepository;
+  listPublicTenantsRepository: ListPublicTenantsRepository;
+  getTenantRepository: GetTenantRepository;
   // Tenant use cases
   listTenantsByUserUseCase: ListTenantsByUserUseCase;
   listAllTenantsUseCase: ListAllTenantsUseCase;
+  listPublicTenantsUseCase: ListPublicTenantsUseCase;
   // Payment providers
   paymentProviderFactory: PaymentProviderFactory;
   paymentManager: PaymentManager;

@@ -1,23 +1,22 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { createProfile } from "../services/profile";
+import { listPublicTenants } from "../services/tenants";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import Select from "../components/Select";
-import { listPublicTenants } from "../services/tenants";
+import Loading from "../components/Loading";
 
 /**
- * Signup page
+ * Create profile page
+ * Allows authenticated user to create a new profile
  */
-export default function Signup(): JSX.Element {
+export default function CreateProfile(): JSX.Element {
   const navigate = useNavigate();
-  const { signUp, isLoading, error } = useAuth();
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    email: "",
     firstName: "",
     lastName: "",
+    email: "",
     tenantId: "",
   });
   const [formError, setFormError] = useState<string | null>(null);
@@ -25,6 +24,7 @@ export default function Signup(): JSX.Element {
     [],
   );
   const [isLoadingTenants, setIsLoadingTenants] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const loadTenants = async (): Promise<void> => {
@@ -32,8 +32,9 @@ export default function Signup(): JSX.Element {
         const response = await listPublicTenants();
         setTenants(response.tenants);
       } catch (err) {
-        console.error("Failed to load tenants:", err);
-        // Don't block signup if tenants fail to load
+        setFormError(
+          err instanceof Error ? err.message : "Failed to load tenants",
+        );
       } finally {
         setIsLoadingTenants(false);
       }
@@ -47,14 +48,12 @@ export default function Signup(): JSX.Element {
     setFormError(null);
 
     if (
-      !formData.username ||
-      !formData.password ||
-      !formData.email ||
       !formData.firstName ||
       !formData.lastName ||
+      !formData.email ||
       !formData.tenantId
     ) {
-      setFormError("All required fields must be filled");
+      setFormError("All fields are required");
       return;
     }
 
@@ -63,23 +62,22 @@ export default function Signup(): JSX.Element {
       return;
     }
 
+    setIsSubmitting(true);
     try {
-      await signUp({
-        username: formData.username,
-        password: formData.password,
-        email: formData.email,
+      await createProfile({
         firstName: formData.firstName,
         lastName: formData.lastName,
-        tenantId: formData.tenantId || undefined,
+        email: formData.email,
+        tenantId: formData.tenantId,
       });
-      // Redirect to login after successful signup
-      navigate("/login", {
-        state: { message: "Account created successfully. Please sign in." },
-      });
+      // Redirect to profile selection after successful creation
+      navigate("/profile-selection");
     } catch (err) {
       setFormError(
-        err instanceof Error ? err.message : "Failed to create account",
+        err instanceof Error ? err.message : "Failed to create profile",
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -97,14 +95,16 @@ export default function Signup(): JSX.Element {
       <div className="max-w-md w-full card animate-fade-in-up">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Create Account
+            Create Profile
           </h1>
-          <p className="text-gray-600">Sign up for a new account</p>
+          <p className="text-gray-600">
+            Create a new profile to associate with a tenant
+          </p>
         </div>
 
-        {(formError || error) && (
+        {formError && (
           <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-            {formError || error?.message}
+            {formError}
           </div>
         )}
 
@@ -142,62 +142,44 @@ export default function Signup(): JSX.Element {
             placeholder="john.doe@example.com"
           />
 
-          <Input
-            label="Username"
-            name="username"
-            type="text"
-            value={formData.username}
-            onChange={handleChange}
-            required
-            autoComplete="username"
-            placeholder="johndoe"
-          />
+          {isLoadingTenants ? (
+            <div className="flex items-center justify-center py-4">
+              <Loading size="sm" />
+            </div>
+          ) : (
+            <Select
+              label="Tenant"
+              name="tenantId"
+              value={formData.tenantId}
+              onChange={handleChange}
+              required
+              options={tenants.map((tenant) => ({
+                value: tenant.id,
+                label: tenant.name,
+              }))}
+              helperText="Select a tenant for this profile"
+            />
+          )}
 
-          <Input
-            label="Password"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            autoComplete="new-password"
-            placeholder="Enter a secure password"
-          />
-
-          <Select
-            label="Tenant"
-            name="tenantId"
-            value={formData.tenantId}
-            onChange={handleChange}
-            required
-            options={tenants.map((tenant) => ({
-              value: tenant.id,
-              label: tenant.name,
-            }))}
-            disabled={isLoadingTenants}
-            helperText={
-              isLoadingTenants
-                ? "Loading tenants..."
-                : "Select a tenant to create your profile"
-            }
-          />
-
-          <Button type="submit" isLoading={isLoading} className="w-full">
-            Create Account
-          </Button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="text-primary-600 hover:text-primary-700 font-semibold"
+          <div className="flex gap-4">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => navigate("/profile-selection")}
+              className="flex-1"
             >
-              Sign in
-            </Link>
-          </p>
-        </div>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              isLoading={isSubmitting}
+              disabled={isLoadingTenants}
+              className="flex-1"
+            >
+              Create Profile
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );

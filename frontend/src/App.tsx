@@ -6,6 +6,8 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import ProfileEdit from "./pages/ProfileEdit";
+import ProfileSelection from "./pages/ProfileSelection";
+import CreateProfile from "./pages/CreateProfile";
 import UsersManagement from "./pages/UsersManagement";
 import ProfilesManagement from "./pages/ProfilesManagement";
 import TenantsList from "./pages/TenantsList";
@@ -45,6 +47,22 @@ function App(): JSX.Element {
           element={
             <ProtectedRoute>
               <ProfileEdit />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile-selection"
+          element={
+            <ProtectedRoute>
+              <ProfileSelection />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/create"
+          element={
+            <ProtectedRoute>
+              <CreateProfile />
             </ProtectedRoute>
           }
         />

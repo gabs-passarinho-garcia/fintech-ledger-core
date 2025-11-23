@@ -16,7 +16,6 @@ const UNKNOWN_ERROR_MESSAGE = "Unknown error";
 export interface SignInInput {
   username: string;
   password: string;
-  tenantId?: string;
 }
 
 export interface SignUpInput {
@@ -32,11 +31,7 @@ export interface SignUpInput {
  * Signs in a user with username and password
  */
 export async function signIn(input: SignInInput): Promise<SignInResponse> {
-  logger.info(
-    { username: input.username, tenantId: input.tenantId },
-    "sign_in:start",
-    AUTH_SERVICE_NAME,
-  );
+  logger.info({ username: input.username }, "sign_in:start", AUTH_SERVICE_NAME);
 
   try {
     const response = await endpoints.auth.signIn(input);
@@ -59,25 +54,21 @@ export async function signIn(input: SignInInput): Promise<SignInResponse> {
     if (data.refreshToken) {
       storage.setRefreshToken(data.refreshToken);
     }
-    if (data.tenantId) {
-      storage.setTenantId(data.tenantId);
-    }
 
     // Extract user info from token
     const tokenUser = data.accessToken
       ? extractUserFromToken(data.accessToken)
       : null;
 
-    // Store user data
+    // Store user data (without tenantId - will be set when profile is selected)
     storage.setUserData({
       username: data.username,
       email: data.userEmail,
-      tenantId: data.tenantId,
       isMaster: tokenUser?.isMaster ?? false,
     });
 
     logger.info(
-      { username: data.username, tenantId: data.tenantId },
+      { username: data.username },
       "sign_in:success",
       AUTH_SERVICE_NAME,
     );

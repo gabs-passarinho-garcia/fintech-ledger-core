@@ -46,7 +46,6 @@ export const endpoints = {
     signIn: async (data: {
       username: string;
       password: string;
-      tenantId?: string;
     }): Promise<Awaited<ReturnType<typeof api.auth.login.post>>> =>
       withAuthRefresh(() => api.auth.login.post(data)),
 
@@ -120,6 +119,18 @@ export const endpoints = {
       withAuthRefresh(() =>
         api.users.profiles.get({
           query,
+          headers: buildHeaders(),
+        }),
+      ),
+
+    createProfile: async (data: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      tenantId: string;
+    }): Promise<Awaited<ReturnType<typeof api.users.profiles.post>>> =>
+      withAuthRefresh(() =>
+        api.users.profiles.post(data, {
           headers: buildHeaders(),
         }),
       ),
@@ -254,6 +265,10 @@ export const endpoints = {
    * Tenant endpoints
    */
   tenants: {
+    listPublicTenants: async (): Promise<
+      Awaited<ReturnType<typeof api.tenants.public.get>>
+    > => api.tenants.public.get(),
+
     listTenants: async (): Promise<
       Awaited<ReturnType<typeof api.tenants.get>>
     > =>
