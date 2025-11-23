@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createLedgerEntry } from "../services/ledger";
 import { listTenants } from "../services/tenants";
+import { listProfilesByTenant } from "../services/profile";
 import { storage } from "../utils/storage";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import Loading from "../components/Loading";
 import type { CreateLedgerEntryInput } from "../services/ledger";
-import type { Tenant } from "../types";
+import type { Tenant, Profile } from "../types";
 
 /**
  * Create ledger entry page
@@ -20,10 +21,11 @@ export default function LedgerEntryCreate(): JSX.Element {
     toAccountId: "",
     amount: "",
     type: "DEPOSIT",
-    createdBy: "",
   });
   const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [isLoadingTenants, setIsLoadingTenants] = useState(true);
+  const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,6 +33,14 @@ export default function LedgerEntryCreate(): JSX.Element {
     loadTenants();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (formData.tenantId) {
+      loadProfiles(formData.tenantId);
+    } else {
+      setProfiles([]);
+    }
+  }, [formData.tenantId]);
 
   const loadTenants = async (): Promise<void> => {
     setIsLoadingTenants(true);
@@ -65,13 +75,49 @@ export default function LedgerEntryCreate(): JSX.Element {
     }
   };
 
+  const loadProfiles = async (tenantId: string): Promise<void> => {
+    setIsLoadingProfiles(true);
+    try {
+      const response = await listProfilesByTenant(tenantId);
+      setProfiles(response.profiles);
+      // Reset account IDs when profiles change
+      setFormData((prev) => ({
+        ...prev,
+        fromAccountId: "",
+        toAccountId: "",
+      }));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load profiles");
+    } finally {
+      setIsLoadingProfiles(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
-    if (!formData.tenantId || !formData.amount || !formData.type) {
-      setError("Tenant ID, amount, and type are required");
+    if (
+      !formData.tenantId ||
+      !formData.amount ||
+      !formData.type ||
+      !formData.fromAccountId
+    ) {
+      setError("Tenant, amount, type, and from account are required");
+      setIsLoading(false);
+      return;
+    }
+
+    // Validate toAccountId based on type
+    if (formData.type === "TRANSFER" && !formData.toAccountId) {
+      setError("To account is required for transfer transactions");
+      setIsLoading(false);
+      return;
+    }
+
+    if (formData.type === "DEPOSIT" && !formData.toAccountId) {
+      setError("To account is required for deposit transactions");
       setIsLoading(false);
       return;
     }
@@ -90,7 +136,7 @@ export default function LedgerEntryCreate(): JSX.Element {
       await createLedgerEntry({
         ...formData,
         amount,
-        fromAccountId: formData.fromAccountId || null,
+        fromAccountId: formData.fromAccountId,
         toAccountId: formData.toAccountId || null,
       });
       navigate("/dashboard");
@@ -191,33 +237,81 @@ export default function LedgerEntryCreate(): JSX.Element {
             placeholder="0.00"
           />
 
-          <Input
-            label="From Account ID (Optional)"
-            name="fromAccountId"
-            type="text"
-            value={formData.fromAccountId || ""}
-            onChange={handleChange}
-            placeholder="Leave empty for deposits"
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              From Account <span className="text-red-500">*</span>
+            </label>
+            {isLoadingProfiles ? (
+              <div className="flex items-center gap-2">
+                <Loading size="sm" />
+                <span className="text-sm text-gray-500">
+                  Loading profiles...
+                </span>
+              </div>
+            ) : profiles.length === 0 ? (
+              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
+                No profiles available for this tenant. Please select a tenant
+                first.
+              </div>
+            ) : (
+              <select
+                name="fromAccountId"
+                value={formData.fromAccountId || ""}
+                onChange={handleChange}
+                className="input-field"
+                required
+                aria-label="Select from account"
+              >
+                <option value="">Select from account</option>
+                {profiles.map((profile) => (
+                  <option key={profile.id} value={profile.id}>
+                    {profile.firstName} {profile.lastName} ({profile.email})
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
 
-          <Input
-            label="To Account ID (Optional)"
-            name="toAccountId"
-            type="text"
-            value={formData.toAccountId || ""}
-            onChange={handleChange}
-            placeholder="Leave empty for withdrawals"
-          />
-
-          <Input
-            label="Created By"
-            name="createdBy"
-            type="text"
-            value={formData.createdBy}
-            onChange={handleChange}
-            required
-            placeholder="User ID or name"
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              To Account
+              {(formData.type === "TRANSFER" ||
+                formData.type === "DEPOSIT") && (
+                <span className="text-red-500"> *</span>
+              )}
+            </label>
+            {isLoadingProfiles ? (
+              <div className="flex items-center gap-2">
+                <Loading size="sm" />
+                <span className="text-sm text-gray-500">
+                  Loading profiles...
+                </span>
+              </div>
+            ) : profiles.length === 0 ? (
+              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
+                No profiles available for this tenant. Please select a tenant
+                first.
+              </div>
+            ) : (
+              <select
+                name="toAccountId"
+                value={formData.toAccountId || ""}
+                onChange={handleChange}
+                className="input-field"
+                required={
+                  formData.type === "TRANSFER" || formData.type === "DEPOSIT"
+                }
+                aria-label="Select to account"
+              >
+                <option value="">Select to account</option>
+                {profiles.map((profile) => (
+                  <option key={profile.id} value={profile.id}>
+                    {profile.firstName} {profile.lastName} ({profile.email})
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
 
           <div className="flex gap-3">
             <Button type="submit" isLoading={isLoading}>

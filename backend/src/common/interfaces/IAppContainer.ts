@@ -36,6 +36,7 @@ import type { UpdateUserPasswordRepository } from '@/models/auth/infra/repositor
 import type { CreateProfileRepository } from '@/models/auth/infra/repositories/CreateProfileRepository';
 import type { GetProfileRepository } from '@/models/auth/infra/repositories/GetProfileRepository';
 import type { ListProfilesByUserIdRepository } from '@/models/auth/infra/repositories/ListProfilesByUserIdRepository';
+import type { ListProfilesByTenantRepository } from '@/models/auth/infra/repositories/ListProfilesByTenantRepository';
 import type { UpdateProfileRepository } from '@/models/auth/infra/repositories/UpdateProfileRepository';
 import type { DeleteProfileRepository } from '@/models/auth/infra/repositories/DeleteProfileRepository';
 import type { DeleteUserRepository } from '@/models/auth/infra/repositories/DeleteUserRepository';
@@ -49,6 +50,7 @@ import type { GetProfileUseCase } from '@/models/auth/usecases/GetProfileUseCase
 import type { GetMyProfileUseCase } from '@/models/auth/usecases/GetMyProfileUseCase';
 import type { UpdateProfileUseCase } from '@/models/auth/usecases/UpdateProfileUseCase';
 import type { ListProfilesByUserUseCase } from '@/models/auth/usecases/ListProfilesByUserUseCase';
+import type { ListProfilesByTenantUseCase } from '@/models/auth/usecases/ListProfilesByTenantUseCase';
 import type { ListAllUsersUseCase } from '@/models/auth/usecases/ListAllUsersUseCase';
 import type { ListAllProfilesUseCase } from '@/models/auth/usecases/ListAllProfilesUseCase';
 import type { DeleteProfileUseCase } from '@/models/auth/usecases/DeleteProfileUseCase';
@@ -105,6 +107,7 @@ export interface IAppContainer {
   createProfileRepository: CreateProfileRepository;
   getProfileRepository: GetProfileRepository;
   listProfilesByUserIdRepository: ListProfilesByUserIdRepository;
+  listProfilesByTenantRepository: ListProfilesByTenantRepository;
   updateProfileRepository: UpdateProfileRepository;
   deleteProfileRepository: DeleteProfileRepository;
   deleteUserRepository: DeleteUserRepository;
@@ -121,6 +124,7 @@ export interface IAppContainer {
   getMyProfileUseCase: GetMyProfileUseCase;
   updateProfileUseCase: UpdateProfileUseCase;
   listProfilesByUserUseCase: ListProfilesByUserUseCase;
+  listProfilesByTenantUseCase: ListProfilesByTenantUseCase;
   listAllUsersUseCase: ListAllUsersUseCase;
   listAllProfilesUseCase: ListAllProfilesUseCase;
   deleteProfileUseCase: DeleteProfileUseCase;

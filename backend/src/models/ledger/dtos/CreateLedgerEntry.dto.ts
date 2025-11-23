@@ -5,11 +5,10 @@ import { t, Static } from 'elysia';
  */
 export const CreateLedgerEntryRequestSchema = t.Object({
   tenantId: t.String({ minLength: 1 }),
-  fromAccountId: t.Optional(t.Nullable(t.String())),
+  fromAccountId: t.String({ minLength: 1 }),
   toAccountId: t.Optional(t.Nullable(t.String())),
   amount: t.Union([t.Number({ minimum: 0.01 }), t.String()]),
   type: t.Union([t.Literal('DEPOSIT'), t.Literal('WITHDRAWAL'), t.Literal('TRANSFER')]),
-  createdBy: t.String({ minLength: 1 }),
 });
 
 export type CreateLedgerEntryRequest = Static<typeof CreateLedgerEntryRequestSchema>;

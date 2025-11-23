@@ -71,6 +71,21 @@ export async function listProfiles(query?: {
 }
 
 /**
+ * Lists profiles by tenant
+ */
+export async function listProfilesByTenant(
+  tenantId: string,
+): Promise<{ profiles: Profile[] }> {
+  const response = await endpoints.users.listProfilesByTenant(tenantId);
+
+  if (!response.data?.data) {
+    throw new Error("Failed to list profiles by tenant");
+  }
+
+  return response.data.data;
+}
+
+/**
  * Creates a new profile
  */
 export async function createProfile(data: {

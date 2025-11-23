@@ -3,6 +3,7 @@ import type { IService } from '@/common/interfaces/IService';
 import type { ITransactionManager } from '@/common/adapters/ITransactionManager';
 import type { IQueueProducer } from '@/common/interfaces/IQueueProducer';
 import type { ILogger } from '@/common/interfaces/ILogger';
+import type { SessionHandler } from '@/common/providers/SessionHandler';
 import { AppProviders } from '@/common/interfaces/IAppContainer';
 import { LedgerEntryFactory } from '../domain/LedgerEntry.factory';
 import type { GetAccountRepository } from '../infra/repositories/GetAccountRepository';
@@ -12,11 +13,10 @@ import { DomainError } from '@/common/errors';
 
 export interface CreateLedgerEntryInput {
   tenantId: string;
-  fromAccountId?: string | null;
+  fromAccountId: string;
   toAccountId?: string | null;
   amount: number | string | Decimal;
   type: 'DEPOSIT' | 'WITHDRAWAL' | 'TRANSFER';
-  createdBy: string;
 }
 
 export interface CreateLedgerEntryOutput {
@@ -41,6 +41,7 @@ export class CreateLedgerEntryUseCase
   private readonly transactionManager: ITransactionManager;
   private readonly queueProducer: IQueueProducer;
   private readonly logger: ILogger;
+  private readonly sessionHandler: SessionHandler;
   private readonly getAccountRepository: GetAccountRepository;
   private readonly updateAccountBalanceRepository: UpdateAccountBalanceRepository;
   private readonly createLedgerEntryRepository: CreateLedgerEntryRepository;
@@ -49,6 +50,7 @@ export class CreateLedgerEntryUseCase
     [AppProviders.transactionManager]: ITransactionManager;
     [AppProviders.queueProducer]: IQueueProducer;
     [AppProviders.logger]: ILogger;
+    [AppProviders.sessionHandler]: SessionHandler;
     [AppProviders.getAccountRepository]: GetAccountRepository;
     [AppProviders.updateAccountBalanceRepository]: UpdateAccountBalanceRepository;
     [AppProviders.createLedgerEntryRepository]: CreateLedgerEntryRepository;
@@ -56,6 +58,7 @@ export class CreateLedgerEntryUseCase
     this.transactionManager = opts[AppProviders.transactionManager];
     this.queueProducer = opts[AppProviders.queueProducer];
     this.logger = opts[AppProviders.logger];
+    this.sessionHandler = opts[AppProviders.sessionHandler];
     this.getAccountRepository = opts[AppProviders.getAccountRepository];
     this.updateAccountBalanceRepository = opts[AppProviders.updateAccountBalanceRepository];
     this.createLedgerEntryRepository = opts[AppProviders.createLedgerEntryRepository];
@@ -79,11 +82,14 @@ export class CreateLedgerEntryUseCase
    * @throws {DomainError} If business rules are violated
    */
   public async execute(input: CreateLedgerEntryInput): Promise<CreateLedgerEntryOutput> {
+    const createdBy = this.sessionHandler.getAgent();
+
     this.logger.info(
       {
         tenantId: input.tenantId,
         type: input.type,
         amount: input.amount.toString(),
+        createdBy,
       },
       'create_ledger_entry:start',
       CreateLedgerEntryUseCase.name,
@@ -205,11 +211,11 @@ export class CreateLedgerEntryUseCase
         toAccountId: input.toAccountId,
         amount,
         type: input.type,
-        createdBy: input.createdBy,
+        createdBy,
       });
 
       // Mark as completed since balance updates succeeded
-      entry.markAsCompleted(input.createdBy);
+      entry.markAsCompleted(createdBy);
 
       const createdEntry = await this.createLedgerEntryRepository.create({
         ledgerEntry: entry,

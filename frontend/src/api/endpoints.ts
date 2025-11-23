@@ -123,6 +123,57 @@ export const endpoints = {
         }),
       ),
 
+    listProfilesByTenant: async (
+      tenantId: string,
+    ): Promise<{
+      data?: {
+        data?: {
+          profiles: Array<{
+            id: string;
+            userId: string;
+            tenantId: string;
+            firstName: string;
+            lastName: string;
+            email: string;
+            createdAt: Date | string;
+            updatedAt: Date | string;
+          }>;
+        };
+      };
+      error?: unknown;
+    }> =>
+      withAuthRefresh(() =>
+        (
+          api.users.profiles as unknown as {
+            byTenant: {
+              get: (options: {
+                query: { tenantId: string };
+                headers: ReturnType<typeof buildHeaders>;
+              }) => Promise<{
+                data?: {
+                  data?: {
+                    profiles: Array<{
+                      id: string;
+                      userId: string;
+                      tenantId: string;
+                      firstName: string;
+                      lastName: string;
+                      email: string;
+                      createdAt: Date | string;
+                      updatedAt: Date | string;
+                    }>;
+                  };
+                };
+                error?: unknown;
+              }>;
+            };
+          }
+        ).byTenant.get({
+          query: { tenantId },
+          headers: buildHeaders(),
+        }),
+      ),
+
     createProfile: async (data: {
       firstName: string;
       lastName: string;
@@ -182,16 +233,18 @@ export const endpoints = {
   ledger: {
     createEntry: async (data: {
       tenantId: string;
-      fromAccountId?: string | null;
+      fromAccountId: string;
       toAccountId?: string | null;
       amount: number | string;
       type: "DEPOSIT" | "WITHDRAWAL" | "TRANSFER";
-      createdBy: string;
     }): Promise<Awaited<ReturnType<typeof api.ledger.entries.post>>> =>
       withAuthRefresh(() =>
-        api.ledger.entries.post(data, {
-          headers: buildHeaders(),
-        }),
+        api.ledger.entries.post(
+          data as Parameters<typeof api.ledger.entries.post>[0],
+          {
+            headers: buildHeaders(),
+          },
+        ),
       ),
 
     listEntries: async (query?: {

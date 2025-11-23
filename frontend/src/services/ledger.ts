@@ -8,11 +8,10 @@ import type { LedgerEntry, ListResponse } from "../types";
 
 export interface CreateLedgerEntryInput {
   tenantId: string;
-  fromAccountId?: string | null;
+  fromAccountId: string;
   toAccountId?: string | null;
   amount: number | string;
   type: "DEPOSIT" | "WITHDRAWAL" | "TRANSFER";
-  createdBy: string;
 }
 
 export interface UpdateLedgerEntryInput {

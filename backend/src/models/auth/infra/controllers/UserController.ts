@@ -22,6 +22,10 @@ import {
   type UpdateProfileInput,
 } from '../../dtos/UpdateProfile.dto';
 import { ListProfilesResponseSchema } from '../../dtos/ListProfiles.dto';
+import {
+  ListProfilesByTenantQuerySchema,
+  ListProfilesByTenantResponseSchema,
+} from '../../dtos/ListProfilesByTenant.dto';
 import { ListAllUsersQuerySchema, ListAllUsersResponseSchema } from '../../dtos/ListAllUsers.dto';
 import {
   ListAllProfilesQuerySchema,
@@ -204,6 +208,41 @@ export const UserController = new Elysia({ prefix: '/users' })
       detail: {
         summary: 'List Profiles',
         description: 'Lists all profiles for the authenticated user',
+        tags: [USER_TAG],
+      },
+      isSignIn: true,
+    },
+  )
+  .get(
+    `${PROFILES_PATH}/by-tenant`,
+    async function listProfilesByTenant({ query, scope }) {
+      const listProfilesByTenantUseCase = scope.resolve(AppProviders.listProfilesByTenantUseCase);
+      const result = await listProfilesByTenantUseCase.execute({
+        tenantId: query.tenantId,
+      });
+
+      return {
+        statusCode: HTTPStatusCode.OK,
+        data: result,
+      };
+    },
+    {
+      query: ListProfilesByTenantQuerySchema,
+      headers: TokenAuthSchema,
+      response: {
+        [HTTPStatusCode.OK]: t.Object({
+          statusCode: t.Literal(HTTPStatusCode.OK),
+          data: ListProfilesByTenantResponseSchema,
+        }),
+        [HTTPStatusCode.BAD_REQUEST]: ErrorSchema,
+        [HTTPStatusCode.UNAUTHORIZED]: ErrorSchema,
+        [HTTPStatusCode.FORBIDDEN]: ErrorSchema,
+        [HTTPStatusCode.INTERNAL_SERVER_ERROR]: ErrorSchema,
+      },
+      detail: {
+        summary: 'List Profiles by Tenant',
+        description:
+          'Lists all profiles for a specific tenant. Users can only access profiles for tenants they belong to.',
         tags: [USER_TAG],
       },
       isSignIn: true,

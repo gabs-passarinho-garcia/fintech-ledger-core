@@ -7,6 +7,7 @@ import { GetProfileUseCase } from './usecases/GetProfileUseCase';
 import { GetMyProfileUseCase } from './usecases/GetMyProfileUseCase';
 import { UpdateProfileUseCase } from './usecases/UpdateProfileUseCase';
 import { ListProfilesByUserUseCase } from './usecases/ListProfilesByUserUseCase';
+import { ListProfilesByTenantUseCase } from './usecases/ListProfilesByTenantUseCase';
 import { ListAllUsersUseCase } from './usecases/ListAllUsersUseCase';
 import { ListAllProfilesUseCase } from './usecases/ListAllProfilesUseCase';
 import { DeleteProfileUseCase } from './usecases/DeleteProfileUseCase';
@@ -19,6 +20,7 @@ import { UpdateUserPasswordRepository } from './infra/repositories/UpdateUserPas
 import { CreateProfileRepository } from './infra/repositories/CreateProfileRepository';
 import { GetProfileRepository } from './infra/repositories/GetProfileRepository';
 import { ListProfilesByUserIdRepository } from './infra/repositories/ListProfilesByUserIdRepository';
+import { ListProfilesByTenantRepository } from './infra/repositories/ListProfilesByTenantRepository';
 import { UpdateProfileRepository } from './infra/repositories/UpdateProfileRepository';
 import { DeleteProfileRepository } from './infra/repositories/DeleteProfileRepository';
 import { DeleteUserRepository } from './infra/repositories/DeleteUserRepository';
@@ -49,6 +51,10 @@ export const AuthModule: ModuleDefinition = {
     [AppProviders.getProfileRepository]: provideClass(GetProfileRepository, Lifecycle.SINGLETON),
     [AppProviders.listProfilesByUserIdRepository]: provideClass(
       ListProfilesByUserIdRepository,
+      Lifecycle.SINGLETON,
+    ),
+    [AppProviders.listProfilesByTenantRepository]: provideClass(
+      ListProfilesByTenantRepository,
       Lifecycle.SINGLETON,
     ),
     [AppProviders.updateProfileRepository]: provideClass(
@@ -89,6 +95,10 @@ export const AuthModule: ModuleDefinition = {
     [AppProviders.updateProfileUseCase]: provideClass(UpdateProfileUseCase, Lifecycle.SINGLETON),
     [AppProviders.listProfilesByUserUseCase]: provideClass(
       ListProfilesByUserUseCase,
+      Lifecycle.SINGLETON,
+    ),
+    [AppProviders.listProfilesByTenantUseCase]: provideClass(
+      ListProfilesByTenantUseCase,
       Lifecycle.SINGLETON,
     ),
     [AppProviders.listAllUsersUseCase]: provideClass(ListAllUsersUseCase, Lifecycle.SINGLETON),
