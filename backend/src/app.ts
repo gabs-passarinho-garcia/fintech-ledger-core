@@ -143,6 +143,7 @@ function buildApp() {
           'Origin',
           'X-Correlation-ID',
           'X-Server-Timing',
+          'X-Tenant-ID',
         ],
         maxAge: 86400,
       }),
