@@ -3,7 +3,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue.svg)](https://www.typescriptlang.org/)
 [![Bun](https://img.shields.io/badge/Bun-1.3.2-orange.svg)](https://bun.sh/)
 [![Elysia](https://img.shields.io/badge/Elysia-1.4.11-green.svg)](https://elysiajs.com/)
-[![Prisma](https://img.shields.io/badge/Prisma-6.17.1-purple.svg)](https://www.prisma.io/)
+[![Prisma](https://img.shields.io/badge/Prisma-7.0.0-purple.svg)](https://www.prisma.io/)
 [![License](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![CI](https://github.com/yourusername/fintech-ledger-core/workflows/CI/badge.svg)](https://github.com/yourusername/fintech-ledger-core/actions)
 
@@ -25,12 +25,14 @@ Fintech Ledger Core is a demonstration project showcasing enterprise-level softw
 - 🧪 **Comprehensive Testing** - Unit tests with Bun test runner
 - 📝 **API Documentation** - Auto-generated Swagger/OpenAPI docs
 - 🌐 **Infrastructure as Code** - OpenTofu (Terraform alternative) for AWS deployment
+- 🎨 **Modern Frontend** - React 18 with Vite, Tailwind CSS, and type-safe API client
+- 🔐 **Complete Auth System** - JWT authentication with refresh tokens and multi-profile support
 
 ## 🏛️ Architecture
 
 The project follows **Clean Architecture** and **Domain-Driven Design (DDD)** principles:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                    Presentation Layer                      │
 │              (Controllers, Routers, DTOs)                  │
@@ -48,12 +50,22 @@ The project follows **Clean Architecture** and **Domain-Driven Design (DDD)** pr
 
 ### Flow Direction
 
-**Controller → Use Case → Repository → Domain**
+Controller → Use Case → Repository → Domain
 
-- **Domain Layer**: Core business entities and rules (LedgerEntry, Account)
+- **Domain Layer**: Core business entities and rules (LedgerEntry, Account, User, Profile, Tenant)
 - **Repository Layer**: Data persistence and retrieval
 - **Service Layer**: Business workflows and orchestration
 - **Presentation Layer**: HTTP endpoints and request/response handling
+
+### Domain Modules
+
+The system is organized into vertical slices (domain modules):
+
+- **Auth** (`/auth`, `/users`) - Authentication, user management, and profile management
+- **Ledger** (`/ledger`) - Financial ledger entries with full CRUD operations
+- **Accounts** (`/accounts`) - Financial account management
+- **Tenant** (`/tenants`) - Multi-tenant management
+- **Payment** - Payment processing and webhooks
 
 ## 🛠️ Tech Stack
 
@@ -79,6 +91,15 @@ The project follows **Clean Architecture** and **Domain-Driven Design (DDD)** pr
 - **Linting**: ESLint + Prettier
 - **Logging**: Winston
 
+### Frontend Stack
+
+- **Framework**: [React](https://react.dev/) 18.3.1
+- **Bundler**: [Vite](https://vitejs.dev/) 7.2.4
+- **Routing**: [React Router DOM](https://reactrouter.com/) 6.26.1
+- **API Client**: [Elysia Eden Treaty](https://elysiajs.com/eden/treaty/) - Type-safe API client
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) 3.4.10
+- **Testing**: Bun Test + React Testing Library
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -90,39 +111,54 @@ The project follows **Clean Architecture** and **Domain-Driven Design (DDD)** pr
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/fintech-ledger-core.git
    cd fintech-ledger-core
    ```
 
 2. **Install dependencies**
+
    ```bash
    bun install
    ```
 
 3. **Environment setup**
+
    ```bash
    cp env.example .env
    # Edit .env with your configuration
    ```
 
 4. **Start infrastructure**
+
    ```bash
    make up
    ```
 
 5. **Database setup**
+
    ```bash
    bun db:init
    bun db:update
    ```
 
 6. **Start development server**
+
    ```bash
+   # Backend only
    bun dev
+   
+   # Frontend only
+   bun dev:frontend
+   
+   # Both backend and frontend
+   bun dev:all
    ```
 
-   The API will be available at `http://localhost:3000`
+   - Backend API: `http://localhost:3000`
+   - Frontend App: `http://localhost:5173`
+   - API Docs: `http://localhost:3000/docs`
 
 ## 📚 API Documentation
 
@@ -131,19 +167,27 @@ API documentation is automatically generated using Swagger/OpenAPI:
 - **Development**: `http://localhost:3000/docs`
 - **Root Endpoint**: Visit the root path `/` for general API information
 
+### Available Endpoints
+
+- **Authentication** (`/auth`) - Sign in, sign up, refresh token
+- **Users** (`/users`) - User and profile management
+- **Ledger** (`/ledger`) - Ledger entry CRUD operations
+- **Tenants** (`/tenants`) - Tenant management (public and protected endpoints)
+- **Accounts** (`/accounts`) - Financial account management
+
 ## 🧪 Testing
 
 ```bash
-# Run all tests
+# Run all tests (backend + frontend)
 bun test
 
 # Run tests with coverage
 bun test:cov
 
-# Run type checking
+# Run type checking (backend + frontend)
 bun check:type
 
-# Run linting
+# Run linting (backend + frontend)
 bun lint
 
 # Run all checks
@@ -155,6 +199,7 @@ bun check
 ### Why Bun?
 
 Bun provides superior performance compared to Node.js, with:
+
 - Faster startup times
 - Built-in test runner
 - Native TypeScript support
@@ -166,12 +211,14 @@ This makes it ideal for high-performance financial systems where latency matters
 ### Why Clean Architecture?
 
 Clean Architecture ensures that business rules are **completely independent** of:
+
 - Frameworks (Elysia, Prisma)
 - External libraries (AWS SDK)
 - UI/API layers
 - Database implementations
 
 This independence allows the system to:
+
 - Switch frameworks without changing business logic
 - Test business rules in isolation
 - Maintain long-term flexibility
@@ -192,6 +239,7 @@ For a financial system, having infrastructure code that is truly open-source and
 ### Why Infrastructure as Code?
 
 Infrastructure should be:
+
 - **Versioned** - Track changes over time
 - **Auditable** - Review infrastructure changes like code
 - **Reproducible** - Deploy identical environments
@@ -201,52 +249,71 @@ IaC ensures infrastructure changes are deliberate, reviewed, and reversible.
 
 ## 📁 Project Structure
 
-```
+```text
 fintech-ledger-core/
-├── .github/workflows/    # CI/CD pipelines
+├── backend/               # Backend API (workspace)
+│   ├── src/
+│   │   ├── models/       # Domain modules (Vertical Slices)
+│   │   │   ├── auth/     # Authentication, users, profiles
+│   │   │   ├── ledger/   # Ledger entries
+│   │   │   ├── accounts/ # Financial accounts
+│   │   │   ├── tenant/   # Tenant management
+│   │   │   └── payment/  # Payment processing
+│   │   ├── common/       # Shared utilities
+│   │   │   ├── adapters/ # Interfaces (ILogger, IQueueProducer)
+│   │   │   ├── container/# Dependency injection
+│   │   │   ├── errors/   # Custom error classes
+│   │   │   ├── providers/# Implementations (Prisma, SQS, Logger)
+│   │   │   └── enums/   # Shared enumerations
+│   │   ├── app.ts        # Application setup
+│   │   └── server.ts     # Entry point
+│   └── prisma/
+│       ├── schema.prisma # Database schema
+│       └── migrations/   # Database migrations
+├── frontend/              # Frontend React app (workspace)
+│   ├── src/
+│   │   ├── api/          # Eden Treaty client and endpoints
+│   │   ├── components/   # Reusable React components
+│   │   ├── hooks/        # Custom React hooks
+│   │   ├── pages/        # Page components
+│   │   ├── services/     # Business logic services
+│   │   ├── types/        # TypeScript type definitions
+│   │   └── utils/        # Utility functions
+│   └── package.json
 ├── terraform/             # Infrastructure as Code (OpenTofu)
 │   ├── modules/          # Reusable modules (RDS, SQS)
-│   └── environments/     # Environment-specific configs
-├── src/
-│   ├── common/           # Shared utilities
-│   │   ├── adapters/    # Interfaces (ILogger, IQueueProducer)
-│   │   ├── container/    # Dependency injection
-│   │   ├── errors/       # Custom error classes
-│   │   ├── providers/    # Implementations (Prisma, SQS, Logger)
-│   │   └── enums/        # Shared enumerations
-│   ├── modules/          # Domain modules (Vertical Slices)
-│   │   └── ledger/
-│   │       ├── domain/   # Entities and factories
-│   │       ├── usecases/ # Business logic
-│   │       ├── infra/    # Repositories and controllers
-│   │       └── dtos/     # Data transfer objects
-│   ├── app.ts            # Application setup
-│   └── server.ts         # Entry point
-├── prisma/
-│   ├── schema.prisma     # Database schema
-│   └── migrations/       # Database migrations
+│   └── environments/    # Environment-specific configs
+├── docs/                  # Documentation
 ├── docker-compose.yml     # Local development environment
 ├── Makefile              # Development commands
-└── README.md
+└── package.json          # Root workspace configuration
 ```
 
 ## 🔄 Development Workflow
 
 ```bash
-# Start infrastructure
+# Start infrastructure (PostgreSQL + LocalStack)
 make up
 
+# Generate Prisma client
+bun db:init
+
 # Run database migrations
-make db-update
+bun db:update
+
+# Seed database (create master user)
+bun db:seed
 
 # Start development server
-bun dev
+bun dev              # Backend only
+bun dev:frontend     # Frontend only
+bun dev:all          # Both
 
 # Run tests
-make test
+bun test
 
 # Run all checks
-make check
+bun check
 ```
 
 ## 🚀 Deployment

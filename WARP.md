@@ -77,46 +77,51 @@ This is a **financial ledger engine** built with **Clean Architecture** and **Do
 
 ### Layer Responsibilities
 
-**Domain Layer** (`src/modules/{module}/domain/`)
-- Core business entities (`LedgerEntry`, `Account`) with encapsulated business logic
+**Domain Layer** (`backend/src/models/{module}/domain/`)
+
+- Core business entities (`LedgerEntry`, `Account`, `User`, `Profile`, `Tenant`) with encapsulated business logic
 - Entities are NOT data bags - they contain behavior (e.g., `ledgerEntry.markAsCompleted()`)
 - Zero external dependencies (no Prisma, Elysia, AWS SDK)
 - All financial calculations use `Decimal.js` for precision
 - Factories handle entity creation and reconstruction
 
-**Repository Layer** (`src/modules/{module}/infra/repositories/`)
-- Single Responsibility: one repository per operation type (Create, Get, Update)
+**Repository Layer** (`backend/src/models/{module}/infra/repositories/`)
+
+- Single Responsibility: one repository per operation type (Create, Get, Update, Delete, List)
 - Accepts and returns Domain Entities
 - Handles mapping between Domain and Prisma models
 - All repositories accept optional `Prisma.TransactionClient` for atomic operations
-- Pattern: `{Operation}{Entity}Repository` (e.g., `CreateLedgerEntryRepository`, `GetAccountRepository`)
+- Pattern: `{Operation}{Entity}Repository` (e.g., `CreateLedgerEntryRepository`, `GetAccountRepository`, `ListAccountsByProfileIdRepository`)
 
-**Service Layer** (`src/modules/{module}/usecases/`)
+**Service Layer** (`backend/src/models/{module}/usecases/`)
+
 - Orchestrates business workflows
 - All services implement `IService<TInput, TOutput>` interface
 - Uses `TransactionManager` to ensure atomic operations
 - Financial transactions (balance updates + ledger entry creation) MUST happen within a single database transaction
 - After successful transactions, dispatches events to SQS for async processing
 
-**Presentation Layer** (`src/modules/{module}/infra/controllers/`)
+**Presentation Layer** (`backend/src/models/{module}/infra/controllers/`)
+
 - HTTP endpoints using Elysia.js
 - Validates input using TypeBox schemas
 - Controllers structured as Elysia plugins with `prefix` option
 - Uses `scopeResolver` for dependency injection
-- Pattern: `{Module}Controller.ts` (e.g., `LedgerController`)
+- Pattern: `{Module}Controller.ts` (e.g., `LedgerController`, `AuthController`, `UserController`, `TenantController`, `AccountController`)
 
-**Infrastructure Layer** (`src/common/providers/`)
+**Infrastructure Layer** (`backend/src/common/providers/`)
+
 - Only layer that communicates with external services
-- Implements interfaces defined in `src/common/interfaces/` and `src/common/adapters/`
+- Implements interfaces defined in `backend/src/common/interfaces/` and `backend/src/common/adapters/`
 - Contains AWS SDK, Prisma handlers, Winston logger implementations
 - All external dependencies live here
 
 ### Dependency Injection
 
 - Uses **Awilix** container for DI
-- Dependencies registered in modules: `ProvidersModule`, `{Module}Module`, `AppModule`
+- Dependencies registered in modules: `ProvidersModule`, `{Module}Module` (e.g., `AuthModule`, `LedgerModule`, `AccountsModule`, `TenantModule`), `AppModule`
 - Controllers use `scopeResolver` to resolve services per-request
-- Container initialized in `app.ts` before any middleware execution
+- Container initialized in `backend/src/app.ts` before any middleware execution
 
 ### Multi-Tenancy
 
@@ -162,7 +167,7 @@ This is a **financial ledger engine** built with **Clean Architecture** and **Do
 
 ### Security & Observability
 
-- Rate limiting configured per endpoint (see `src/common/middlewares/rateLimiting.ts`)
+- Rate limiting configured per endpoint (see `backend/src/common/middlewares/rateLimiting.ts`)
 - Security headers: CSP, HSTS, X-Frame-Options (environment-based presets)
 - Correlation ID tracking for request tracing
 - Structured logging via Winston
@@ -174,15 +179,42 @@ This is a **financial ledger engine** built with **Clean Architecture** and **Do
 
 Each domain module follows this structure:
 
-```
-src/modules/{module}/
+```text
+backend/src/models/{module}/
 ├── domain/          # Entities, Factories, Value Objects
 ├── usecases/        # Application services (business workflows)
+│   └── helpers/    # Helper functions and utilities
 ├── infra/
 │   ├── controllers/ # HTTP endpoints (Elysia plugins)
 │   └── repositories/# Database operations (one per operation)
 └── dtos/            # TypeBox validation schemas
 ```
+
+### Available Modules
+
+- **auth** - Authentication, user management, and profile management
+  - Endpoints: `/auth` (sign in, sign up, refresh token), `/users` (user and profile CRUD)
+  - Entities: `User`, `Profile`
+  - Key features: JWT authentication, multi-profile support, master user impersonation
+
+- **ledger** - Financial ledger entries
+  - Endpoints: `/ledger` (full CRUD operations)
+  - Entities: `LedgerEntry`
+  - Key features: Atomic transactions, balance updates, status tracking
+
+- **accounts** - Financial account management
+  - Endpoints: `/accounts` (account CRUD)
+  - Entities: `Account`
+  - Key features: Account creation, balance management, profile association
+
+- **tenant** - Multi-tenant management
+  - Endpoints: `/tenants` (public and protected endpoints)
+  - Entities: `Tenant`
+  - Key features: Tenant listing, admin management, public tenant discovery
+
+- **payment** - Payment processing
+  - Endpoints: Internal use (webhooks, processing)
+  - Key features: Payment processing, refunds, webhook handling
 
 ## Important Patterns
 
@@ -203,6 +235,10 @@ Repositories are focused and single-purpose:
 - `CreateLedgerEntryRepository` - creates ledger entries
 - `GetAccountRepository` - retrieves accounts
 - `UpdateAccountBalanceRepository` - updates balances (debit/credit methods)
+- `ListLedgerEntriesRepository` - lists ledger entries with filters
+- `ListAccountsByProfileIdRepository` - lists accounts by profile
+- `GetProfileRepository` - retrieves profiles
+- `ListAllTenantsRepository` - lists all tenants (admin)
 
 All accept optional `tx` parameter for transactions.
 
@@ -211,8 +247,17 @@ All accept optional `tx` parameter for transactions.
 ```typescript
 export const LedgerController = new Elysia({ prefix: '/ledger' })
   .resolve(scopeResolver)
+  .use(AuthGuardPlugin) // For protected endpoints
   .post('/entries', handler, { detail: {...} });
 ```
+
+Available controllers:
+
+- `AuthController` - `/auth` (sign in, sign up, refresh token)
+- `UserController` - `/users` (user and profile management)
+- `LedgerController` - `/ledger` (ledger entry CRUD)
+- `TenantController` - `/tenants` (tenant management)
+- `AccountController` - `/accounts` (account management)
 
 ### Transaction Pattern
 
@@ -268,6 +313,8 @@ Copy `env.example` to `.env` and configure:
 6. **Test critical paths** - Domain and Service layers must have comprehensive test coverage
 7. **Controllers use scopeResolver** - Don't resolve dependencies directly; use the DI pattern shown in existing controllers
 8. **Entities validate themselves** - Domain entities call `validate()` in their `create()` method
+9. **Path structure is `backend/src/models/`** - Not `src/modules/`, the project uses `models/` for domain modules
+10. **Workspace structure** - This is a Bun workspace with `backend/` and `frontend/` as separate workspaces
 
 ## Philosophy
 
