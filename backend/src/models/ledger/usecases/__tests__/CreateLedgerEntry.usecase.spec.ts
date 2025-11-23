@@ -4,6 +4,7 @@ import type { ITransactionManager } from '@/common/adapters/ITransactionManager'
 import type { IQueueProducer } from '@/common/interfaces/IQueueProducer';
 import type { ILogger } from '@/common/interfaces/ILogger';
 import type { PrismaHandler } from '@/common/providers/PrismaHandler';
+import type { SessionHandler } from '@/common/providers/SessionHandler';
 import { DomainError, NotFoundError } from '@/common/errors';
 import { Decimal } from 'decimal.js';
 import { AppProviders } from '@/common/interfaces/IAppContainer';
@@ -27,11 +28,25 @@ describe('CreateLedgerEntryUseCase', () => {
       debug: mock(() => {}),
     };
 
+    const mockSessionHandler: SessionHandler = {
+      getAgent: mock(() => 'user-123'),
+      get: mock(() => ({
+        userId: 'user-123',
+        tenantId: 'tenant-1',
+        accessType: 'AUTH_USER' as const,
+      })),
+      enrich: mock(),
+      initialize: mock(),
+      run: mock((fn) => fn()),
+      clear: mock(),
+    } as unknown as SessionHandler;
+
     const mockPrisma: PrismaHandler = {} as PrismaHandler;
 
     return {
       mockQueueProducer,
       mockLogger,
+      mockSessionHandler,
       mockPrisma,
     };
   };
@@ -82,7 +97,7 @@ describe('CreateLedgerEntryUseCase', () => {
 
   describe('execute', () => {
     it('should validate that amount must be greater than zero', async () => {
-      const { mockQueueProducer, mockLogger, mockPrisma } = setup();
+      const { mockQueueProducer, mockLogger, mockPrisma, mockSessionHandler } = setup();
 
       // Mock transaction manager that should not be called for amount validation
       const mockTransactionManager: ITransactionManager = {
@@ -99,10 +114,12 @@ describe('CreateLedgerEntryUseCase', () => {
         [AppProviders.prisma]: mockPrisma,
       });
 
+
       const useCase = new CreateLedgerEntryUseCase({
         [AppProviders.transactionManager]: mockTransactionManager,
         [AppProviders.queueProducer]: mockQueueProducer,
         [AppProviders.logger]: mockLogger,
+        [AppProviders.sessionHandler]: mockSessionHandler,
         [AppProviders.getAccountRepository]: getAccountRepository,
         [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
         [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
@@ -111,10 +128,10 @@ describe('CreateLedgerEntryUseCase', () => {
       await expect(
         useCase.execute({
           tenantId: 'tenant-1',
+          fromAccountId: 'account-1',
           toAccountId: 'account-1',
           amount: '0',
           type: 'DEPOSIT',
-          createdBy: 'user-1',
         }),
       ).rejects.toThrow(DomainError);
 
@@ -123,7 +140,7 @@ describe('CreateLedgerEntryUseCase', () => {
     });
 
     it('should validate that TRANSFER requires both accounts', async () => {
-      const { mockQueueProducer, mockLogger, mockPrisma } = setup();
+      const { mockQueueProducer, mockLogger, mockPrisma, mockSessionHandler } = setup();
 
       const mockPrismaClient = createMockPrismaClient({
         'account-1': createMockAccount('account-1'),
@@ -154,6 +171,7 @@ describe('CreateLedgerEntryUseCase', () => {
         [AppProviders.transactionManager]: mockTransactionManager,
         [AppProviders.queueProducer]: mockQueueProducer,
         [AppProviders.logger]: mockLogger,
+        [AppProviders.sessionHandler]: mockSessionHandler,
         [AppProviders.getAccountRepository]: getAccountRepository,
         [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
         [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
@@ -165,7 +183,6 @@ describe('CreateLedgerEntryUseCase', () => {
           fromAccountId: 'account-1',
           amount: '100.00',
           type: 'TRANSFER',
-          createdBy: 'user-1',
         }),
       ).rejects.toThrow(DomainError);
 
@@ -174,7 +191,7 @@ describe('CreateLedgerEntryUseCase', () => {
     });
 
     it('should successfully create a DEPOSIT transaction', async () => {
-      const { mockQueueProducer, mockLogger, mockPrisma } = setup();
+      const { mockQueueProducer, mockLogger, mockPrisma, mockSessionHandler } = setup();
 
       const mockPrismaClient = createMockPrismaClient({
         'account-1': createMockAccount('account-1'),
@@ -197,10 +214,12 @@ describe('CreateLedgerEntryUseCase', () => {
         [AppProviders.prisma]: mockPrisma,
       });
 
+
       const useCase = new CreateLedgerEntryUseCase({
         [AppProviders.transactionManager]: mockTransactionManager,
         [AppProviders.queueProducer]: mockQueueProducer,
         [AppProviders.logger]: mockLogger,
+        [AppProviders.sessionHandler]: mockSessionHandler,
         [AppProviders.getAccountRepository]: getAccountRepository,
         [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
         [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
@@ -208,10 +227,10 @@ describe('CreateLedgerEntryUseCase', () => {
 
       const result = await useCase.execute({
         tenantId: 'tenant-1',
+        fromAccountId: 'account-1',
         toAccountId: 'account-1',
         amount: '100.00',
         type: 'DEPOSIT',
-        createdBy: 'user-1',
       });
 
       expect(result).toBeDefined();
@@ -222,7 +241,7 @@ describe('CreateLedgerEntryUseCase', () => {
     });
 
     it('should successfully create a WITHDRAWAL transaction', async () => {
-      const { mockQueueProducer, mockLogger, mockPrisma } = setup();
+      const { mockQueueProducer, mockLogger, mockPrisma, mockSessionHandler } = setup();
 
       const mockPrismaClient = createMockPrismaClient({
         'account-1': createMockAccount('account-1', '1000.00'),
@@ -249,6 +268,7 @@ describe('CreateLedgerEntryUseCase', () => {
         [AppProviders.transactionManager]: mockTransactionManager,
         [AppProviders.queueProducer]: mockQueueProducer,
         [AppProviders.logger]: mockLogger,
+        [AppProviders.sessionHandler]: mockSessionHandler,
         [AppProviders.getAccountRepository]: getAccountRepository,
         [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
         [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
@@ -259,7 +279,6 @@ describe('CreateLedgerEntryUseCase', () => {
         fromAccountId: 'account-1',
         amount: '100.00',
         type: 'WITHDRAWAL',
-        createdBy: 'user-1',
       });
 
       expect(result).toBeDefined();
@@ -269,7 +288,7 @@ describe('CreateLedgerEntryUseCase', () => {
     });
 
     it('should successfully create a TRANSFER transaction', async () => {
-      const { mockQueueProducer, mockLogger, mockPrisma } = setup();
+      const { mockQueueProducer, mockLogger, mockPrisma, mockSessionHandler } = setup();
 
       const mockPrismaClient = createMockPrismaClient({
         'account-1': createMockAccount('account-1', '1000.00'),
@@ -297,6 +316,7 @@ describe('CreateLedgerEntryUseCase', () => {
         [AppProviders.transactionManager]: mockTransactionManager,
         [AppProviders.queueProducer]: mockQueueProducer,
         [AppProviders.logger]: mockLogger,
+        [AppProviders.sessionHandler]: mockSessionHandler,
         [AppProviders.getAccountRepository]: getAccountRepository,
         [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
         [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
@@ -308,7 +328,6 @@ describe('CreateLedgerEntryUseCase', () => {
         toAccountId: 'account-2',
         amount: '100.00',
         type: 'TRANSFER',
-        createdBy: 'user-1',
       });
 
       expect(result).toBeDefined();
@@ -320,7 +339,7 @@ describe('CreateLedgerEntryUseCase', () => {
     });
 
     it('should throw NotFoundError when fromAccount does not exist', async () => {
-      const { mockQueueProducer, mockLogger, mockPrisma } = setup();
+      const { mockQueueProducer, mockLogger, mockPrisma, mockSessionHandler } = setup();
 
       const mockPrismaClient = createMockPrismaClient({});
 
@@ -345,6 +364,7 @@ describe('CreateLedgerEntryUseCase', () => {
         [AppProviders.transactionManager]: mockTransactionManager,
         [AppProviders.queueProducer]: mockQueueProducer,
         [AppProviders.logger]: mockLogger,
+        [AppProviders.sessionHandler]: mockSessionHandler,
         [AppProviders.getAccountRepository]: getAccountRepository,
         [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
         [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
@@ -356,13 +376,12 @@ describe('CreateLedgerEntryUseCase', () => {
           fromAccountId: 'non-existent-account',
           amount: '100.00',
           type: 'WITHDRAWAL',
-          createdBy: 'user-1',
         }),
       ).rejects.toThrow(NotFoundError);
     });
 
     it('should throw NotFoundError when toAccount does not exist', async () => {
-      const { mockQueueProducer, mockLogger, mockPrisma } = setup();
+      const { mockQueueProducer, mockLogger, mockPrisma, mockSessionHandler } = setup();
 
       const mockPrismaClient = createMockPrismaClient({});
 
@@ -387,6 +406,7 @@ describe('CreateLedgerEntryUseCase', () => {
         [AppProviders.transactionManager]: mockTransactionManager,
         [AppProviders.queueProducer]: mockQueueProducer,
         [AppProviders.logger]: mockLogger,
+        [AppProviders.sessionHandler]: mockSessionHandler,
         [AppProviders.getAccountRepository]: getAccountRepository,
         [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
         [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
@@ -395,16 +415,16 @@ describe('CreateLedgerEntryUseCase', () => {
       await expect(
         useCase.execute({
           tenantId: 'tenant-1',
+          fromAccountId: 'account-1',
           toAccountId: 'non-existent-account',
           amount: '100.00',
           type: 'DEPOSIT',
-          createdBy: 'user-1',
         }),
       ).rejects.toThrow(NotFoundError);
     });
 
     it('should validate that WITHDRAWAL requires fromAccountId', async () => {
-      const { mockQueueProducer, mockLogger, mockPrisma } = setup();
+      const { mockQueueProducer, mockLogger, mockPrisma, mockSessionHandler } = setup();
 
       const mockPrismaClient = createMockPrismaClient({});
 
@@ -429,6 +449,7 @@ describe('CreateLedgerEntryUseCase', () => {
         [AppProviders.transactionManager]: mockTransactionManager,
         [AppProviders.queueProducer]: mockQueueProducer,
         [AppProviders.logger]: mockLogger,
+        [AppProviders.sessionHandler]: mockSessionHandler,
         [AppProviders.getAccountRepository]: getAccountRepository,
         [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
         [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
@@ -437,17 +458,20 @@ describe('CreateLedgerEntryUseCase', () => {
       await expect(
         useCase.execute({
           tenantId: 'tenant-1',
+          fromAccountId: '',
           amount: '100.00',
           type: 'WITHDRAWAL',
-          createdBy: 'user-1',
         }),
       ).rejects.toThrow(DomainError);
     });
 
     it('should validate that DEPOSIT requires toAccountId', async () => {
-      const { mockQueueProducer, mockLogger, mockPrisma } = setup();
+      const { mockQueueProducer, mockLogger, mockPrisma, mockSessionHandler } = setup();
 
-      const mockPrismaClient = createMockPrismaClient({});
+      // Mock account exists so we can test toAccountId validation
+      const mockPrismaClient = createMockPrismaClient({
+        'account-1': createMockAccount('account-1'),
+      });
 
       const mockTransactionManager: ITransactionManager = {
         runInTransaction: mock(async (callback) => {
@@ -470,6 +494,7 @@ describe('CreateLedgerEntryUseCase', () => {
         [AppProviders.transactionManager]: mockTransactionManager,
         [AppProviders.queueProducer]: mockQueueProducer,
         [AppProviders.logger]: mockLogger,
+        [AppProviders.sessionHandler]: mockSessionHandler,
         [AppProviders.getAccountRepository]: getAccountRepository,
         [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
         [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
@@ -478,15 +503,15 @@ describe('CreateLedgerEntryUseCase', () => {
       await expect(
         useCase.execute({
           tenantId: 'tenant-1',
+          fromAccountId: 'account-1',
           amount: '100.00',
           type: 'DEPOSIT',
-          createdBy: 'user-1',
         }),
       ).rejects.toThrow(DomainError);
     });
 
     it('should handle queue producer errors gracefully', async () => {
-      const { mockLogger, mockPrisma } = setup();
+      const { mockLogger, mockPrisma, mockSessionHandler } = setup();
 
       const mockQueueProducer: IQueueProducer = {
         sendMessage: mock(async () => {
@@ -519,6 +544,7 @@ describe('CreateLedgerEntryUseCase', () => {
         [AppProviders.transactionManager]: mockTransactionManager,
         [AppProviders.queueProducer]: mockQueueProducer,
         [AppProviders.logger]: mockLogger,
+        [AppProviders.sessionHandler]: mockSessionHandler,
         [AppProviders.getAccountRepository]: getAccountRepository,
         [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
         [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
@@ -527,16 +553,83 @@ describe('CreateLedgerEntryUseCase', () => {
       // Should still succeed even if queue fails
       const result = await useCase.execute({
         tenantId: 'tenant-1',
+        fromAccountId: 'account-1',
         toAccountId: 'account-1',
         amount: '100.00',
         type: 'DEPOSIT',
-        createdBy: 'user-1',
       });
 
       expect(result).toBeDefined();
       expect(result.status).toBe('COMPLETED');
       // Verify error was logged
       expect(mockLogger.error).toHaveBeenCalled();
+    });
+
+    it('should obtain createdBy from SessionHandler.getAgent()', async () => {
+      const { mockQueueProducer, mockLogger, mockPrisma } = setup();
+
+      const mockSessionHandler: SessionHandler = {
+        getAgent: mock(() => 'agent-from-session'),
+        get: mock(() => ({
+          userId: 'user-123',
+          tenantId: 'tenant-1',
+          accessType: 'AUTH_USER' as const,
+        })),
+        enrich: mock(),
+        initialize: mock(),
+        run: mock((fn) => fn()),
+        clear: mock(),
+      } as unknown as SessionHandler;
+
+      const mockPrismaClient = createMockPrismaClient({
+        'account-1': createMockAccount('account-1'),
+      });
+
+      const mockTransactionManager: ITransactionManager = {
+        runInTransaction: mock(async (callback) => {
+          const mockTx = {
+            prisma: mockPrismaClient as any,
+          };
+          return await callback(mockTx);
+        }),
+      };
+
+      const getAccountRepository = new GetAccountRepository({ [AppProviders.prisma]: mockPrisma });
+      const updateAccountBalanceRepository = new UpdateAccountBalanceRepository({
+        [AppProviders.prisma]: mockPrisma,
+      });
+      const createLedgerEntryRepository = new CreateLedgerEntryRepository({
+        [AppProviders.prisma]: mockPrisma,
+      });
+
+      const useCase = new CreateLedgerEntryUseCase({
+        [AppProviders.transactionManager]: mockTransactionManager,
+        [AppProviders.queueProducer]: mockQueueProducer,
+        [AppProviders.logger]: mockLogger,
+        [AppProviders.sessionHandler]: mockSessionHandler,
+        [AppProviders.getAccountRepository]: getAccountRepository,
+        [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
+        [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
+      });
+
+      const result = await useCase.execute({
+        tenantId: 'tenant-1',
+        fromAccountId: 'account-1',
+        toAccountId: 'account-1',
+        amount: '100.00',
+        type: 'DEPOSIT',
+      });
+
+      expect(result).toBeDefined();
+      expect(mockSessionHandler.getAgent).toHaveBeenCalled();
+      // Verify that the createdBy from session handler was used in the ledger entry
+      expect(mockPrismaClient.ledgerEntry.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            createdBy: 'agent-from-session',
+          }),
+        }),
+      );
     });
   });
 });
