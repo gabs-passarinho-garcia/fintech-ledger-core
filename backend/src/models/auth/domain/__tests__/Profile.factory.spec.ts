@@ -103,6 +103,7 @@ describe('ProfileFactory', () => {
         firstName: 'Jane',
         lastName: 'Smith',
         email: 'jane.smith@example.com',
+        balance: 0,
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-02'),
         deletedAt: null,
@@ -130,6 +131,7 @@ describe('ProfileFactory', () => {
         firstName: 'Jane',
         lastName: 'Smith',
         email: 'jane.smith@example.com',
+        balance: 0,
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-02'),
         deletedAt,
@@ -148,6 +150,7 @@ describe('ProfileFactory', () => {
         firstName: 'Jane',
         lastName: 'Smith',
         email: 'jane.smith@example.com',
+        balance: 0,
         createdAt: new Date('2024-01-01'),
         updatedAt: new Date('2024-01-02'),
       };

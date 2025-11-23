@@ -104,7 +104,6 @@ export class ProcessPaymentRefundUseCase
         fromAccountId: input.fromAccountId,
         amount: refundResult.refundedValue,
         type: 'WITHDRAWAL',
-        createdBy: input.createdBy,
       });
 
       this.logger.info(

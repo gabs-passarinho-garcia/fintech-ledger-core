@@ -108,10 +108,10 @@ export class ProcessPaymentUseCase
       try {
         ledgerEntry = await this.createLedgerEntryUseCase.execute({
           tenantId: input.tenantId,
+          fromAccountId: '',
           toAccountId: input.toAccountId,
           amount: paymentResult.status === InvoiceStatusType.PAID ? amount : new Decimal('0'),
           type: 'DEPOSIT',
-          createdBy: input.createdBy,
         });
 
         this.logger.info(

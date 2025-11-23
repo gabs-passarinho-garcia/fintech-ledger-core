@@ -58,6 +58,38 @@ describe('ListAllLedgerEntriesRepository', () => {
         orderBy: {
           createdAt: 'desc',
         },
+        include: {
+          tenant: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          fromAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+          toAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+        },
       });
     });
 
@@ -79,6 +111,38 @@ describe('ListAllLedgerEntriesRepository', () => {
         take: 20,
         orderBy: {
           createdAt: 'desc',
+        },
+        include: {
+          tenant: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          fromAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+          toAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
         },
       });
     });
@@ -107,6 +171,38 @@ describe('ListAllLedgerEntriesRepository', () => {
         orderBy: {
           createdAt: 'desc',
         },
+        include: {
+          tenant: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          fromAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+          toAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+        },
       });
     });
 
@@ -134,6 +230,38 @@ describe('ListAllLedgerEntriesRepository', () => {
         orderBy: {
           createdAt: 'desc',
         },
+        include: {
+          tenant: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          fromAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+          toAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+        },
       });
     });
 
@@ -160,6 +288,38 @@ describe('ListAllLedgerEntriesRepository', () => {
         take: 20,
         orderBy: {
           createdAt: 'desc',
+        },
+        include: {
+          tenant: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          fromAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+          toAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
         },
       });
     });
@@ -195,6 +355,38 @@ describe('ListAllLedgerEntriesRepository', () => {
         orderBy: {
           createdAt: 'desc',
         },
+        include: {
+          tenant: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          fromAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+          toAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+        },
       });
     });
 
@@ -217,6 +409,38 @@ describe('ListAllLedgerEntriesRepository', () => {
         take: 10,
         orderBy: {
           createdAt: 'desc',
+        },
+        include: {
+          tenant: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          fromAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+          toAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
         },
       });
     });
@@ -259,6 +483,38 @@ describe('ListAllLedgerEntriesRepository', () => {
         take: 20,
         orderBy: {
           createdAt: 'desc',
+        },
+        include: {
+          tenant: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          fromAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+          toAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
         },
       });
     });

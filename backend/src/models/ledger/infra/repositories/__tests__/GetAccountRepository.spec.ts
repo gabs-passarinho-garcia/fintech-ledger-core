@@ -22,6 +22,7 @@ describe('GetAccountRepository', () => {
       const mockAccount: AccountData = {
         id: 'account-1',
         tenantId: 'tenant-1',
+        profileId: null,
         name: 'Test Account',
         balance: new Decimal('1000.00') as any,
       };
@@ -56,6 +57,7 @@ describe('GetAccountRepository', () => {
       const mockAccount: AccountData = {
         id: 'account-1',
         tenantId: 'tenant-1',
+        profileId: null,
         name: 'Test Account',
         balance: new Decimal('1000.00') as any,
       };
@@ -86,6 +88,7 @@ describe('GetAccountRepository', () => {
       const mockAccount: AccountData = {
         id: 'account-1',
         tenantId: 'tenant-1',
+        profileId: null,
         name: 'Test Account',
         balance: new Decimal('1000.00') as any,
       };

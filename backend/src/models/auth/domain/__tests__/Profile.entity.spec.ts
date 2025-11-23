@@ -12,6 +12,7 @@ describe('Profile Entity', () => {
       firstName: 'John',
       lastName: 'Doe',
       email: 'john.doe@example.com',
+      balance: 0,
       createdAt: new Date(),
       updatedAt: new Date(),
       deletedAt: null,

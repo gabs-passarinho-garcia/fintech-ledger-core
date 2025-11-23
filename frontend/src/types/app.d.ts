@@ -25,7 +25,7 @@ declare function buildApp(): Elysia<"", {
     };
     macroFn: {
         readonly isSignIn: (enable: boolean) => {
-            readonly beforeHandle: ({ headers, scope, error }: {
+            readonly beforeHandle: ({ headers, scope }: {
                 [x: string]: unknown;
                 body: unknown;
                 query: Record<string, string>;
@@ -2160,7 +2160,7 @@ export declare const app: Elysia<"", {
     };
     macroFn: {
         readonly isSignIn: (enable: boolean) => {
-            readonly beforeHandle: ({ headers, scope, error }: {
+            readonly beforeHandle: ({ headers, scope }: {
                 [x: string]: unknown;
                 body: unknown;
                 query: Record<string, string>;

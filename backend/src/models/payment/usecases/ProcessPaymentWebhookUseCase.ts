@@ -90,10 +90,10 @@ export class ProcessPaymentWebhookUseCase
       try {
         ledgerEntry = await this.createLedgerEntryUseCase.execute({
           tenantId: input.tenantId,
+          fromAccountId: '',
           toAccountId: input.toAccountId,
           amount: new Decimal(webhookResult.amount),
           type: 'DEPOSIT',
-          createdBy: input.updatedBy,
         });
 
         this.logger.info(
@@ -122,7 +122,6 @@ export class ProcessPaymentWebhookUseCase
           fromAccountId: input.toAccountId,
           amount: new Decimal(webhookResult.amount),
           type: 'WITHDRAWAL',
-          createdBy: input.updatedBy,
         });
 
         this.logger.info(

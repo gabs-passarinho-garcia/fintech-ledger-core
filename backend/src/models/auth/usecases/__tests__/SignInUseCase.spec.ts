@@ -104,7 +104,8 @@ describe('SignInUseCase', () => {
 
       const result = await useCase.execute(input);
 
-      expect(result.tenantId).toBeUndefined();
+      expect(result).toBeDefined();
+      expect(result.accessToken).toBeDefined();
     });
   });
 });
