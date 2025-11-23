@@ -11,7 +11,7 @@ describe('ErrorFactory', () => {
         message: 'Domain error',
       });
 
-      const enrichedError = ErrorFactory.createError(customError, '/api/test', {
+      const enrichedError = ErrorFactory.createError(customError, '/api/test', undefined, {
         params: { id: '123' },
         query: { page: '1' },
         body: { name: 'test' },
@@ -43,7 +43,7 @@ describe('ErrorFactory', () => {
         message: 'Domain error',
       });
 
-      const enrichedError = ErrorFactory.createError(customError, undefined, {
+      const enrichedError = ErrorFactory.createError(customError, undefined, undefined, {
         params: { id: '123' },
       });
 
@@ -57,7 +57,7 @@ describe('ErrorFactory', () => {
     it('should wrap regular Error in InternalError', () => {
       const regularError = new Error('Regular error message');
 
-      const wrappedError = ErrorFactory.createError(regularError, '/api/test', {
+      const wrappedError = ErrorFactory.createError(regularError, '/api/test', undefined, {
         params: { id: '123' },
       });
 
@@ -86,7 +86,7 @@ describe('ErrorFactory', () => {
     it('should wrap unknown error value in InternalError', () => {
       const unknownError = { code: 'CUSTOM', message: 'Unknown error' };
 
-      const wrappedError = ErrorFactory.createError(unknownError, '/api/test', {
+      const wrappedError = ErrorFactory.createError(unknownError, '/api/test', undefined, {
         query: { filter: 'active' },
       });
 

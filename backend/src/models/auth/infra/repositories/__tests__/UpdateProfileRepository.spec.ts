@@ -61,8 +61,16 @@ describe('UpdateProfileRepository', () => {
       });
 
       expect(mockUpdate).toHaveBeenCalledTimes(1);
-      const callArgs = mockUpdate.mock.calls[0]?.[0];
-      expect(callArgs?.data?.lastName).toBe('Smith');
+      expect(mockUpdate).toHaveBeenCalledWith({
+        where: {
+          id: 'profile-123',
+          deletedAt: null,
+        },
+        data: {
+          lastName: 'Smith',
+          updatedAt: expect.any(Date),
+        },
+      });
     });
 
     it('should update email and lowercase it', async () => {
@@ -75,8 +83,16 @@ describe('UpdateProfileRepository', () => {
       });
 
       expect(mockUpdate).toHaveBeenCalledTimes(1);
-      const callArgs = mockUpdate.mock.calls[0]?.[0];
-      expect(callArgs?.data?.email).toBe('jane@example.com');
+      expect(mockUpdate).toHaveBeenCalledWith({
+        where: {
+          id: 'profile-123',
+          deletedAt: null,
+        },
+        data: {
+          email: 'jane@example.com',
+          updatedAt: expect.any(Date),
+        },
+      });
     });
 
     it('should update multiple fields', async () => {
@@ -91,29 +107,39 @@ describe('UpdateProfileRepository', () => {
       });
 
       expect(mockUpdate).toHaveBeenCalledTimes(1);
-      const callArgs = mockUpdate.mock.calls[0]?.[0];
-      expect(callArgs?.data?.firstName).toBe('Jane');
-      expect(callArgs?.data?.lastName).toBe('Smith');
-      expect(callArgs?.data?.email).toBe('jane@example.com');
+      expect(mockUpdate).toHaveBeenCalledWith({
+        where: {
+          id: 'profile-123',
+          deletedAt: null,
+        },
+        data: {
+          firstName: 'Jane',
+          lastName: 'Smith',
+          email: 'jane@example.com',
+          updatedAt: expect.any(Date),
+        },
+      });
     });
 
     it('should update updatedAt timestamp', async () => {
       const { mockPrisma, mockUpdate } = setup();
       const repository = new UpdateProfileRepository({ [AppProviders.prisma]: mockPrisma });
 
-      const before = new Date();
       await repository.update({
         profileId: 'profile-123',
         firstName: 'Jane',
       });
-      const after = new Date();
 
-      const callArgs = mockUpdate.mock.calls[0]?.[0];
-      const updatedAt = callArgs?.data?.updatedAt as Date;
-
-      expect(updatedAt).toBeInstanceOf(Date);
-      expect(updatedAt.getTime()).toBeGreaterThanOrEqual(before.getTime());
-      expect(updatedAt.getTime()).toBeLessThanOrEqual(after.getTime());
+      expect(mockUpdate).toHaveBeenCalledWith({
+        where: {
+          id: 'profile-123',
+          deletedAt: null,
+        },
+        data: {
+          firstName: 'Jane',
+          updatedAt: expect.any(Date),
+        },
+      });
     });
 
     it('should use transaction context when provided', async () => {

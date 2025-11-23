@@ -43,16 +43,17 @@ describe('DeleteProfileRepository', () => {
       const { mockPrisma, mockUpdateMany } = setup();
       const repository = new DeleteProfileRepository({ [AppProviders.prisma]: mockPrisma });
 
-      const before = new Date();
       await repository.delete({ profileId: 'profile-123' });
-      const after = new Date();
 
-      const callArgs = mockUpdateMany.mock.calls[0]?.[0];
-      const deletedAt = callArgs?.data?.deletedAt as Date;
-
-      expect(deletedAt).toBeInstanceOf(Date);
-      expect(deletedAt.getTime()).toBeGreaterThanOrEqual(before.getTime());
-      expect(deletedAt.getTime()).toBeLessThanOrEqual(after.getTime());
+      expect(mockUpdateMany).toHaveBeenCalledWith({
+        where: {
+          id: 'profile-123',
+          deletedAt: null,
+        },
+        data: {
+          deletedAt: expect.any(Date),
+        },
+      });
     });
 
     it('should only delete profiles that are not already deleted', async () => {
@@ -61,8 +62,15 @@ describe('DeleteProfileRepository', () => {
 
       await repository.delete({ profileId: 'profile-123' });
 
-      const callArgs = mockUpdateMany.mock.calls[0]?.[0];
-      expect(callArgs?.where?.deletedAt).toBeNull();
+      expect(mockUpdateMany).toHaveBeenCalledWith({
+        where: {
+          id: 'profile-123',
+          deletedAt: null,
+        },
+        data: {
+          deletedAt: expect.any(Date),
+        },
+      });
     });
 
     it('should use transaction context when provided', async () => {

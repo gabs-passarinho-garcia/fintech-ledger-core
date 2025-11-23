@@ -41,19 +41,18 @@ describe('UpdateUserPasswordRepository', () => {
       const { mockPrisma, mockUpdate } = setup();
       const repository = new UpdateUserPasswordRepository({ [AppProviders.prisma]: mockPrisma });
 
-      const before = new Date();
       await repository.update({
         userId: 'user-123',
         passwordHash: '$argon2id$v=19$m=65536,t=3,p=4$salt$hash',
       });
-      const after = new Date();
 
-      const callArgs = mockUpdate.mock.calls[0]?.[0];
-      const updatedAt = callArgs?.data?.updatedAt as Date;
-
-      expect(updatedAt).toBeInstanceOf(Date);
-      expect(updatedAt.getTime()).toBeGreaterThanOrEqual(before.getTime());
-      expect(updatedAt.getTime()).toBeLessThanOrEqual(after.getTime());
+      expect(mockUpdate).toHaveBeenCalledWith({
+        where: { id: 'user-123' },
+        data: {
+          passwordHash: '$argon2id$v=19$m=65536,t=3,p=4$salt$hash',
+          updatedAt: expect.any(Date),
+        },
+      });
     });
 
     it('should use transaction client when provided', async () => {

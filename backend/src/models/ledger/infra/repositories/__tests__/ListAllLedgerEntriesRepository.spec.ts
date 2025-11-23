@@ -49,8 +49,16 @@ describe('ListAllLedgerEntriesRepository', () => {
       });
 
       expect(mockFindMany).toHaveBeenCalledTimes(1);
-      const callArgs = mockFindMany.mock.calls[0]?.[0];
-      expect(callArgs?.where?.deletedAt).toBeNull();
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: {
+          deletedAt: null,
+        },
+        skip: 0,
+        take: 20,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     });
 
     it('should include deleted entries when includeDeleted is true', async () => {
@@ -65,8 +73,14 @@ describe('ListAllLedgerEntriesRepository', () => {
         includeDeleted: true,
       });
 
-      const callArgs = mockFindMany.mock.calls[0]?.[0];
-      expect(callArgs?.where?.deletedAt).toBeUndefined();
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: {},
+        skip: 0,
+        take: 20,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     });
 
     it('should filter by tenantId when provided', async () => {
@@ -83,8 +97,17 @@ describe('ListAllLedgerEntriesRepository', () => {
         limit: 20,
       });
 
-      const callArgs = mockFindMany.mock.calls[0]?.[0];
-      expect(callArgs?.where?.tenantId).toBe('tenant-1');
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: {
+          deletedAt: null,
+          tenantId: 'tenant-1',
+        },
+        skip: 0,
+        take: 20,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     });
 
     it('should filter by status when provided', async () => {
@@ -101,8 +124,17 @@ describe('ListAllLedgerEntriesRepository', () => {
         limit: 20,
       });
 
-      const callArgs = mockFindMany.mock.calls[0]?.[0];
-      expect(callArgs?.where?.status).toBe('COMPLETED');
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: {
+          deletedAt: null,
+          status: 'COMPLETED',
+        },
+        skip: 0,
+        take: 20,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     });
 
     it('should filter by type when provided', async () => {
@@ -119,8 +151,17 @@ describe('ListAllLedgerEntriesRepository', () => {
         limit: 20,
       });
 
-      const callArgs = mockFindMany.mock.calls[0]?.[0];
-      expect(callArgs?.where?.type).toBe('TRANSFER');
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: {
+          deletedAt: null,
+          type: 'TRANSFER',
+        },
+        skip: 0,
+        take: 20,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     });
 
     it('should filter by date range when provided', async () => {
@@ -141,9 +182,20 @@ describe('ListAllLedgerEntriesRepository', () => {
         limit: 20,
       });
 
-      const callArgs = mockFindMany.mock.calls[0]?.[0];
-      expect(callArgs?.where?.createdAt?.gte).toEqual(dateFrom);
-      expect(callArgs?.where?.createdAt?.lte).toEqual(dateTo);
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: {
+          deletedAt: null,
+          createdAt: {
+            gte: dateFrom,
+            lte: dateTo,
+          },
+        },
+        skip: 0,
+        take: 20,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     });
 
     it('should support pagination', async () => {
@@ -157,9 +209,16 @@ describe('ListAllLedgerEntriesRepository', () => {
         limit: 10,
       });
 
-      const callArgs = mockFindMany.mock.calls[0]?.[0];
-      expect(callArgs?.skip).toBe(10); // (page - 1) * limit
-      expect(callArgs?.take).toBe(10);
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: {
+          deletedAt: null,
+        },
+        skip: 10, // (page - 1) * limit
+        take: 10,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     });
 
     it('should return paginated result with total count', async () => {
@@ -192,9 +251,15 @@ describe('ListAllLedgerEntriesRepository', () => {
         limit: 20,
       });
 
-      const callArgs = mockFindMany.mock.calls[0]?.[0];
-      expect(callArgs?.orderBy).toEqual({
-        createdAt: 'desc',
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: {
+          deletedAt: null,
+        },
+        skip: 0,
+        take: 20,
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
     });
 

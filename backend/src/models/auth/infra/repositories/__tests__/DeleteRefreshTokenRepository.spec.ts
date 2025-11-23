@@ -42,16 +42,17 @@ describe('DeleteRefreshTokenRepository', () => {
       const { mockPrisma, mockUpdateMany } = setup();
       const repository = new DeleteRefreshTokenRepository({ [AppProviders.prisma]: mockPrisma });
 
-      const before = new Date();
       await repository.revoke({ token: 'token-123' });
-      const after = new Date();
 
-      const callArgs = mockUpdateMany.mock.calls[0]?.[0];
-      const revokedAt = callArgs?.data?.revokedAt as Date;
-
-      expect(revokedAt).toBeInstanceOf(Date);
-      expect(revokedAt.getTime()).toBeGreaterThanOrEqual(before.getTime());
-      expect(revokedAt.getTime()).toBeLessThanOrEqual(after.getTime());
+      expect(mockUpdateMany).toHaveBeenCalledWith({
+        where: {
+          token: 'token-123',
+          revokedAt: null,
+        },
+        data: {
+          revokedAt: expect.any(Date),
+        },
+      });
     });
 
     it('should only revoke tokens that are not already revoked', async () => {
@@ -60,8 +61,15 @@ describe('DeleteRefreshTokenRepository', () => {
 
       await repository.revoke({ token: 'token-123' });
 
-      const callArgs = mockUpdateMany.mock.calls[0]?.[0];
-      expect(callArgs?.where?.revokedAt).toBeNull();
+      expect(mockUpdateMany).toHaveBeenCalledWith({
+        where: {
+          token: 'token-123',
+          revokedAt: null,
+        },
+        data: {
+          revokedAt: expect.any(Date),
+        },
+      });
     });
 
     it('should use transaction client when provided', async () => {

@@ -10,6 +10,7 @@ import { ForbiddenError, NotFoundError } from '@/common/errors';
 describe('GetProfileUseCase', () => {
   const setup = () => {
     const mockLogger: ILogger = {
+      log: mock(() => {}),
       debug: mock(),
       info: mock(),
       warn: mock(),
@@ -31,7 +32,7 @@ describe('GetProfileUseCase', () => {
       run: mock((fn) => fn()),
       getAgent: mock(() => 'user-123'),
       clear: mock(),
-    };
+    } as never;
 
     const mockGetUserRepository: GetUserRepository = {
       findById: mock(),

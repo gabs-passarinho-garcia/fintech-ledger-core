@@ -63,7 +63,7 @@ describe('CreateUserRepository', () => {
         user: {
           create: mockCreate,
         },
-      } as unknown as Prisma.TransactionClient;
+      } as never;
 
       const mockTxContext: ITransactionContext = {
         prisma: mockTxClient,

@@ -18,7 +18,7 @@ describe('AuthorizationHelper', () => {
       run: mock((fn) => fn()),
       getAgent: mock(() => 'user-123'),
       clear: mock(),
-    };
+    } as never;
 
     const mockGetUserRepository: GetUserRepository = {
       findById: mock(),

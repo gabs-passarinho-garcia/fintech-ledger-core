@@ -58,19 +58,35 @@ describe('DeleteUserRepository', () => {
     });
 
     it('should use same timestamp for user and profiles', async () => {
-      const { mockPrisma, mockProfileUpdateMany, mockUserUpdateMany } = setup();
+      let profileDeletedAt: Date | undefined;
+      let userDeletedAt: Date | undefined;
+
+      const mockProfileUpdateMany = mock(async (args: any) => {
+        profileDeletedAt = args.data.deletedAt;
+        return { count: 2 };
+      });
+
+      const mockUserUpdateMany = mock(async (args: any) => {
+        userDeletedAt = args.data.deletedAt;
+        return { count: 1 };
+      });
+
+      const mockPrisma = {
+        profile: {
+          updateMany: mockProfileUpdateMany,
+        },
+        user: {
+          updateMany: mockUserUpdateMany,
+        },
+      } as unknown as PrismaHandler;
+
       const repository = new DeleteUserRepository({ [AppProviders.prisma]: mockPrisma });
 
       await repository.delete({ userId: 'user-123' });
 
-      const profileCallArgs = mockProfileUpdateMany.mock.calls[0]?.[0];
-      const userCallArgs = mockUserUpdateMany.mock.calls[0]?.[0];
-      const profileDeletedAt = profileCallArgs?.data?.deletedAt as Date;
-      const userDeletedAt = userCallArgs?.data?.deletedAt as Date;
-
       expect(profileDeletedAt).toBeInstanceOf(Date);
       expect(userDeletedAt).toBeInstanceOf(Date);
-      expect(profileDeletedAt.getTime()).toBe(userDeletedAt.getTime());
+      expect(profileDeletedAt?.getTime()).toBe(userDeletedAt?.getTime());
     });
 
     it('should use transaction context when provided', async () => {

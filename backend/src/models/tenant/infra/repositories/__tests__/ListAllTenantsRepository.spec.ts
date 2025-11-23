@@ -69,8 +69,15 @@ describe('ListAllTenantsRepository', () => {
       await repository.listAll({ includeDeleted: true });
 
       expect(mockFindMany).toHaveBeenCalledTimes(1);
-      const callArgs = mockFindMany.mock.calls[0]?.[0];
-      expect(callArgs?.where?.deletedAt).toBeUndefined();
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: {},
+        skip: undefined,
+        take: undefined,
+        select: expect.any(Object),
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     });
 
     it('should support pagination', async () => {
@@ -82,9 +89,17 @@ describe('ListAllTenantsRepository', () => {
       await repository.listAll({ skip: 10, take: 20 });
 
       expect(mockFindMany).toHaveBeenCalledTimes(1);
-      const callArgs = mockFindMany.mock.calls[0]?.[0];
-      expect(callArgs?.skip).toBe(10);
-      expect(callArgs?.take).toBe(20);
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: {
+          deletedAt: null,
+        },
+        skip: 10,
+        take: 20,
+        select: expect.any(Object),
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     });
 
     it('should return tenants with all fields', async () => {
@@ -110,9 +125,16 @@ describe('ListAllTenantsRepository', () => {
 
       await repository.listAll();
 
-      const callArgs = mockFindMany.mock.calls[0]?.[0];
-      expect(callArgs?.orderBy).toEqual({
-        createdAt: 'desc',
+      expect(mockFindMany).toHaveBeenCalledWith({
+        where: {
+          deletedAt: null,
+        },
+        skip: undefined,
+        take: undefined,
+        select: expect.any(Object),
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
     });
   });

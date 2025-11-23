@@ -50,8 +50,13 @@ describe('CreateRefreshTokenRepository', () => {
         expiresAt,
       });
 
-      const callArgs = mockCreate.mock.calls[0]?.[0];
-      expect(callArgs?.data?.expiresAt).toEqual(expiresAt);
+      expect(mockCreate).toHaveBeenCalledWith({
+        data: {
+          token: 'token-123',
+          userId: 'user-123',
+          expiresAt,
+        },
+      });
     });
 
     it('should use transaction client when provided', async () => {
