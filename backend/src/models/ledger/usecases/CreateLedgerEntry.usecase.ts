@@ -1,4 +1,5 @@
 import { Decimal } from 'decimal.js';
+import { Prisma } from 'prisma/client';
 import type { IService } from '@/common/interfaces/IService';
 import type { ITransactionManager } from '@/common/adapters/ITransactionManager';
 import type { IQueueProducer } from '@/common/interfaces/IQueueProducer';
@@ -6,6 +7,7 @@ import type { ILogger } from '@/common/interfaces/ILogger';
 import type { SessionHandler } from '@/common/providers/SessionHandler';
 import { AppProviders } from '@/common/interfaces/IAppContainer';
 import { LedgerEntryFactory } from '../domain/LedgerEntry.factory';
+import type { LedgerEntry } from '../domain/LedgerEntry.entity';
 import type { GetAccountRepository } from '../infra/repositories/GetAccountRepository';
 import type { UpdateAccountBalanceRepository } from '../infra/repositories/UpdateAccountBalanceRepository';
 import type { CreateLedgerEntryRepository } from '../infra/repositories/CreateLedgerEntryRepository';
@@ -84,6 +86,237 @@ export class CreateLedgerEntryUseCase
   }
 
   /**
+   * Validates account existence and retrieves their profile IDs.
+   * Also validates profile ownership for common users.
+   *
+   * @param input - The input data containing account IDs
+   * @param tx - The Prisma transaction client
+   * @returns Object containing fromAccountProfileId and toAccountProfileId
+   */
+  private async validateAndGetAccountProfileIds(
+    input: CreateLedgerEntryInput,
+    tx: Prisma.TransactionClient,
+  ): Promise<{ fromAccountProfileId: string | null; toAccountProfileId: string | null }> {
+    let fromAccountProfileId: string | null = null;
+    let toAccountProfileId: string | null = null;
+
+    if (input.fromAccountId) {
+      const fromAccount = await this.getAccountRepository.findByIdOrThrow({
+        accountId: input.fromAccountId,
+        tenantId: input.tenantId,
+        tx,
+      });
+      fromAccountProfileId = fromAccount.profileId;
+
+      if (fromAccountProfileId) {
+        await this.authorizationHelper.requireProfileOwnershipOrMaster({
+          profileId: fromAccountProfileId,
+        });
+      }
+    }
+
+    if (input.toAccountId) {
+      const toAccount = await this.getAccountRepository.findByIdOrThrow({
+        accountId: input.toAccountId,
+        tenantId: input.tenantId,
+        tx,
+      });
+      toAccountProfileId = toAccount.profileId;
+
+      if (toAccountProfileId) {
+        await this.authorizationHelper.requireProfileOwnershipOrMaster({
+          profileId: toAccountProfileId,
+        });
+      }
+    }
+
+    return { fromAccountProfileId, toAccountProfileId };
+  }
+
+  /**
+   * Executes balance updates based on transaction type.
+   *
+   * @param input - The input data containing transaction type and account IDs
+   * @param amount - The transaction amount
+   * @param tx - The Prisma transaction client
+   * @throws {DomainError} If required accounts are missing for the transaction type
+   */
+  private async executeBalanceUpdates(
+    input: CreateLedgerEntryInput,
+    amount: Decimal,
+    tx: Prisma.TransactionClient,
+  ): Promise<void> {
+    const balanceUpdateStrategies = {
+      TRANSFER: async (): Promise<void> => {
+        if (!input.fromAccountId || !input.toAccountId) {
+          throw new DomainError({
+            message: 'Transfer transactions require both fromAccountId and toAccountId',
+          });
+        }
+
+        await this.updateAccountBalanceRepository.debit({
+          accountId: input.fromAccountId,
+          tenantId: input.tenantId,
+          amount,
+          tx,
+        });
+
+        await this.updateAccountBalanceRepository.credit({
+          accountId: input.toAccountId,
+          tenantId: input.tenantId,
+          amount,
+          tx,
+        });
+
+        this.logger.info(
+          {
+            fromAccountId: input.fromAccountId,
+            toAccountId: input.toAccountId,
+            amount: amount.toString(),
+          },
+          'create_ledger_entry:transfer_executed',
+          CreateLedgerEntryUseCase.name,
+        );
+      },
+      WITHDRAWAL: async (): Promise<void> => {
+        if (!input.fromAccountId) {
+          throw new DomainError({
+            message: 'Withdrawal transactions require fromAccountId',
+          });
+        }
+
+        await this.updateAccountBalanceRepository.debit({
+          accountId: input.fromAccountId,
+          tenantId: input.tenantId,
+          amount,
+          tx,
+        });
+
+        this.logger.info(
+          {
+            fromAccountId: input.fromAccountId,
+            amount: amount.toString(),
+          },
+          'create_ledger_entry:withdrawal_executed',
+          CreateLedgerEntryUseCase.name,
+        );
+      },
+      DEPOSIT: async (): Promise<void> => {
+        if (!input.toAccountId) {
+          throw new DomainError({
+            message: 'Deposit transactions require toAccountId',
+          });
+        }
+
+        await this.updateAccountBalanceRepository.credit({
+          accountId: input.toAccountId,
+          tenantId: input.tenantId,
+          amount,
+          tx,
+        });
+
+        this.logger.info(
+          {
+            toAccountId: input.toAccountId,
+            amount: amount.toString(),
+          },
+          'create_ledger_entry:deposit_executed',
+          CreateLedgerEntryUseCase.name,
+        );
+      },
+    };
+
+    const strategy = balanceUpdateStrategies[input.type];
+    if (strategy) {
+      await strategy();
+    }
+  }
+
+  /**
+   * Creates and persists the ledger entry entity.
+   *
+   * @param input - The input data for creating the ledger entry
+   * @param amount - The transaction amount
+   * @param createdBy - The user ID who created the entry
+   * @param tx - The Prisma transaction client
+   * @returns The created ledger entry
+   */
+  private async createAndPersistLedgerEntry(
+    input: CreateLedgerEntryInput,
+    amount: Decimal,
+    createdBy: string,
+    tx: Prisma.TransactionClient,
+  ): Promise<LedgerEntry> {
+    const entry = LedgerEntryFactory.create({
+      tenantId: input.tenantId,
+      fromAccountId: input.fromAccountId,
+      toAccountId: input.toAccountId,
+      amount,
+      type: input.type,
+      createdBy,
+    });
+
+    entry.markAsCompleted(createdBy);
+
+    return await this.createLedgerEntryRepository.create({
+      ledgerEntry: entry,
+      tx,
+    });
+  }
+
+  /**
+   * Updates balance for all affected profiles.
+   *
+   * @param fromAccountProfileId - Profile ID of the source account (if any)
+   * @param toAccountProfileId - Profile ID of the destination account (if any)
+   * @param tenantId - The tenant ID
+   * @param updatedBy - The user ID who triggered the update
+   * @param tx - The Prisma transaction client
+   */
+  private async updateAffectedProfileBalances(
+    fromAccountProfileId: string | null,
+    toAccountProfileId: string | null,
+    tenantId: string,
+    updatedBy: string,
+    tx: Prisma.TransactionClient,
+  ): Promise<void> {
+    const affectedProfileIds = new Set<string>();
+    if (fromAccountProfileId) {
+      affectedProfileIds.add(fromAccountProfileId);
+    }
+    if (toAccountProfileId && toAccountProfileId !== fromAccountProfileId) {
+      affectedProfileIds.add(toAccountProfileId);
+    }
+
+    await Promise.all(
+      Array.from(affectedProfileIds).map(async (profileId) => {
+        const calculatedBalance = await this.getProfileBalanceRepository.calculateBalance({
+          profileId,
+          tenantId,
+          tx,
+        });
+
+        await this.updateProfileBalanceRepository.updateBalance({
+          profileId,
+          tenantId,
+          balance: calculatedBalance,
+          updatedBy,
+          tx,
+        });
+
+        this.logger.info(
+          {
+            profileId,
+            newBalance: calculatedBalance.toString(),
+          },
+          'create_ledger_entry:profile_balance_updated',
+          CreateLedgerEntryUseCase.name,
+        );
+      }),
+    );
+  }
+
+  /**
    * Executes the create ledger entry use case.
    * This method performs all operations within a single database transaction to ensure atomicity.
    *
@@ -125,176 +358,24 @@ export class CreateLedgerEntryUseCase
 
     // Execute all operations within a single transaction
     const ledgerEntry = await this.transactionManager.runInTransaction(async (ctx) => {
-      // Validate accounts exist and get their profileIds
-      let fromAccountProfileId: string | null = null;
-      let toAccountProfileId: string | null = null;
+      const { fromAccountProfileId, toAccountProfileId } =
+        await this.validateAndGetAccountProfileIds(input, ctx.prisma);
 
-      if (input.fromAccountId) {
-        const fromAccount = await this.getAccountRepository.findByIdOrThrow({
-          accountId: input.fromAccountId,
-          tenantId: input.tenantId,
-          tx: ctx.prisma,
-        });
-        fromAccountProfileId = fromAccount.profileId;
+      await this.executeBalanceUpdates(input, amount, ctx.prisma);
 
-        // Validate profile ownership for common users
-        if (fromAccountProfileId) {
-          await this.authorizationHelper.requireProfileOwnershipOrMaster({
-            profileId: fromAccountProfileId,
-          });
-        }
-      }
-
-      if (input.toAccountId) {
-        const toAccount = await this.getAccountRepository.findByIdOrThrow({
-          accountId: input.toAccountId,
-          tenantId: input.tenantId,
-          tx: ctx.prisma,
-        });
-        toAccountProfileId = toAccount.profileId;
-
-        // Validate profile ownership for common users
-        if (toAccountProfileId) {
-          await this.authorizationHelper.requireProfileOwnershipOrMaster({
-            profileId: toAccountProfileId,
-          });
-        }
-      }
-
-      // Handle balance updates based on transaction type
-      if (input.type === 'TRANSFER') {
-        if (!input.fromAccountId || !input.toAccountId) {
-          throw new DomainError({
-            message: 'Transfer transactions require both fromAccountId and toAccountId',
-          });
-        }
-
-        // Debit from source account
-        await this.updateAccountBalanceRepository.debit({
-          accountId: input.fromAccountId,
-          tenantId: input.tenantId,
-          amount,
-          tx: ctx.prisma,
-        });
-
-        // Credit to destination account
-        await this.updateAccountBalanceRepository.credit({
-          accountId: input.toAccountId,
-          tenantId: input.tenantId,
-          amount,
-          tx: ctx.prisma,
-        });
-
-        this.logger.info(
-          {
-            fromAccountId: input.fromAccountId,
-            toAccountId: input.toAccountId,
-            amount: amount.toString(),
-          },
-          'create_ledger_entry:transfer_executed',
-          CreateLedgerEntryUseCase.name,
-        );
-      } else if (input.type === 'WITHDRAWAL') {
-        if (!input.fromAccountId) {
-          throw new DomainError({
-            message: 'Withdrawal transactions require fromAccountId',
-          });
-        }
-
-        // Debit from account
-        await this.updateAccountBalanceRepository.debit({
-          accountId: input.fromAccountId,
-          tenantId: input.tenantId,
-          amount,
-          tx: ctx.prisma,
-        });
-
-        this.logger.info(
-          {
-            fromAccountId: input.fromAccountId,
-            amount: amount.toString(),
-          },
-          'create_ledger_entry:withdrawal_executed',
-          CreateLedgerEntryUseCase.name,
-        );
-      } else if (input.type === 'DEPOSIT') {
-        if (!input.toAccountId) {
-          throw new DomainError({
-            message: 'Deposit transactions require toAccountId',
-          });
-        }
-
-        // Credit to account
-        await this.updateAccountBalanceRepository.credit({
-          accountId: input.toAccountId,
-          tenantId: input.tenantId,
-          amount,
-          tx: ctx.prisma,
-        });
-
-        this.logger.info(
-          {
-            toAccountId: input.toAccountId,
-            amount: amount.toString(),
-          },
-          'create_ledger_entry:deposit_executed',
-          CreateLedgerEntryUseCase.name,
-        );
-      }
-
-      // Create the ledger entry
-      const entry = LedgerEntryFactory.create({
-        tenantId: input.tenantId,
-        fromAccountId: input.fromAccountId,
-        toAccountId: input.toAccountId,
+      const createdEntry = await this.createAndPersistLedgerEntry(
+        input,
         amount,
-        type: input.type,
         createdBy,
-      });
+        ctx.prisma,
+      );
 
-      // Mark as completed since balance updates succeeded
-      entry.markAsCompleted(createdBy);
-
-      const createdEntry = await this.createLedgerEntryRepository.create({
-        ledgerEntry: entry,
-        tx: ctx.prisma,
-      });
-
-      // Update profile balances for affected profiles
-      const affectedProfileIds = new Set<string>();
-      if (fromAccountProfileId) {
-        affectedProfileIds.add(fromAccountProfileId);
-      }
-      if (toAccountProfileId && toAccountProfileId !== fromAccountProfileId) {
-        affectedProfileIds.add(toAccountProfileId);
-      }
-
-      // Update each affected profile's balance
-      await Promise.all(
-        Array.from(affectedProfileIds).map(async (profileId) => {
-          const calculatedBalance = await this.getProfileBalanceRepository.calculateBalance({
-            profileId,
-            tenantId: input.tenantId,
-            tx: ctx.prisma,
-          });
-
-          await this.updateProfileBalanceRepository.updateBalance({
-            profileId,
-            tenantId: input.tenantId,
-            balance: calculatedBalance,
-            updatedBy: createdBy,
-            tx: ctx.prisma,
-          });
-
-          this.logger.info(
-            {
-              profileId,
-              newBalance: calculatedBalance.toString(),
-            },
-            'create_ledger_entry:profile_balance_updated',
-            CreateLedgerEntryUseCase.name,
-          );
-        }),
+      await this.updateAffectedProfileBalances(
+        fromAccountProfileId,
+        toAccountProfileId,
+        input.tenantId,
+        createdBy,
+        ctx.prisma,
       );
 
       this.logger.info(
