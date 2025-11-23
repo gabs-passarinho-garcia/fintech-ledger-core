@@ -8,6 +8,7 @@
     "build": "bun run scripts/build.ts",
     "preview": "bunx --bun vite preview",
     "type-check": "bunx --bun tsc --noEmit",
+    "generate-types": "bun run scripts/generate-types.ts",
     "test": "bun test",
     "test:cov": "bun test --coverage",
     "test:watch": "bun test --watch",

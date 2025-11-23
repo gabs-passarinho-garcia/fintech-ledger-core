@@ -1,8 +1,7 @@
 import { treaty } from "@elysiajs/eden";
-import { getCorrelationId } from "../utils/correlationId";
 import { storage } from "../utils/storage";
 import { logger } from "../utils/logger";
-import type { App } from "../../../backend/src/app";
+import { App } from "@/types/app";
 
 /**
  * Base URL for the API
@@ -20,27 +19,7 @@ const UNKNOWN_ERROR_MESSAGE = "Unknown error";
  * @returns Configured Eden Treaty client instance
  */
 function createApiClient(): ReturnType<typeof treaty<App>> {
-  return treaty<App>(API_BASE_URL, {
-    headers: () => {
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-
-      // Add correlation ID
-      const correlationId = getCorrelationId();
-      if (correlationId) {
-        headers["x-correlation-id"] = correlationId;
-      }
-
-      // Add authorization token
-      const accessToken = storage.getAccessToken();
-      if (accessToken) {
-        headers["Authorization"] = `Bearer ${accessToken}`;
-      }
-
-      return headers;
-    },
-  });
+  return treaty<App>(API_BASE_URL);
 }
 
 /**

@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --watch src/server.ts",
-    "prod": "bun run dist/server.js",
+    "prod": "bun run dist/src/server.js",
     "check:type": "bunx --bun tsc --noEmit",
     "build": "bunx --bun tsc --outDir dist",
     "build:prod": "bunx --bun tsc --outDir dist",

@@ -1,6 +1,7 @@
 import { api } from "./client";
 import { withAuthRefresh } from "./client";
 import { storage } from "../utils/storage";
+import { getCorrelationId } from "@/utils/correlationId";
 
 /**
  * API endpoints organized by domain
@@ -49,15 +50,30 @@ export const endpoints = {
     getProfile: async (
       profileId: string,
     ): Promise<
-      Awaited<ReturnType<(typeof api.users.profiles)[":profileId"]["get"]>>
+      Awaited<ReturnType<ReturnType<typeof api.users.profiles>["get"]>>
     > =>
       withAuthRefresh(() =>
-        api.users.profiles[":profileId"].get({ params: { profileId } }),
+        api.users.profiles({ profileId }).get({
+          headers: {
+            "x-tenant-id": storage.getTenantId() ?? undefined,
+            "x-correlation-id": getCorrelationId(),
+            authorization: `Bearer ${storage.getAccessToken()}`,
+          },
+        }),
       ),
 
     getMyProfile: async (): Promise<
       Awaited<ReturnType<typeof api.users.profiles.me.get>>
-    > => withAuthRefresh(() => api.users.profiles.me.get()),
+    > =>
+      withAuthRefresh(() =>
+        api.users.profiles.me.get({
+          headers: {
+            "x-tenant-id": storage.getTenantId() ?? undefined,
+            "x-correlation-id": getCorrelationId(),
+            authorization: `Bearer ${storage.getAccessToken()}`,
+          },
+        }),
+      ),
 
     updateProfile: async (
       profileId: string,
@@ -67,12 +83,15 @@ export const endpoints = {
         email?: string;
       },
     ): Promise<
-      Awaited<ReturnType<(typeof api.users.profiles)[":profileId"]["put"]>>
+      Awaited<ReturnType<ReturnType<typeof api.users.profiles>["put"]>>
     > =>
       withAuthRefresh(() =>
-        api.users.profiles[":profileId"].put({
-          params: { profileId },
-          body: data,
+        api.users.profiles({ profileId }).put(data, {
+          headers: {
+            "x-tenant-id": storage.getTenantId() ?? undefined,
+            "x-correlation-id": getCorrelationId(),
+            authorization: `Bearer ${storage.getAccessToken()}`,
+          },
         }),
       ),
 
@@ -80,34 +99,79 @@ export const endpoints = {
       page?: number;
       limit?: number;
     }): Promise<Awaited<ReturnType<typeof api.users.profiles.get>>> =>
-      withAuthRefresh(() => api.users.profiles.get({ query })),
+      withAuthRefresh(() =>
+        api.users.profiles.get({
+          query,
+          headers: {
+            "x-tenant-id": storage.getTenantId() ?? undefined,
+            "x-correlation-id": getCorrelationId(),
+            authorization: `Bearer ${storage.getAccessToken()}`,
+          },
+        }),
+      ),
 
     listAllUsers: async (query?: {
       page?: number;
       limit?: number;
     }): Promise<Awaited<ReturnType<typeof api.users.all.get>>> =>
-      withAuthRefresh(() => api.users.all.get({ query })),
+      withAuthRefresh(() =>
+        api.users.all.get({
+          query,
+          headers: {
+            "x-tenant-id": storage.getTenantId() ?? undefined,
+            "x-correlation-id": getCorrelationId(),
+            authorization: `Bearer ${storage.getAccessToken()}`,
+          },
+        }),
+      ),
 
     listAllProfiles: async (query?: {
       page?: number;
       limit?: number;
-    }): Promise<Awaited<ReturnType<typeof api.users.profiles.all.get>>> =>
-      withAuthRefresh(() => api.users.profiles.all.get({ query })),
-
-    deleteUser: async (
-      userId: string,
-    ): Promise<Awaited<ReturnType<(typeof api.users)[":userId"]["delete"]>>> =>
+    }): Promise<Awaited<ReturnType<typeof api.users.all.profiles.get>>> =>
       withAuthRefresh(() =>
-        api.users[":userId"].delete({ params: { userId } }),
+        api.users.all.profiles.get({
+          query,
+          headers: {
+            "x-tenant-id": storage.getTenantId() ?? undefined,
+            "x-correlation-id": getCorrelationId(),
+            authorization: `Bearer ${storage.getAccessToken()}`,
+          },
+        }),
+      ),
+
+    deleteUser: async (): Promise<
+      Awaited<ReturnType<typeof api.users.me.delete>>
+    > =>
+      withAuthRefresh(() =>
+        api.users.me.delete(
+          {},
+          {
+            headers: {
+              "x-tenant-id": storage.getTenantId() ?? undefined,
+              "x-correlation-id": getCorrelationId(),
+              authorization: `Bearer ${storage.getAccessToken()}`,
+            },
+          },
+        ),
       ),
 
     deleteProfile: async (
       profileId: string,
     ): Promise<
-      Awaited<ReturnType<(typeof api.users.profiles)[":profileId"]["delete"]>>
+      Awaited<ReturnType<ReturnType<typeof api.users.profiles>["delete"]>>
     > =>
       withAuthRefresh(() =>
-        api.users.profiles[":profileId"].delete({ params: { profileId } }),
+        api.users.profiles({ profileId }).delete(
+          {},
+          {
+            headers: {
+              "x-tenant-id": storage.getTenantId() ?? undefined,
+              "x-correlation-id": getCorrelationId(),
+              authorization: `Bearer ${storage.getAccessToken()}`,
+            },
+          },
+        ),
       ),
   },
 
@@ -123,7 +187,15 @@ export const endpoints = {
       type: "DEPOSIT" | "WITHDRAWAL" | "TRANSFER";
       createdBy: string;
     }): Promise<Awaited<ReturnType<typeof api.ledger.entries.post>>> =>
-      withAuthRefresh(() => api.ledger.entries.post(data)),
+      withAuthRefresh(() =>
+        api.ledger.entries.post(data, {
+          headers: {
+            "x-tenant-id": storage.getTenantId() ?? undefined,
+            "x-correlation-id": getCorrelationId(),
+            authorization: `Bearer ${storage.getAccessToken()}`,
+          },
+        }),
+      ),
 
     listEntries: async (query?: {
       status?: "PENDING" | "COMPLETED" | "FAILED";
@@ -133,14 +205,31 @@ export const endpoints = {
       page?: number;
       limit?: number;
     }): Promise<Awaited<ReturnType<typeof api.ledger.entries.get>>> =>
-      withAuthRefresh(() => api.ledger.entries.get({ query })),
+      withAuthRefresh(() =>
+        api.ledger.entries.get({
+          query,
+          headers: {
+            "x-tenant-id": storage.getTenantId() ?? undefined,
+            "x-correlation-id": getCorrelationId(),
+            authorization: `Bearer ${storage.getAccessToken()}`,
+          },
+        }),
+      ),
 
     getEntry: async (
       id: string,
     ): Promise<
-      Awaited<ReturnType<(typeof api.ledger.entries)[":id"]["get"]>>
+      Awaited<ReturnType<ReturnType<typeof api.ledger.entries>["get"]>>
     > =>
-      withAuthRefresh(() => api.ledger.entries[":id"].get({ params: { id } })),
+      withAuthRefresh(() =>
+        api.ledger.entries({ id }).get({
+          headers: {
+            "x-tenant-id": storage.getTenantId() ?? undefined,
+            "x-correlation-id": getCorrelationId(),
+            authorization: `Bearer ${storage.getAccessToken()}`,
+          },
+        }),
+      ),
 
     updateEntry: async (
       id: string,
@@ -148,19 +237,34 @@ export const endpoints = {
         status: "PENDING" | "COMPLETED" | "FAILED";
       },
     ): Promise<
-      Awaited<ReturnType<(typeof api.ledger.entries)[":id"]["put"]>>
+      Awaited<ReturnType<ReturnType<typeof api.ledger.entries>["put"]>>
     > =>
       withAuthRefresh(() =>
-        api.ledger.entries[":id"].put({ params: { id }, body: data }),
+        api.ledger.entries({ id }).put(data, {
+          headers: {
+            "x-tenant-id": storage.getTenantId() ?? undefined,
+            "x-correlation-id": getCorrelationId(),
+            authorization: `Bearer ${storage.getAccessToken()}`,
+          },
+        }),
       ),
 
     deleteEntry: async (
       id: string,
     ): Promise<
-      Awaited<ReturnType<(typeof api.ledger.entries)[":id"]["delete"]>>
+      Awaited<ReturnType<ReturnType<typeof api.ledger.entries>["delete"]>>
     > =>
       withAuthRefresh(() =>
-        api.ledger.entries[":id"].delete({ params: { id } }),
+        api.ledger.entries({ id }).delete(
+          {},
+          {
+            headers: {
+              "x-tenant-id": storage.getTenantId() ?? undefined,
+              "x-correlation-id": getCorrelationId(),
+              authorization: `Bearer ${storage.getAccessToken()}`,
+            },
+          },
+        ),
       ),
 
     listAllEntries: async (query?: {
@@ -173,7 +277,16 @@ export const endpoints = {
       limit?: number;
       includeDeleted?: boolean;
     }): Promise<Awaited<ReturnType<typeof api.ledger.entries.all.get>>> =>
-      withAuthRefresh(() => api.ledger.entries.all.get({ query })),
+      withAuthRefresh(() =>
+        api.ledger.entries.all.get({
+          query,
+          headers: {
+            "x-tenant-id": storage.getTenantId() ?? undefined,
+            "x-correlation-id": getCorrelationId(),
+            authorization: `Bearer ${storage.getAccessToken()}`,
+          },
+        }),
+      ),
   },
 
   /**
@@ -182,13 +295,31 @@ export const endpoints = {
   tenants: {
     listTenants: async (): Promise<
       Awaited<ReturnType<typeof api.tenants.get>>
-    > => withAuthRefresh(() => api.tenants.get()),
+    > =>
+      withAuthRefresh(() =>
+        api.tenants.get({
+          headers: {
+            "x-tenant-id": storage.getTenantId() ?? undefined,
+            "x-correlation-id": getCorrelationId(),
+            authorization: `Bearer ${storage.getAccessToken()}`,
+          },
+        }),
+      ),
 
     listAllTenants: async (query?: {
       page?: number;
       limit?: number;
       includeDeleted?: boolean;
     }): Promise<Awaited<ReturnType<typeof api.tenants.all.get>>> =>
-      withAuthRefresh(() => api.tenants.all.get({ query })),
+      withAuthRefresh(() =>
+        api.tenants.all.get({
+          query,
+          headers: {
+            "x-tenant-id": storage.getTenantId() ?? undefined,
+            "x-correlation-id": getCorrelationId(),
+            authorization: `Bearer ${storage.getAccessToken()}`,
+          },
+        }),
+      ),
   },
 };

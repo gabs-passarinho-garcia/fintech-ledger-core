@@ -30,7 +30,8 @@
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "inlineSources": true,
-    "sourceRoot": "/"
+    "sourceRoot": "/",
+    "noEmitOnError": false
   },
   "exclude": [
     "eslint.config.mjs",
