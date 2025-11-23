@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -26,6 +27,12 @@ export default {
           amber: '#f59e0b', // Warnings
           gray: '#6b7280',  // Neutral
         },
+        accent: {
+          purple: '#8b5cf6',
+          pink: '#ec4899',
+          cyan: '#06b6d4',
+          orange: '#f97316',
+        },
         gray: {
           50: '#f9fafb',
           100: '#f3f4f6',
@@ -44,15 +51,48 @@ export default {
       },
       boxShadow: {
         'float': '0 10px 30px -10px rgba(0, 0, 0, 0.15)',
+        'float-dark': '0 10px 30px -10px rgba(0, 0, 0, 0.4)',
         'nav': '0 -4px 20px rgba(0,0,0,0.05)',
         'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+        'card-dark': '0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2)',
+        'glow': '0 0 20px rgba(37, 99, 235, 0.3)',
+        'glow-dark': '0 0 20px rgba(59, 130, 246, 0.4)',
       },
       borderRadius: {
         'xl': '1rem',
         '2xl': '1.25rem',
         '3xl': '1.5rem',
         '4xl': '2rem',
-      }
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.3s ease-out',
+        'fade-in-up': 'fadeInUp 0.4s ease-out',
+        'slide-in': 'slideIn 0.3s ease-out',
+        'bounce-subtle': 'bounceSubtle 0.6s ease-out',
+        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        fadeInUp: {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideIn: {
+          '0%': { transform: 'translateX(-10px)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        bounceSubtle: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-5px)' },
+        },
+        pulseGlow: {
+          '0%, 100%': { opacity: '1', boxShadow: '0 0 20px rgba(37, 99, 235, 0.3)' },
+          '50%': { opacity: '0.8', boxShadow: '0 0 30px rgba(37, 99, 235, 0.5)' },
+        },
+      },
     },
   },
   plugins: [],

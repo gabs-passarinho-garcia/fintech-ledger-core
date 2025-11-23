@@ -1,20 +1,27 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { endpoints } from "../api/endpoints";
 import Table from "../components/Table";
 import Loading from "../components/Loading";
+import Badge from "../components/Badge";
+import Card from "../components/Card";
+import SearchBar from "../components/SearchBar";
 import type { LedgerEntry } from "../types";
 
 /**
  * Ledgers management page (master/admin)
  */
 export default function LedgersManagement(): JSX.Element {
+  const navigate = useNavigate();
   const [entries, setEntries] = useState<LedgerEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadEntries();
-  }, []);
+  }, [filters]);
 
   const loadEntries = async (): Promise<void> => {
     setIsLoading(true);
@@ -45,7 +52,117 @@ export default function LedgersManagement(): JSX.Element {
     }
   };
 
-  if (isLoading) {
+  const filteredEntries = entries.filter((entry) => {
+    if (!searchQuery) {
+      return true;
+    }
+    const query = searchQuery.toLowerCase();
+    return (
+      entry.id.toLowerCase().includes(query) ||
+      entry.type.toLowerCase().includes(query) ||
+      entry.amount.toLowerCase().includes(query) ||
+      entry.status.toLowerCase().includes(query) ||
+      entry.tenantId.toLowerCase().includes(query)
+    );
+  });
+
+  const columns = [
+    {
+      key: "id",
+      header: "ID",
+      render: (entry: LedgerEntry): JSX.Element => (
+        <span className="font-mono text-xs text-gray-600 dark:text-gray-400">
+          {entry.id.slice(0, 8)}...
+        </span>
+      ),
+      sortable: true,
+      sortFn: (a: LedgerEntry, b: LedgerEntry): number =>
+        a.id.localeCompare(b.id),
+    },
+    {
+      key: "tenantId",
+      header: "Tenant ID",
+      render: (entry: LedgerEntry): JSX.Element => (
+        <span className="font-mono text-xs text-gray-600 dark:text-gray-400">
+          {entry.tenantId.slice(0, 8)}...
+        </span>
+      ),
+      sortable: true,
+      sortFn: (a: LedgerEntry, b: LedgerEntry): number =>
+        a.tenantId.localeCompare(b.tenantId),
+    },
+    {
+      key: "type",
+      header: "Type",
+      render: (entry: LedgerEntry): JSX.Element => (
+        <Badge
+          variant={
+            entry.type === "DEPOSIT"
+              ? "success"
+              : entry.type === "WITHDRAWAL"
+                ? "warning"
+                : "info"
+          }
+          size="sm"
+        >
+          {entry.type}
+        </Badge>
+      ),
+      sortable: true,
+      sortFn: (a: LedgerEntry, b: LedgerEntry): number =>
+        a.type.localeCompare(b.type),
+    },
+    {
+      key: "amount",
+      header: "Amount",
+      render: (entry: LedgerEntry): string => {
+        const amount = parseFloat(entry.amount || "0");
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+        }).format(amount);
+      },
+      sortable: true,
+      sortFn: (a: LedgerEntry, b: LedgerEntry): number =>
+        parseFloat(a.amount || "0") - parseFloat(b.amount || "0"),
+    },
+    {
+      key: "status",
+      header: "Status",
+      render: (entry: LedgerEntry): JSX.Element => (
+        <Badge
+          variant={
+            entry.status === "COMPLETED"
+              ? "success"
+              : entry.status === "PENDING"
+                ? "warning"
+                : "error"
+          }
+          size="sm"
+        >
+          {entry.status}
+        </Badge>
+      ),
+      sortable: true,
+      sortFn: (a: LedgerEntry, b: LedgerEntry): number =>
+        a.status.localeCompare(b.status),
+    },
+    {
+      key: "createdAt",
+      header: "Created At",
+      render: (entry: LedgerEntry): string =>
+        new Date(entry.createdAt).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        }),
+      sortable: true,
+      sortFn: (a: LedgerEntry, b: LedgerEntry): number =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    },
+  ];
+
+  if (isLoading && entries.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loading size="lg" />
@@ -53,74 +170,59 @@ export default function LedgersManagement(): JSX.Element {
     );
   }
 
-  const columns = [
-    {
-      key: "id",
-      header: "ID",
-      render: (entry: LedgerEntry): JSX.Element => (
-        <span className="font-mono text-xs">{entry.id.slice(0, 8)}...</span>
-      ),
-    },
-    {
-      key: "tenantId",
-      header: "Tenant ID",
-      render: (entry: LedgerEntry): JSX.Element => (
-        <span className="font-mono text-xs">
-          {entry.tenantId.slice(0, 8)}...
-        </span>
-      ),
-    },
-    {
-      key: "type",
-      header: "Type",
-      render: (entry: LedgerEntry): string => entry.type,
-    },
-    {
-      key: "amount",
-      header: "Amount",
-      render: (entry: LedgerEntry): string => entry.amount,
-    },
-    {
-      key: "status",
-      header: "Status",
-      render: (entry: LedgerEntry): JSX.Element => (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-semibold ${
-            entry.status === "COMPLETED"
-              ? "bg-green-100 text-green-800"
-              : entry.status === "PENDING"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-red-100 text-red-800"
-          }`}
-        >
-          {entry.status}
-        </span>
-      ),
-    },
-    {
-      key: "createdAt",
-      header: "Created At",
-      render: (entry: LedgerEntry): string =>
-        new Date(entry.createdAt).toLocaleDateString(),
-    },
-  ];
-
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Ledgers Management</h1>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          Ledgers Management
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Manage all ledger entries across all tenants
+        </p>
       </div>
+
       {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+        <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-xl text-red-700 dark:text-red-300 text-sm animate-fade-in">
           {error}
         </div>
       )}
 
-      <Table
-        columns={columns}
-        data={entries}
-        emptyMessage="No ledger entries found"
-      />
+      <Card className="animate-fade-in-up">
+        <div className="mb-4">
+          <SearchBar
+            onSearch={setSearchQuery}
+            onFilterChange={setFilters}
+            placeholder="Search by ID, type, amount, status, or tenant ID..."
+            filters={[
+              {
+                key: "status",
+                label: "Status",
+                value: "",
+              },
+              {
+                key: "type",
+                label: "Type",
+                value: "",
+              },
+            ]}
+          />
+        </div>
+
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loading size="lg" />
+          </div>
+        ) : (
+          <Table
+            columns={columns}
+            data={filteredEntries}
+            emptyMessage="No ledger entries found"
+            onRowClick={(entry) => {
+              navigate(`/ledger/${entry.id}`);
+            }}
+          />
+        )}
+      </Card>
     </div>
   );
 }

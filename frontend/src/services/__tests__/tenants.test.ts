@@ -119,7 +119,9 @@ describe("tenants service", () => {
     it("should throw error when response is invalid", async () => {
       mockListAllTenants.mockResolvedValue({});
 
-      await expect(listAllTenants()).rejects.toThrow("Failed to list all tenants");
+      await expect(listAllTenants()).rejects.toThrow(
+        "Failed to list all tenants",
+      );
     });
   });
 });
