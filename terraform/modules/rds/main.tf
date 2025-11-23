@@ -29,12 +29,31 @@ resource "aws_security_group" "rds" {
     description = "PostgreSQL access"
   }
 
+  # DNS resolution (UDP)
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port   = 53
+    to_port     = 53
+    protocol    = "udp"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow all outbound traffic"
+    description = "DNS resolution (UDP)"
+  }
+
+  # DNS resolution (TCP)
+  egress {
+    from_port   = 53
+    to_port     = 53
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "DNS resolution (TCP)"
+  }
+
+  # HTTPS for CloudWatch logs and AWS services
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTPS for CloudWatch logs and AWS services"
   }
 
   tags = {

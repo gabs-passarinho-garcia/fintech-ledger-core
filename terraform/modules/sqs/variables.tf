@@ -14,3 +14,9 @@ variable "queue_names" {
   type        = list(string)
 }
 
+variable "max_receive_count" {
+  description = "Maximum number of times a message can be received before being moved to DLQ"
+  type        = number
+  default     = 3
+}
+
