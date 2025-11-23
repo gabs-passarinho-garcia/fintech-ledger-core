@@ -125,50 +125,9 @@ export const endpoints = {
 
     listProfilesByTenant: async (
       tenantId: string,
-    ): Promise<{
-      data?: {
-        data?: {
-          profiles: Array<{
-            id: string;
-            userId: string;
-            tenantId: string;
-            firstName: string;
-            lastName: string;
-            email: string;
-            createdAt: Date | string;
-            updatedAt: Date | string;
-          }>;
-        };
-      };
-      error?: unknown;
-    }> =>
+    ): Promise<Awaited<ReturnType<typeof api.users.tenant.profiles.get>>> =>
       withAuthRefresh(() =>
-        (
-          api.users.profiles as unknown as {
-            byTenant: {
-              get: (options: {
-                query: { tenantId: string };
-                headers: ReturnType<typeof buildHeaders>;
-              }) => Promise<{
-                data?: {
-                  data?: {
-                    profiles: Array<{
-                      id: string;
-                      userId: string;
-                      tenantId: string;
-                      firstName: string;
-                      lastName: string;
-                      email: string;
-                      createdAt: Date | string;
-                      updatedAt: Date | string;
-                    }>;
-                  };
-                };
-                error?: unknown;
-              }>;
-            };
-          }
-        ).byTenant.get({
+        api.users.tenant.profiles.get({
           query: { tenantId },
           headers: buildHeaders(),
         }),
