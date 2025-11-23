@@ -18,7 +18,12 @@ export interface ListLedgerEntriesFilters {
 }
 
 export interface ListLedgerEntriesResult {
-  entries: LedgerEntry[];
+  entries: Array<
+    LedgerEntry & {
+      tenantName?: string;
+      profileName?: string | null;
+    }
+  >;
   total: number;
   page: number;
   limit: number;
@@ -93,13 +98,56 @@ export class ListLedgerEntriesRepository {
         orderBy: {
           createdAt: 'desc',
         },
+        include: {
+          tenant: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          fromAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+          toAccount: {
+            select: {
+              id: true,
+              profile: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+          },
+        },
       }),
       client.ledgerEntry.count({ where }),
     ]);
 
     return {
-      entries: entries.map((entry) =>
-        LedgerEntry.reconstruct({
+      entries: entries.map((entry) => {
+        // Determine profile name based on transaction type
+        let profileName: string | null = null;
+        if (entry.type === 'DEPOSIT' && entry.toAccount?.profile) {
+          profileName = `${entry.toAccount.profile.firstName} ${entry.toAccount.profile.lastName}`;
+        } else if (entry.type === 'WITHDRAWAL' && entry.fromAccount?.profile) {
+          profileName = `${entry.fromAccount.profile.firstName} ${entry.fromAccount.profile.lastName}`;
+        } else if (entry.type === 'TRANSFER' && entry.fromAccount?.profile) {
+          // For transfers, show the fromAccount profile (sender)
+          profileName = `${entry.fromAccount.profile.firstName} ${entry.fromAccount.profile.lastName}`;
+        }
+
+        const ledgerEntry = LedgerEntry.reconstruct({
           id: entry.id,
           tenantId: entry.tenantId,
           fromAccountId: entry.fromAccountId,
@@ -113,8 +161,13 @@ export class ListLedgerEntriesRepository {
           updatedAt: entry.updatedAt,
           deletedBy: entry.deletedBy,
           deletedAt: entry.deletedAt,
-        }),
-      ),
+        });
+
+        return Object.assign(ledgerEntry, {
+          tenantName: entry.tenant?.name,
+          profileName,
+        });
+      }),
       total,
       page: args.page,
       limit: args.limit,

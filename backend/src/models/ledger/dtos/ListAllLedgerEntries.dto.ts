@@ -24,6 +24,8 @@ export const ListAllLedgerEntriesResponseSchema = t.Object({
     t.Object({
       id: t.String(),
       tenantId: t.String(),
+      tenantName: t.Optional(t.Nullable(t.String())),
+      profileName: t.Optional(t.Nullable(t.String())),
       fromAccountId: t.Optional(t.Nullable(t.String())),
       toAccountId: t.Optional(t.Nullable(t.String())),
       amount: t.String(),

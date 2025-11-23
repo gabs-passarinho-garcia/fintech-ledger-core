@@ -1282,6 +1282,8 @@ declare function buildApp(): Elysia<"", {
                                 updatedBy?: string | null | undefined;
                                 fromAccountId?: string | null | undefined;
                                 toAccountId?: string | null | undefined;
+                                tenantName?: string | null | undefined;
+                                profileName?: string | null | undefined;
                                 tenantId: string;
                                 type: string;
                                 id: string;
@@ -1518,6 +1520,8 @@ declare function buildApp(): Elysia<"", {
                                     deletedAt?: Date | null | undefined;
                                     fromAccountId?: string | null | undefined;
                                     toAccountId?: string | null | undefined;
+                                    tenantName?: string | null | undefined;
+                                    profileName?: string | null | undefined;
                                     tenantId: string;
                                     type: string;
                                     id: string;
@@ -1957,7 +1961,7 @@ declare function buildApp(): Elysia<"", {
                 initialBalance?: string | number | undefined;
                 tenantId: string;
                 name: string;
-                profileId: string | null;
+                profileId: string;
             };
             params: {};
             query: {};
@@ -3413,6 +3417,8 @@ export declare const app: Elysia<"", {
                                 updatedBy?: string | null | undefined;
                                 fromAccountId?: string | null | undefined;
                                 toAccountId?: string | null | undefined;
+                                tenantName?: string | null | undefined;
+                                profileName?: string | null | undefined;
                                 tenantId: string;
                                 type: string;
                                 id: string;
@@ -3649,6 +3655,8 @@ export declare const app: Elysia<"", {
                                     deletedAt?: Date | null | undefined;
                                     fromAccountId?: string | null | undefined;
                                     toAccountId?: string | null | undefined;
+                                    tenantName?: string | null | undefined;
+                                    profileName?: string | null | undefined;
                                     tenantId: string;
                                     type: string;
                                     id: string;
@@ -4088,7 +4096,7 @@ export declare const app: Elysia<"", {
                 initialBalance?: string | number | undefined;
                 tenantId: string;
                 name: string;
-                profileId: string | null;
+                profileId: string;
             };
             params: {};
             query: {};

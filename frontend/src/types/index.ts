@@ -68,6 +68,8 @@ export interface SignUpResponse {
 export interface LedgerEntry {
   id: string;
   tenantId: string;
+  tenantName?: string | null;
+  profileName?: string | null;
   fromAccountId?: string | null;
   toAccountId?: string | null;
   amount: string;

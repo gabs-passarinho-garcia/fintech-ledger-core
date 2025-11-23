@@ -140,9 +140,18 @@ export default function Dashboard(): JSX.Element {
     entries.forEach((entry) => {
       typeCounts[entry.type] = (typeCounts[entry.type] || 0) + 1;
     });
+
+    // Color mapping for transaction types
+    const typeColors: Record<string, string> = {
+      DEPOSIT: "#10b981", // green
+      WITHDRAWAL: "#f59e0b", // amber
+      TRANSFER: "#3b82f6", // blue
+    };
+
     return Object.entries(typeCounts).map(([label, value]) => ({
       label,
       value,
+      color: typeColors[label] || "#2563eb",
     }));
   }, [entries]);
 
@@ -172,6 +181,36 @@ export default function Dashboard(): JSX.Element {
       sortable: true,
       sortFn: (a: LedgerEntry, b: LedgerEntry): number =>
         a.id.localeCompare(b.id),
+    },
+    {
+      key: "tenant",
+      header: "Tenant",
+      render: (entry: LedgerEntry): JSX.Element => (
+        <span className="text-sm text-gray-700 dark:text-gray-300">
+          {entry.tenantName || entry.tenantId.slice(0, 8) + "..."}
+        </span>
+      ),
+      sortable: true,
+      sortFn: (a: LedgerEntry, b: LedgerEntry): number => {
+        const aName = a.tenantName || a.tenantId;
+        const bName = b.tenantName || b.tenantId;
+        return aName.localeCompare(bName);
+      },
+    },
+    {
+      key: "profile",
+      header: "Profile",
+      render: (entry: LedgerEntry): JSX.Element => (
+        <span className="text-sm text-gray-700 dark:text-gray-300">
+          {entry.profileName || "-"}
+        </span>
+      ),
+      sortable: true,
+      sortFn: (a: LedgerEntry, b: LedgerEntry): number => {
+        const aName = a.profileName || "";
+        const bName = b.profileName || "";
+        return aName.localeCompare(bName);
+      },
     },
     {
       key: "type",
@@ -367,10 +406,15 @@ export default function Dashboard(): JSX.Element {
 
       {chartData.length > 0 && (
         <Card className="animate-fade-in-up">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Transactions by Type
-          </h2>
-          <SimpleChart data={chartData} height={150} color="#2563eb" />
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+              Transactions by Type
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Distribution of transaction types in your ledger
+            </p>
+          </div>
+          <SimpleChart data={chartData} height={280} color="#2563eb" />
         </Card>
       )}
 
