@@ -13,6 +13,10 @@ import {
   ListAccountsByProfileResponseSchema,
 } from '../../dtos/ListAccountsByProfile.dto';
 import { ListProfilesWithAccountsResponseSchema } from '../../dtos/ListProfilesWithAccounts.dto';
+import {
+  CreateAccountRequestSchema,
+  CreateAccountResponseSchema,
+} from '../../dtos/CreateAccount.dto';
 
 const ACCOUNT_TAG = 'Accounts';
 const MY_PATH = '/my';
@@ -86,6 +90,40 @@ export const AccountController = new Elysia({ prefix: '/accounts' })
       detail: {
         summary: 'List Accounts by Profile',
         description: 'Lists all accounts for a specific profile. Master users only.',
+        tags: [ACCOUNT_TAG],
+      },
+      isSignIn: true,
+    },
+  )
+  .post(
+    '/',
+    async function createAccount({ body, scope }) {
+      const createAccountUseCase = scope.resolve(AppProviders.createAccountUseCase);
+      const result = await createAccountUseCase.execute(body);
+
+      return {
+        statusCode: HTTPStatusCode.CREATED,
+        data: result,
+      };
+    },
+    {
+      body: CreateAccountRequestSchema,
+      headers: TokenAuthSchema,
+      response: {
+        [HTTPStatusCode.CREATED]: t.Object({
+          statusCode: t.Literal(HTTPStatusCode.CREATED),
+          data: CreateAccountResponseSchema,
+        }),
+        [HTTPStatusCode.BAD_REQUEST]: ErrorSchema,
+        [HTTPStatusCode.UNAUTHORIZED]: ErrorSchema,
+        [HTTPStatusCode.FORBIDDEN]: ErrorSchema,
+        [HTTPStatusCode.NOT_FOUND]: ErrorSchema,
+        [HTTPStatusCode.INTERNAL_SERVER_ERROR]: ErrorSchema,
+      },
+      detail: {
+        summary: 'Create Account',
+        description:
+          'Creates a new account for a profile. User must own the profile or be a master user.',
         tags: [ACCOUNT_TAG],
       },
       isSignIn: true,

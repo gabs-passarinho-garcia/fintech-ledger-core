@@ -33,6 +33,7 @@ export default function Layout({ children }: LayoutProps): JSX.Element {
     { to: "/dashboard", label: "Dashboard", icon: "📊" },
     { to: "/profile", label: "Profile", icon: "👤" },
     { to: "/tenants", label: "Tenants", icon: "🏢" },
+    { to: "/accounts", label: "Accounts", icon: "💳" },
   ];
 
   const adminLinks = user?.isMaster

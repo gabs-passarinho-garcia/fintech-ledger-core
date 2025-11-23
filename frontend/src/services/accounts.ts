@@ -74,3 +74,25 @@ export async function listProfilesWithAccounts(): Promise<{
 
   return response.data.data;
 }
+
+/**
+ * Creates a new account
+ */
+export interface CreateAccountInput {
+  tenantId: string;
+  profileId: string;
+  name: string;
+  initialBalance?: number | string;
+}
+
+export async function createAccount(
+  data: CreateAccountInput,
+): Promise<AccountResponse> {
+  const response = await endpoints.accounts.createAccount(data);
+
+  if (!response.data?.data) {
+    throw new Error("Failed to create account");
+  }
+
+  return response.data.data;
+}

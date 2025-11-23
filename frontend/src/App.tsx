@@ -16,6 +16,7 @@ import LedgersManagement from "./pages/LedgersManagement";
 import LedgerEntryCreate from "./pages/LedgerEntryCreate";
 import LedgerEntryDetail from "./pages/LedgerEntryDetail";
 import LedgerEntryEdit from "./pages/LedgerEntryEdit";
+import AccountsManagement from "./pages/AccountsManagement";
 
 /**
  * Main App component with routing
@@ -127,6 +128,14 @@ function App(): JSX.Element {
           element={
             <ProtectedRoute>
               <LedgerEntryEdit />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/accounts"
+          element={
+            <ProtectedRoute>
+              <AccountsManagement />
             </ProtectedRoute>
           }
         />

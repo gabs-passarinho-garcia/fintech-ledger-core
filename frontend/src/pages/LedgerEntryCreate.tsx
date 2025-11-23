@@ -352,7 +352,15 @@ export default function LedgerEntryCreate(): JSX.Element {
               <div className="p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg text-sm text-yellow-700 dark:text-yellow-300">
                 {isMaster
                   ? "No accounts available. Please select a profile first."
-                  : "No accounts available. Please contact your administrator."}
+                  : "No accounts available. "}
+                {!isMaster && (
+                  <a
+                    href="/accounts"
+                    className="underline font-medium hover:text-yellow-800 dark:hover:text-yellow-200"
+                  >
+                    Create an account
+                  </a>
+                )}
               </div>
             ) : (
               <select
@@ -393,7 +401,15 @@ export default function LedgerEntryCreate(): JSX.Element {
               <div className="p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg text-sm text-yellow-700 dark:text-yellow-300">
                 {isMaster
                   ? "No accounts available. Please select a profile first."
-                  : "No accounts available. Please contact your administrator."}
+                  : "No accounts available. "}
+                {!isMaster && (
+                  <a
+                    href="/accounts"
+                    className="underline font-medium hover:text-yellow-800 dark:hover:text-yellow-200"
+                  >
+                    Create an account
+                  </a>
+                )}
               </div>
             ) : (
               <select

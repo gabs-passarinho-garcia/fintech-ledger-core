@@ -335,5 +335,17 @@ export const endpoints = {
           headers: buildHeaders(),
         }),
       ),
+
+    createAccount: async (data: {
+      tenantId: string;
+      profileId: string | null;
+      name: string;
+      initialBalance?: number | string;
+    }): Promise<Awaited<ReturnType<typeof api.accounts.post>>> =>
+      withAuthRefresh(() =>
+        api.accounts.post(data, {
+          headers: buildHeaders(),
+        }),
+      ),
   },
 };

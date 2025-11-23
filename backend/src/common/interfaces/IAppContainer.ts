@@ -46,9 +46,11 @@ import type { GetProfileBalanceRepository } from '@/models/auth/infra/repositori
 import type { UpdateProfileBalanceRepository } from '@/models/auth/infra/repositories/UpdateProfileBalanceRepository';
 import type { CreateRefreshTokenRepository } from '@/models/auth/infra/repositories/CreateRefreshTokenRepository';
 import type { ListAccountsByProfileIdRepository } from '@/models/accounts/infra/repositories/ListAccountsByProfileIdRepository';
+import type { CreateAccountRepository } from '@/models/accounts/infra/repositories/CreateAccountRepository';
 import type { GetMyAccountsUseCase } from '@/models/accounts/usecases/GetMyAccountsUseCase';
 import type { ListAccountsByProfileUseCase } from '@/models/accounts/usecases/ListAccountsByProfileUseCase';
 import type { ListProfilesWithAccountsUseCase } from '@/models/accounts/usecases/ListProfilesWithAccountsUseCase';
+import type { CreateAccountUseCase } from '@/models/accounts/usecases/CreateAccountUseCase';
 import type { GetProfileBalanceUseCase } from '@/models/auth/usecases/GetProfileBalanceUseCase';
 import type { GetRefreshTokenRepository } from '@/models/auth/infra/repositories/GetRefreshTokenRepository';
 import type { DeleteRefreshTokenRepository } from '@/models/auth/infra/repositories/DeleteRefreshTokenRepository';
@@ -124,6 +126,7 @@ export interface IAppContainer {
   updateProfileBalanceRepository: UpdateProfileBalanceRepository;
   createRefreshTokenRepository: CreateRefreshTokenRepository;
   listAccountsByProfileIdRepository: ListAccountsByProfileIdRepository;
+  createAccountRepository: CreateAccountRepository;
   getRefreshTokenRepository: GetRefreshTokenRepository;
   deleteRefreshTokenRepository: DeleteRefreshTokenRepository;
   // Auth use cases
@@ -145,6 +148,7 @@ export interface IAppContainer {
   getMyAccountsUseCase: GetMyAccountsUseCase;
   listAccountsByProfileUseCase: ListAccountsByProfileUseCase;
   listProfilesWithAccountsUseCase: ListProfilesWithAccountsUseCase;
+  createAccountUseCase: CreateAccountUseCase;
   // Tenant repositories
   listTenantsByUserRepository: ListTenantsByUserRepository;
   listAllTenantsRepository: ListAllTenantsRepository;
