@@ -116,13 +116,7 @@ describe('ListLedgerEntriesUseCase', () => {
     });
 
     it('should list ledger entries successfully with default pagination', async () => {
-      const {
-        useCase,
-        mockRepository,
-        mockGetUserRepository,
-        mockGetProfileRepository,
-        mockListAccountsByProfileIdRepository,
-      } = setup();
+      const { useCase, mockRepository, mockGetUserRepository } = setup();
       const entries = [createMockLedgerEntry('entry-1'), createMockLedgerEntry('entry-2')];
 
       (mockGetUserRepository.findById as ReturnType<typeof mock>).mockResolvedValue({
@@ -158,6 +152,7 @@ describe('ListLedgerEntriesUseCase', () => {
           type: undefined,
           dateFrom: undefined,
           dateTo: undefined,
+          accountIds: undefined,
         },
         page: 1,
         limit: 20,
@@ -265,6 +260,7 @@ describe('ListLedgerEntriesUseCase', () => {
           type: undefined,
           dateFrom: undefined,
           dateTo: undefined,
+          accountIds: undefined,
         },
         page: 1,
         limit: 20,
@@ -303,6 +299,7 @@ describe('ListLedgerEntriesUseCase', () => {
           type: 'DEPOSIT',
           dateFrom: undefined,
           dateTo: undefined,
+          accountIds: undefined,
         },
         page: 1,
         limit: 20,

@@ -7,6 +7,7 @@ import type { GetUserRepository } from '../../infra/repositories/GetUserReposito
 import { AppProviders } from '@/common/interfaces/IAppContainer';
 import { ForbiddenError, NotFoundError } from '@/common/errors';
 import { Decimal } from 'decimal.js';
+import { ProfileFactory } from '../../domain';
 
 describe('GetProfileUseCase', () => {
   const setup = () => {
@@ -69,18 +70,20 @@ describe('GetProfileUseCase', () => {
         deletedAt: null,
       });
 
-      (mockGetProfileRepository.findById as ReturnType<typeof mock>).mockResolvedValue({
-        id: 'profile-123',
-        userId: 'user-123',
-        tenantId: 'tenant-123',
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john@example.com',
-        balance: new Decimal('0.00'),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-      });
+      (mockGetProfileRepository.findById as ReturnType<typeof mock>).mockResolvedValue(
+        ProfileFactory.reconstruct({
+          id: 'profile-123',
+          userId: 'user-123',
+          tenantId: 'tenant-123',
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john@example.com',
+          balance: new Decimal('0.00'),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+        }),
+      );
 
       const result = await useCase.execute({ profileId: 'profile-123' });
 
@@ -133,18 +136,20 @@ describe('GetProfileUseCase', () => {
         deletedAt: null,
       });
 
-      (mockGetProfileRepository.findById as ReturnType<typeof mock>).mockResolvedValue({
-        id: 'profile-123',
-        userId: 'user-456',
-        tenantId: 'tenant-123',
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john@example.com',
-        balance: new Decimal('0.00'),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-      });
+      (mockGetProfileRepository.findById as ReturnType<typeof mock>).mockResolvedValue(
+        ProfileFactory.reconstruct({
+          id: 'profile-123',
+          userId: 'user-456',
+          tenantId: 'tenant-123',
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john@example.com',
+          balance: new Decimal('0.00'),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+        }),
+      );
 
       await expect(async () => {
         await useCase.execute({ profileId: 'profile-123' });
