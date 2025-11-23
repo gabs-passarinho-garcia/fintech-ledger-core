@@ -73,6 +73,7 @@ describe('CreateProfileUseCase', () => {
       mockGetTenantRepository,
       mockSessionHandler,
       mockTransactionManager,
+      mockGetUserRepository,
     };
   };
 

@@ -11,6 +11,7 @@
     "build": "bunx --bun tsc --outDir dist",
     "build:prod": "bunx --bun tsc --outDir dist",
     "test": "bun test",
+    "test:clean": "rm -rf dist && bun test",
     "test:cov": "bun test --coverage",
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",

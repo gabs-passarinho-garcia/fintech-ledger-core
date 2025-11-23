@@ -71,13 +71,16 @@ describe('CustomError', () => {
         additionalMessage: 'Wrapped error',
       });
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(originalError);
+      // When originalError is a CustomError, console.error is NOT called
+      // because the error properties are copied directly
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
       expect(error.statusCode).toBe(originalError.statusCode);
       expect(error.errorCode).toBe(originalError.errorCode);
       expect(error.errorName).toBe(originalError.errorName);
       expect(error.path).toBe(originalError.path);
       expect(error.data).toEqual(originalError.data);
       expect(error.message).toBe(originalError.message);
+      expect(error.cause).toBe(originalError);
 
       console.error = originalConsoleError;
     });
