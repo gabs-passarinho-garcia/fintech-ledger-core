@@ -2,6 +2,7 @@ import type { IService } from '@/common/interfaces/IService';
 import type { ILogger } from '@/common/interfaces/ILogger';
 import type { SessionHandler } from '@/common/providers/SessionHandler';
 import type { ListTenantsByUserRepository } from '../infra/repositories/ListTenantsByUserRepository';
+import type { ListAllTenantsRepository } from '../infra/repositories/ListAllTenantsRepository';
 import { AppProviders } from '@/common/interfaces/IAppContainer';
 import { AuthorizationHelper } from '@/models/auth/usecases/helpers/AuthorizationHelper';
 import type { GetUserRepository } from '@/models/auth/infra/repositories/GetUserRepository';
@@ -15,23 +16,29 @@ export type ListTenantsByUserOutput = ListTenantsResponse;
 /**
  * Use case for listing tenants associated with the authenticated user.
  * Returns all unique tenants from the user's profiles.
+ * Master users receive all tenants in the system (non-deleted).
  */
 export class ListTenantsByUserUseCase
   implements IService<ListTenantsByUserInput, ListTenantsByUserOutput>
 {
   private readonly logger: ILogger;
   private readonly listTenantsByUserRepository: ListTenantsByUserRepository;
+  private readonly listAllTenantsRepository: ListAllTenantsRepository;
   private readonly authorizationHelper: AuthorizationHelper;
+  private readonly getUserRepository: GetUserRepository;
 
   public constructor(opts: {
     [AppProviders.logger]: ILogger;
     [AppProviders.listTenantsByUserRepository]: ListTenantsByUserRepository;
+    [AppProviders.listAllTenantsRepository]: ListAllTenantsRepository;
     [AppProviders.sessionHandler]: SessionHandler;
     [AppProviders.getUserRepository]: GetUserRepository;
     [AppProviders.getProfileRepository]: GetProfileRepository;
   }) {
     this.logger = opts[AppProviders.logger];
     this.listTenantsByUserRepository = opts[AppProviders.listTenantsByUserRepository];
+    this.listAllTenantsRepository = opts[AppProviders.listAllTenantsRepository];
+    this.getUserRepository = opts[AppProviders.getUserRepository];
     this.authorizationHelper = new AuthorizationHelper({
       sessionHandler: opts[AppProviders.sessionHandler],
       getUserRepository: opts[AppProviders.getUserRepository],
@@ -42,9 +49,10 @@ export class ListTenantsByUserUseCase
   /**
    * Executes the list tenants by user use case.
    * Lists all unique tenants associated with the authenticated user's profiles.
+   * Master users receive all tenants in the system (non-deleted).
    *
    * @param _input - Empty input (uses authenticated user from session)
-   * @returns List of tenants for the authenticated user
+   * @returns List of tenants for the authenticated user (all tenants if master)
    * @throws {ForbiddenError} If user is not authenticated
    */
   public async execute(
@@ -61,12 +69,23 @@ export class ListTenantsByUserUseCase
       ListTenantsByUserUseCase.name,
     );
 
-    const tenants = await this.listTenantsByUserRepository.listByUserId({ userId });
+    // Check if user is master
+    const user = await this.getUserRepository.findById({ userId });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Master users receive all tenants (non-deleted)
+    const tenants = user.isMaster
+      ? await this.listAllTenantsRepository.listAll({ includeDeleted: false })
+      : await this.listTenantsByUserRepository.listByUserId({ userId });
 
     this.logger.info(
       {
         userId,
         tenantCount: tenants.length,
+        isMaster: user.isMaster,
       },
       'list_tenants_by_user:success',
       ListTenantsByUserUseCase.name,

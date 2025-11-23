@@ -56,9 +56,14 @@ export class ListAllTenantsRepository {
         deletedBy: true,
         deletedAt: true,
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: [
+        {
+          name: 'asc',
+        },
+        {
+          createdAt: 'desc',
+        },
+      ],
     });
   }
 }

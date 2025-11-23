@@ -54,9 +54,14 @@ describe('ListAllTenantsRepository', () => {
         skip: undefined,
         take: undefined,
         select: expect.any(Object),
-        orderBy: {
-          createdAt: 'desc',
-        },
+        orderBy: [
+          {
+            name: 'asc',
+          },
+          {
+            createdAt: 'desc',
+          },
+        ],
       });
     });
 
@@ -74,9 +79,14 @@ describe('ListAllTenantsRepository', () => {
         skip: undefined,
         take: undefined,
         select: expect.any(Object),
-        orderBy: {
-          createdAt: 'desc',
-        },
+        orderBy: [
+          {
+            name: 'asc',
+          },
+          {
+            createdAt: 'desc',
+          },
+        ],
       });
     });
 
@@ -96,9 +106,14 @@ describe('ListAllTenantsRepository', () => {
         skip: 10,
         take: 20,
         select: expect.any(Object),
-        orderBy: {
-          createdAt: 'desc',
-        },
+        orderBy: [
+          {
+            name: 'asc',
+          },
+          {
+            createdAt: 'desc',
+          },
+        ],
       });
     });
 
@@ -132,9 +147,14 @@ describe('ListAllTenantsRepository', () => {
         skip: undefined,
         take: undefined,
         select: expect.any(Object),
-        orderBy: {
-          createdAt: 'desc',
-        },
+        orderBy: [
+          {
+            name: 'asc',
+          },
+          {
+            createdAt: 'desc',
+          },
+        ],
       });
     });
   });
