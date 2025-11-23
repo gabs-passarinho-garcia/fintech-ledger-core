@@ -101,6 +101,7 @@ export class GetMyProfileUseCase implements IService<GetMyProfileInput, GetMyPro
       firstName: profile.firstName,
       lastName: profile.lastName,
       email: profile.email,
+      balance: profile.balance.toString(),
       createdAt: profile.createdAt,
       updatedAt: profile.updatedAt,
     };

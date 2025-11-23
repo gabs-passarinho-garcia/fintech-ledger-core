@@ -11,6 +11,10 @@ import { AppProviders } from '@/common/interfaces/IAppContainer';
 import { GetAccountRepository } from '../../infra/repositories/GetAccountRepository';
 import { UpdateAccountBalanceRepository } from '../../infra/repositories/UpdateAccountBalanceRepository';
 import { CreateLedgerEntryRepository } from '../../infra/repositories/CreateLedgerEntryRepository';
+import type { GetProfileRepository } from '@/models/auth/infra/repositories/GetProfileRepository';
+import type { GetProfileBalanceRepository } from '@/models/auth/infra/repositories/GetProfileBalanceRepository';
+import type { UpdateProfileBalanceRepository } from '@/models/auth/infra/repositories/UpdateProfileBalanceRepository';
+import type { GetUserRepository } from '@/models/auth/infra/repositories/GetUserRepository';
 
 describe('CreateLedgerEntryUseCase', () => {
   const setup = () => {
@@ -51,12 +55,86 @@ describe('CreateLedgerEntryUseCase', () => {
     };
   };
 
-  const createMockAccount = (id: string, balance: string = '1000.00') => ({
+  const createMockAccount = (id: string, balance: string = '1000.00', profileId: string | null = 'profile-1') => ({
     id,
     tenantId: 'tenant-1',
+    profileId,
     name: `Account ${id}`,
     balance: { toString: () => balance },
   });
+
+  const createMockUseCase = (opts: {
+    mockTransactionManager: ITransactionManager;
+    mockQueueProducer: IQueueProducer;
+    mockLogger: ILogger;
+    mockSessionHandler: SessionHandler;
+    mockPrisma: PrismaHandler;
+    mockGetProfileRepository?: GetProfileRepository;
+    mockGetProfileBalanceRepository?: GetProfileBalanceRepository;
+    mockUpdateProfileBalanceRepository?: UpdateProfileBalanceRepository;
+    mockGetUserRepository?: GetUserRepository;
+  }) => {
+    const getAccountRepository = new GetAccountRepository({ [AppProviders.prisma]: opts.mockPrisma });
+    const updateAccountBalanceRepository = new UpdateAccountBalanceRepository({
+      [AppProviders.prisma]: opts.mockPrisma,
+    });
+    const createLedgerEntryRepository = new CreateLedgerEntryRepository({
+      [AppProviders.prisma]: opts.mockPrisma,
+    });
+
+    const mockGetProfileRepository: GetProfileRepository = opts.mockGetProfileRepository || ({
+      findById: mock(async (args: { profileId: string }) => {
+        // Return a mock profile for profile-1
+        if (args.profileId === 'profile-1') {
+          return {
+            id: 'profile-1',
+            userId: 'user-123',
+            tenantId: 'tenant-1',
+            firstName: 'Test',
+            lastName: 'User',
+            email: 'test@example.com',
+            balance: { toString: () => '0' },
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            deletedAt: null,
+          } as any;
+        }
+        return null;
+      }),
+    } as unknown as GetProfileRepository);
+
+    const mockGetProfileBalanceRepository: GetProfileBalanceRepository =
+      opts.mockGetProfileBalanceRepository ||
+      ({
+        calculateBalance: mock(async () => new Decimal(0)),
+      } as unknown as GetProfileBalanceRepository);
+
+    const mockUpdateProfileBalanceRepository: UpdateProfileBalanceRepository =
+      opts.mockUpdateProfileBalanceRepository ||
+      ({
+        updateBalance: mock(async () => {}),
+      } as unknown as UpdateProfileBalanceRepository);
+
+    const mockGetUserRepository: GetUserRepository =
+      opts.mockGetUserRepository ||
+      ({
+        findById: mock(async () => ({ id: 'user-123', isMaster: false })),
+      } as unknown as GetUserRepository);
+
+    return new CreateLedgerEntryUseCase({
+      [AppProviders.transactionManager]: opts.mockTransactionManager,
+      [AppProviders.queueProducer]: opts.mockQueueProducer,
+      [AppProviders.logger]: opts.mockLogger,
+      [AppProviders.sessionHandler]: opts.mockSessionHandler,
+      [AppProviders.getAccountRepository]: getAccountRepository,
+      [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
+      [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
+      [AppProviders.getProfileRepository]: mockGetProfileRepository,
+      [AppProviders.getProfileBalanceRepository]: mockGetProfileBalanceRepository,
+      [AppProviders.updateProfileBalanceRepository]: mockUpdateProfileBalanceRepository,
+      [AppProviders.getUserRepository]: mockGetUserRepository,
+    });
+  };
 
   const createMockPrismaClient = (accounts: Record<string, any> = {}) => {
     const mockAccountFindFirst = mock(async (args: any) => {
@@ -67,6 +145,7 @@ describe('CreateLedgerEntryUseCase', () => {
     const mockAccountUpdate = mock(async () => ({
       id: 'account-1',
       tenantId: 'tenant-1',
+      profileId: 'profile-1',
       balance: new Decimal('900.00'),
     }));
 
@@ -106,23 +185,12 @@ describe('CreateLedgerEntryUseCase', () => {
         }),
       };
 
-      const getAccountRepository = new GetAccountRepository({ [AppProviders.prisma]: mockPrisma });
-      const updateAccountBalanceRepository = new UpdateAccountBalanceRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-      const createLedgerEntryRepository = new CreateLedgerEntryRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-
-
-      const useCase = new CreateLedgerEntryUseCase({
-        [AppProviders.transactionManager]: mockTransactionManager,
-        [AppProviders.queueProducer]: mockQueueProducer,
-        [AppProviders.logger]: mockLogger,
-        [AppProviders.sessionHandler]: mockSessionHandler,
-        [AppProviders.getAccountRepository]: getAccountRepository,
-        [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
-        [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
+      const useCase = createMockUseCase({
+        mockTransactionManager,
+        mockQueueProducer,
+        mockLogger,
+        mockSessionHandler,
+        mockPrisma,
       });
 
       await expect(
@@ -159,22 +227,12 @@ describe('CreateLedgerEntryUseCase', () => {
         }),
       };
 
-      const getAccountRepository = new GetAccountRepository({ [AppProviders.prisma]: mockPrisma });
-      const updateAccountBalanceRepository = new UpdateAccountBalanceRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-      const createLedgerEntryRepository = new CreateLedgerEntryRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-
-      const useCase = new CreateLedgerEntryUseCase({
-        [AppProviders.transactionManager]: mockTransactionManager,
-        [AppProviders.queueProducer]: mockQueueProducer,
-        [AppProviders.logger]: mockLogger,
-        [AppProviders.sessionHandler]: mockSessionHandler,
-        [AppProviders.getAccountRepository]: getAccountRepository,
-        [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
-        [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
+      const useCase = createMockUseCase({
+        mockTransactionManager,
+        mockQueueProducer,
+        mockLogger,
+        mockSessionHandler,
+        mockPrisma,
       });
 
       await expect(
@@ -206,23 +264,12 @@ describe('CreateLedgerEntryUseCase', () => {
         }),
       };
 
-      const getAccountRepository = new GetAccountRepository({ [AppProviders.prisma]: mockPrisma });
-      const updateAccountBalanceRepository = new UpdateAccountBalanceRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-      const createLedgerEntryRepository = new CreateLedgerEntryRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-
-
-      const useCase = new CreateLedgerEntryUseCase({
-        [AppProviders.transactionManager]: mockTransactionManager,
-        [AppProviders.queueProducer]: mockQueueProducer,
-        [AppProviders.logger]: mockLogger,
-        [AppProviders.sessionHandler]: mockSessionHandler,
-        [AppProviders.getAccountRepository]: getAccountRepository,
-        [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
-        [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
+      const useCase = createMockUseCase({
+        mockTransactionManager,
+        mockQueueProducer,
+        mockLogger,
+        mockSessionHandler,
+        mockPrisma,
       });
 
       const result = await useCase.execute({
@@ -256,22 +303,12 @@ describe('CreateLedgerEntryUseCase', () => {
         }),
       };
 
-      const getAccountRepository = new GetAccountRepository({ [AppProviders.prisma]: mockPrisma });
-      const updateAccountBalanceRepository = new UpdateAccountBalanceRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-      const createLedgerEntryRepository = new CreateLedgerEntryRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-
-      const useCase = new CreateLedgerEntryUseCase({
-        [AppProviders.transactionManager]: mockTransactionManager,
-        [AppProviders.queueProducer]: mockQueueProducer,
-        [AppProviders.logger]: mockLogger,
-        [AppProviders.sessionHandler]: mockSessionHandler,
-        [AppProviders.getAccountRepository]: getAccountRepository,
-        [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
-        [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
+      const useCase = createMockUseCase({
+        mockTransactionManager,
+        mockQueueProducer,
+        mockLogger,
+        mockSessionHandler,
+        mockPrisma,
       });
 
       const result = await useCase.execute({
@@ -304,22 +341,12 @@ describe('CreateLedgerEntryUseCase', () => {
         }),
       };
 
-      const getAccountRepository = new GetAccountRepository({ [AppProviders.prisma]: mockPrisma });
-      const updateAccountBalanceRepository = new UpdateAccountBalanceRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-      const createLedgerEntryRepository = new CreateLedgerEntryRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-
-      const useCase = new CreateLedgerEntryUseCase({
-        [AppProviders.transactionManager]: mockTransactionManager,
-        [AppProviders.queueProducer]: mockQueueProducer,
-        [AppProviders.logger]: mockLogger,
-        [AppProviders.sessionHandler]: mockSessionHandler,
-        [AppProviders.getAccountRepository]: getAccountRepository,
-        [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
-        [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
+      const useCase = createMockUseCase({
+        mockTransactionManager,
+        mockQueueProducer,
+        mockLogger,
+        mockSessionHandler,
+        mockPrisma,
       });
 
       const result = await useCase.execute({
@@ -352,22 +379,12 @@ describe('CreateLedgerEntryUseCase', () => {
         }),
       };
 
-      const getAccountRepository = new GetAccountRepository({ [AppProviders.prisma]: mockPrisma });
-      const updateAccountBalanceRepository = new UpdateAccountBalanceRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-      const createLedgerEntryRepository = new CreateLedgerEntryRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-
-      const useCase = new CreateLedgerEntryUseCase({
-        [AppProviders.transactionManager]: mockTransactionManager,
-        [AppProviders.queueProducer]: mockQueueProducer,
-        [AppProviders.logger]: mockLogger,
-        [AppProviders.sessionHandler]: mockSessionHandler,
-        [AppProviders.getAccountRepository]: getAccountRepository,
-        [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
-        [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
+      const useCase = createMockUseCase({
+        mockTransactionManager,
+        mockQueueProducer,
+        mockLogger,
+        mockSessionHandler,
+        mockPrisma,
       });
 
       await expect(
@@ -394,22 +411,12 @@ describe('CreateLedgerEntryUseCase', () => {
         }),
       };
 
-      const getAccountRepository = new GetAccountRepository({ [AppProviders.prisma]: mockPrisma });
-      const updateAccountBalanceRepository = new UpdateAccountBalanceRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-      const createLedgerEntryRepository = new CreateLedgerEntryRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-
-      const useCase = new CreateLedgerEntryUseCase({
-        [AppProviders.transactionManager]: mockTransactionManager,
-        [AppProviders.queueProducer]: mockQueueProducer,
-        [AppProviders.logger]: mockLogger,
-        [AppProviders.sessionHandler]: mockSessionHandler,
-        [AppProviders.getAccountRepository]: getAccountRepository,
-        [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
-        [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
+      const useCase = createMockUseCase({
+        mockTransactionManager,
+        mockQueueProducer,
+        mockLogger,
+        mockSessionHandler,
+        mockPrisma,
       });
 
       await expect(
@@ -437,22 +444,12 @@ describe('CreateLedgerEntryUseCase', () => {
         }),
       };
 
-      const getAccountRepository = new GetAccountRepository({ [AppProviders.prisma]: mockPrisma });
-      const updateAccountBalanceRepository = new UpdateAccountBalanceRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-      const createLedgerEntryRepository = new CreateLedgerEntryRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-
-      const useCase = new CreateLedgerEntryUseCase({
-        [AppProviders.transactionManager]: mockTransactionManager,
-        [AppProviders.queueProducer]: mockQueueProducer,
-        [AppProviders.logger]: mockLogger,
-        [AppProviders.sessionHandler]: mockSessionHandler,
-        [AppProviders.getAccountRepository]: getAccountRepository,
-        [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
-        [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
+      const useCase = createMockUseCase({
+        mockTransactionManager,
+        mockQueueProducer,
+        mockLogger,
+        mockSessionHandler,
+        mockPrisma,
       });
 
       await expect(
@@ -482,22 +479,12 @@ describe('CreateLedgerEntryUseCase', () => {
         }),
       };
 
-      const getAccountRepository = new GetAccountRepository({ [AppProviders.prisma]: mockPrisma });
-      const updateAccountBalanceRepository = new UpdateAccountBalanceRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-      const createLedgerEntryRepository = new CreateLedgerEntryRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-
-      const useCase = new CreateLedgerEntryUseCase({
-        [AppProviders.transactionManager]: mockTransactionManager,
-        [AppProviders.queueProducer]: mockQueueProducer,
-        [AppProviders.logger]: mockLogger,
-        [AppProviders.sessionHandler]: mockSessionHandler,
-        [AppProviders.getAccountRepository]: getAccountRepository,
-        [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
-        [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
+      const useCase = createMockUseCase({
+        mockTransactionManager,
+        mockQueueProducer,
+        mockLogger,
+        mockSessionHandler,
+        mockPrisma,
       });
 
       await expect(
@@ -532,22 +519,12 @@ describe('CreateLedgerEntryUseCase', () => {
         }),
       };
 
-      const getAccountRepository = new GetAccountRepository({ [AppProviders.prisma]: mockPrisma });
-      const updateAccountBalanceRepository = new UpdateAccountBalanceRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-      const createLedgerEntryRepository = new CreateLedgerEntryRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-
-      const useCase = new CreateLedgerEntryUseCase({
-        [AppProviders.transactionManager]: mockTransactionManager,
-        [AppProviders.queueProducer]: mockQueueProducer,
-        [AppProviders.logger]: mockLogger,
-        [AppProviders.sessionHandler]: mockSessionHandler,
-        [AppProviders.getAccountRepository]: getAccountRepository,
-        [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
-        [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
+      const useCase = createMockUseCase({
+        mockTransactionManager,
+        mockQueueProducer,
+        mockLogger,
+        mockSessionHandler,
+        mockPrisma,
       });
 
       // Should still succeed even if queue fails
@@ -594,22 +571,12 @@ describe('CreateLedgerEntryUseCase', () => {
         }),
       };
 
-      const getAccountRepository = new GetAccountRepository({ [AppProviders.prisma]: mockPrisma });
-      const updateAccountBalanceRepository = new UpdateAccountBalanceRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-      const createLedgerEntryRepository = new CreateLedgerEntryRepository({
-        [AppProviders.prisma]: mockPrisma,
-      });
-
-      const useCase = new CreateLedgerEntryUseCase({
-        [AppProviders.transactionManager]: mockTransactionManager,
-        [AppProviders.queueProducer]: mockQueueProducer,
-        [AppProviders.logger]: mockLogger,
-        [AppProviders.sessionHandler]: mockSessionHandler,
-        [AppProviders.getAccountRepository]: getAccountRepository,
-        [AppProviders.updateAccountBalanceRepository]: updateAccountBalanceRepository,
-        [AppProviders.createLedgerEntryRepository]: createLedgerEntryRepository,
+      const useCase = createMockUseCase({
+        mockTransactionManager,
+        mockQueueProducer,
+        mockLogger,
+        mockSessionHandler,
+        mockPrisma,
       });
 
       const result = await useCase.execute({

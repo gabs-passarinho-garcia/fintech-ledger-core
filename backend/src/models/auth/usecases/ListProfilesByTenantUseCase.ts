@@ -105,6 +105,7 @@ export class ListProfilesByTenantUseCase
         firstName: profile.firstName,
         lastName: profile.lastName,
         email: profile.email,
+        balance: profile.balance.toString(),
         createdAt: profile.createdAt,
         updatedAt: profile.updatedAt,
       })),

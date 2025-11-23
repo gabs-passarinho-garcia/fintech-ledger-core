@@ -450,6 +450,7 @@ declare function buildApp(): Elysia<"", {
                                 id: string;
                                 createdAt: Date;
                                 updatedAt: Date;
+                                balance: string;
                                 firstName: string;
                                 lastName: string;
                                 email: string;
@@ -518,6 +519,7 @@ declare function buildApp(): Elysia<"", {
                                     id: string;
                                     createdAt: Date;
                                     updatedAt: Date;
+                                    balance: string;
                                     firstName: string;
                                     lastName: string;
                                     email: string;
@@ -594,6 +596,7 @@ declare function buildApp(): Elysia<"", {
                                 id: string;
                                 createdAt: Date;
                                 updatedAt: Date;
+                                balance: string;
                                 firstName: string;
                                 lastName: string;
                                 email: string;
@@ -754,6 +757,7 @@ declare function buildApp(): Elysia<"", {
                                 id: string;
                                 createdAt: Date;
                                 updatedAt: Date;
+                                balance: string;
                                 firstName: string;
                                 lastName: string;
                                 email: string;
@@ -992,6 +996,7 @@ declare function buildApp(): Elysia<"", {
                                     id: string;
                                     createdAt: Date;
                                     updatedAt: Date;
+                                    balance: string;
                                     firstName: string;
                                     lastName: string;
                                     email: string;
@@ -1763,6 +1768,219 @@ declare function buildApp(): Elysia<"", {
                                 createdBy: string;
                                 createdAt: Date;
                                 updatedAt: Date;
+                            }[];
+                        };
+                    };
+                    401: {
+                        correlationId?: string | undefined;
+                        path?: string | undefined;
+                        message: string;
+                        statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                        errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                        errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                    };
+                    403: {
+                        correlationId?: string | undefined;
+                        path?: string | undefined;
+                        message: string;
+                        statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                        errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                        errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                    };
+                    422: {
+                        type: "validation";
+                        on: string;
+                        summary?: string;
+                        message?: string;
+                        found?: unknown;
+                        property?: string;
+                        expected?: string;
+                    };
+                    500: {
+                        correlationId?: string | undefined;
+                        path?: string | undefined;
+                        message: string;
+                        statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                        errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                        errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                    };
+                };
+            };
+        };
+    };
+} & {
+    accounts: {};
+} & {
+    accounts: {
+        my: {
+            get: {
+                body: {};
+                params: {};
+                query: {};
+                headers: {
+                    'x-tenant-id'?: string | undefined;
+                    'x-correlation-id'?: string | undefined;
+                    authorization: string;
+                };
+                response: {
+                    200: {
+                        statusCode: 200;
+                        data: {
+                            accounts: {
+                                tenantId: string;
+                                name: string;
+                                id: string;
+                                createdAt: Date;
+                                updatedAt: Date;
+                                profileId: string | null;
+                                balance: string;
+                            }[];
+                        };
+                    };
+                    401: {
+                        correlationId?: string | undefined;
+                        path?: string | undefined;
+                        message: string;
+                        statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                        errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                        errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                    };
+                    404: {
+                        correlationId?: string | undefined;
+                        path?: string | undefined;
+                        message: string;
+                        statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                        errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                        errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                    };
+                    422: {
+                        type: "validation";
+                        on: string;
+                        summary?: string;
+                        message?: string;
+                        found?: unknown;
+                        property?: string;
+                        expected?: string;
+                    };
+                    500: {
+                        correlationId?: string | undefined;
+                        path?: string | undefined;
+                        message: string;
+                        statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                        errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                        errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                    };
+                };
+            };
+        };
+    };
+} & {
+    accounts: {
+        profile: {
+            ":profileId": {
+                get: {
+                    body: {};
+                    params: {
+                        profileId: string;
+                    };
+                    query: {};
+                    headers: {
+                        'x-tenant-id'?: string | undefined;
+                        'x-correlation-id'?: string | undefined;
+                        authorization: string;
+                    };
+                    response: {
+                        200: {
+                            statusCode: 200;
+                            data: {
+                                accounts: {
+                                    tenantId: string;
+                                    name: string;
+                                    id: string;
+                                    createdAt: Date;
+                                    updatedAt: Date;
+                                    profileId: string | null;
+                                    balance: string;
+                                }[];
+                            };
+                        };
+                        401: {
+                            correlationId?: string | undefined;
+                            path?: string | undefined;
+                            message: string;
+                            statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                            errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                            errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                        };
+                        403: {
+                            correlationId?: string | undefined;
+                            path?: string | undefined;
+                            message: string;
+                            statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                            errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                            errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                        };
+                        404: {
+                            correlationId?: string | undefined;
+                            path?: string | undefined;
+                            message: string;
+                            statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                            errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                            errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                        };
+                        422: {
+                            type: "validation";
+                            on: string;
+                            summary?: string;
+                            message?: string;
+                            found?: unknown;
+                            property?: string;
+                            expected?: string;
+                        };
+                        500: {
+                            correlationId?: string | undefined;
+                            path?: string | undefined;
+                            message: string;
+                            statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                            errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                            errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                        };
+                    };
+                };
+            };
+        };
+    };
+} & {
+    accounts: {
+        profiles: {
+            get: {
+                body: {};
+                params: {};
+                query: {};
+                headers: {
+                    'x-tenant-id'?: string | undefined;
+                    'x-correlation-id'?: string | undefined;
+                    authorization: string;
+                };
+                response: {
+                    200: {
+                        statusCode: 200;
+                        data: {
+                            profiles: {
+                                userId: string;
+                                tenantId: string;
+                                id: string;
+                                createdAt: Date;
+                                updatedAt: Date;
+                                balance: string;
+                                firstName: string;
+                                lastName: string;
+                                email: string;
+                                accounts: {
+                                    name: string;
+                                    id: string;
+                                    balance: string;
+                                }[];
                             }[];
                         };
                     };
@@ -2270,6 +2488,7 @@ export declare const app: Elysia<"", {
                                 id: string;
                                 createdAt: Date;
                                 updatedAt: Date;
+                                balance: string;
                                 firstName: string;
                                 lastName: string;
                                 email: string;
@@ -2338,6 +2557,7 @@ export declare const app: Elysia<"", {
                                     id: string;
                                     createdAt: Date;
                                     updatedAt: Date;
+                                    balance: string;
                                     firstName: string;
                                     lastName: string;
                                     email: string;
@@ -2414,6 +2634,7 @@ export declare const app: Elysia<"", {
                                 id: string;
                                 createdAt: Date;
                                 updatedAt: Date;
+                                balance: string;
                                 firstName: string;
                                 lastName: string;
                                 email: string;
@@ -2574,6 +2795,7 @@ export declare const app: Elysia<"", {
                                 id: string;
                                 createdAt: Date;
                                 updatedAt: Date;
+                                balance: string;
                                 firstName: string;
                                 lastName: string;
                                 email: string;
@@ -2812,6 +3034,7 @@ export declare const app: Elysia<"", {
                                     id: string;
                                     createdAt: Date;
                                     updatedAt: Date;
+                                    balance: string;
                                     firstName: string;
                                     lastName: string;
                                     email: string;
@@ -3583,6 +3806,219 @@ export declare const app: Elysia<"", {
                                 createdBy: string;
                                 createdAt: Date;
                                 updatedAt: Date;
+                            }[];
+                        };
+                    };
+                    401: {
+                        correlationId?: string | undefined;
+                        path?: string | undefined;
+                        message: string;
+                        statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                        errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                        errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                    };
+                    403: {
+                        correlationId?: string | undefined;
+                        path?: string | undefined;
+                        message: string;
+                        statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                        errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                        errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                    };
+                    422: {
+                        type: "validation";
+                        on: string;
+                        summary?: string;
+                        message?: string;
+                        found?: unknown;
+                        property?: string;
+                        expected?: string;
+                    };
+                    500: {
+                        correlationId?: string | undefined;
+                        path?: string | undefined;
+                        message: string;
+                        statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                        errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                        errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                    };
+                };
+            };
+        };
+    };
+} & {
+    accounts: {};
+} & {
+    accounts: {
+        my: {
+            get: {
+                body: {};
+                params: {};
+                query: {};
+                headers: {
+                    'x-tenant-id'?: string | undefined;
+                    'x-correlation-id'?: string | undefined;
+                    authorization: string;
+                };
+                response: {
+                    200: {
+                        statusCode: 200;
+                        data: {
+                            accounts: {
+                                tenantId: string;
+                                name: string;
+                                id: string;
+                                createdAt: Date;
+                                updatedAt: Date;
+                                profileId: string | null;
+                                balance: string;
+                            }[];
+                        };
+                    };
+                    401: {
+                        correlationId?: string | undefined;
+                        path?: string | undefined;
+                        message: string;
+                        statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                        errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                        errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                    };
+                    404: {
+                        correlationId?: string | undefined;
+                        path?: string | undefined;
+                        message: string;
+                        statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                        errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                        errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                    };
+                    422: {
+                        type: "validation";
+                        on: string;
+                        summary?: string;
+                        message?: string;
+                        found?: unknown;
+                        property?: string;
+                        expected?: string;
+                    };
+                    500: {
+                        correlationId?: string | undefined;
+                        path?: string | undefined;
+                        message: string;
+                        statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                        errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                        errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                    };
+                };
+            };
+        };
+    };
+} & {
+    accounts: {
+        profile: {
+            ":profileId": {
+                get: {
+                    body: {};
+                    params: {
+                        profileId: string;
+                    };
+                    query: {};
+                    headers: {
+                        'x-tenant-id'?: string | undefined;
+                        'x-correlation-id'?: string | undefined;
+                        authorization: string;
+                    };
+                    response: {
+                        200: {
+                            statusCode: 200;
+                            data: {
+                                accounts: {
+                                    tenantId: string;
+                                    name: string;
+                                    id: string;
+                                    createdAt: Date;
+                                    updatedAt: Date;
+                                    profileId: string | null;
+                                    balance: string;
+                                }[];
+                            };
+                        };
+                        401: {
+                            correlationId?: string | undefined;
+                            path?: string | undefined;
+                            message: string;
+                            statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                            errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                            errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                        };
+                        403: {
+                            correlationId?: string | undefined;
+                            path?: string | undefined;
+                            message: string;
+                            statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                            errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                            errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                        };
+                        404: {
+                            correlationId?: string | undefined;
+                            path?: string | undefined;
+                            message: string;
+                            statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                            errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                            errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                        };
+                        422: {
+                            type: "validation";
+                            on: string;
+                            summary?: string;
+                            message?: string;
+                            found?: unknown;
+                            property?: string;
+                            expected?: string;
+                        };
+                        500: {
+                            correlationId?: string | undefined;
+                            path?: string | undefined;
+                            message: string;
+                            statusCode: 200 | 201 | 202 | 204 | 400 | 401 | 403 | 404 | 405 | 409 | 422 | 429 | 500 | 503 | 504;
+                            errorCode: 5 | 1 | 2 | 400 | 401 | 403 | 404 | 405 | 500 | 3 | 4 | 406 | 600 | 601 | 602 | 603 | 900;
+                            errorName: "NOT_FOUND" | "DB_CONNECTION_ERROR" | "DB_QUERY_ERROR" | "DB_INSERT_ERROR" | "DB_UPDATE_ERROR" | "DB_DELETE_ERROR" | "INVALID_INPUT" | "NOT_SIGNED" | "NOT_AUTHORIZED" | "OPERATION_NOT_ALLOWED" | "ALREADY_EXISTS" | "EXTERNAL_SOURCE_ERROR" | "DOMAIN_ERROR" | "INSUFFICIENT_BALANCE" | "INVALID_TRANSACTION" | "UNSUPPORTED_PAYMENT_PROVIDER" | "INTERNAL_ERROR";
+                        };
+                    };
+                };
+            };
+        };
+    };
+} & {
+    accounts: {
+        profiles: {
+            get: {
+                body: {};
+                params: {};
+                query: {};
+                headers: {
+                    'x-tenant-id'?: string | undefined;
+                    'x-correlation-id'?: string | undefined;
+                    authorization: string;
+                };
+                response: {
+                    200: {
+                        statusCode: 200;
+                        data: {
+                            profiles: {
+                                userId: string;
+                                tenantId: string;
+                                id: string;
+                                createdAt: Date;
+                                updatedAt: Date;
+                                balance: string;
+                                firstName: string;
+                                lastName: string;
+                                email: string;
+                                accounts: {
+                                    name: string;
+                                    id: string;
+                                    balance: string;
+                                }[];
                             }[];
                         };
                     };

@@ -22,6 +22,20 @@ export interface Profile {
   firstName: string;
   lastName: string;
   email: string;
+  balance: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+}
+
+/**
+ * Account data structure
+ */
+export interface Account {
+  id: string;
+  tenantId: string;
+  profileId: string | null;
+  name: string;
+  balance: string;
   createdAt: Date | string;
   updatedAt: Date | string;
 }

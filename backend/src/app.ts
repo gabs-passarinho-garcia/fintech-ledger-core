@@ -18,6 +18,7 @@ import { LedgerController } from './models/ledger/infra/controllers/LedgerContro
 import { AuthController } from './models/auth/infra/controllers/AuthController';
 import { UserController } from './models/auth/infra/controllers/UserController';
 import { TenantController } from './models/tenant/infra/controllers/TenantController';
+import { AccountController } from './models/accounts/infra/controllers/AccountController';
 import * as Sentry from '@sentry/bun';
 import { instrumentation } from './instrumentation';
 import { AppEnvironment, AppEnvironmentType } from '@/common';
@@ -187,7 +188,8 @@ function buildApp() {
     .use(AuthController)
     .use(UserController)
     .use(LedgerController)
-    .use(TenantController);
+    .use(TenantController)
+    .use(AccountController);
 }
 
 /**

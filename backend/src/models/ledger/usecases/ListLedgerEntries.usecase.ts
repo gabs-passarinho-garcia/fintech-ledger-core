@@ -1,5 +1,6 @@
 import type { IService } from '@/common/interfaces/IService';
 import type { ILogger } from '@/common/interfaces/ILogger';
+import type { SessionHandler } from '@/common/providers/SessionHandler';
 import { AppProviders } from '@/common/interfaces/IAppContainer';
 import type {
   ListLedgerEntriesRepository,
@@ -9,10 +10,14 @@ import type {
   ListLedgerEntriesQuery,
   ListLedgerEntriesResponse,
 } from '../dtos/ListLedgerEntries.dto';
+import type { GetProfileRepository } from '@/models/auth/infra/repositories/GetProfileRepository';
+import type { ListAccountsByProfileIdRepository } from '@/models/accounts/infra/repositories/ListAccountsByProfileIdRepository';
+import type { GetUserRepository } from '@/models/auth/infra/repositories/GetUserRepository';
 import { DomainError } from '@/common/errors';
 import { QueryParameterConverter } from './helpers/QueryParameterConverter';
 import { ListLedgerEntriesFiltersBuilder } from './helpers/ListLedgerEntriesFiltersBuilder';
 import { LedgerEntryMapper } from './helpers/LedgerEntryMapper';
+import { SessionContextExtractor } from '@/models/auth/usecases/helpers/SessionContextExtractor';
 
 export interface ListLedgerEntriesInput {
   tenantId: string;
@@ -35,13 +40,25 @@ export class ListLedgerEntriesUseCase
 {
   private readonly logger: ILogger;
   private readonly listLedgerEntriesRepository: ListLedgerEntriesRepository;
+  private readonly sessionHandler: SessionHandler;
+  private readonly getProfileRepository: GetProfileRepository;
+  private readonly listAccountsByProfileIdRepository: ListAccountsByProfileIdRepository;
+  private readonly getUserRepository: GetUserRepository;
 
   public constructor(opts: {
     [AppProviders.logger]: ILogger;
     [AppProviders.listLedgerEntriesRepository]: ListLedgerEntriesRepository;
+    [AppProviders.sessionHandler]: SessionHandler;
+    [AppProviders.getProfileRepository]: GetProfileRepository;
+    [AppProviders.listAccountsByProfileIdRepository]: ListAccountsByProfileIdRepository;
+    [AppProviders.getUserRepository]: GetUserRepository;
   }) {
     this.logger = opts[AppProviders.logger];
     this.listLedgerEntriesRepository = opts[AppProviders.listLedgerEntriesRepository];
+    this.sessionHandler = opts[AppProviders.sessionHandler];
+    this.getProfileRepository = opts[AppProviders.getProfileRepository];
+    this.listAccountsByProfileIdRepository = opts[AppProviders.listAccountsByProfileIdRepository];
+    this.getUserRepository = opts[AppProviders.getUserRepository];
   }
 
   /**
@@ -54,9 +71,38 @@ export class ListLedgerEntriesUseCase
     this.validateInput(input);
 
     const { page, limit } = QueryParameterConverter.normalizePagination(input.page, input.limit);
-    const filters = ListLedgerEntriesFiltersBuilder.build(input);
 
-    this.logStart(input, page, limit);
+    // Check if user is master - if not, filter by profile accounts
+    let accountIds: string[] | undefined;
+    const session = this.sessionHandler.get();
+    const userId = SessionContextExtractor.extractUserId(session);
+    const user = await this.getUserRepository.findById({ userId });
+
+    if (!user?.isMaster) {
+      // For common users, filter by their profile's accounts
+      const profile = await this.getProfileRepository.findByUserIdAndTenantId({
+        userId,
+        tenantId: input.tenantId,
+      });
+
+      if (profile) {
+        const accounts = await this.listAccountsByProfileIdRepository.findByProfileId({
+          profileId: profile.id,
+          tenantId: input.tenantId,
+        });
+        accountIds = accounts.map((account) => account.id);
+      } else {
+        // If no profile found, return empty result
+        accountIds = [];
+      }
+    }
+
+    const filters = ListLedgerEntriesFiltersBuilder.build({
+      ...input,
+      accountIds,
+    });
+
+    this.logStart(input, page, limit, accountIds);
 
     const result = await this.listLedgerEntriesRepository.list({
       filters,
@@ -89,8 +135,14 @@ export class ListLedgerEntriesUseCase
    * @param input - The input parameters
    * @param page - The page number
    * @param limit - The limit per page
+   * @param accountIds - Optional account IDs for filtering
    */
-  private logStart(input: ListLedgerEntriesInput, page: number, limit: number): void {
+  private logStart(
+    input: ListLedgerEntriesInput,
+    page: number,
+    limit: number,
+    accountIds?: string[],
+  ): void {
     this.logger.info(
       {
         tenantId: input.tenantId,
@@ -99,6 +151,7 @@ export class ListLedgerEntriesUseCase
           type: input.type,
           dateFrom: input.dateFrom,
           dateTo: input.dateTo,
+          accountIds: accountIds?.length,
         },
         page,
         limit,

@@ -302,4 +302,38 @@ export const endpoints = {
         }),
       ),
   },
+
+  /**
+   * Account endpoints
+   */
+  accounts: {
+    getMyAccounts: async (): Promise<
+      Awaited<ReturnType<typeof api.accounts.my.get>>
+    > =>
+      withAuthRefresh(() =>
+        api.accounts.my.get({
+          headers: buildHeaders(),
+        }),
+      ),
+
+    listAccountsByProfile: async (
+      profileId: string,
+    ): Promise<
+      Awaited<ReturnType<ReturnType<typeof api.accounts.profile>["get"]>>
+    > =>
+      withAuthRefresh(() =>
+        api.accounts.profile({ profileId }).get({
+          headers: buildHeaders(),
+        }),
+      ),
+
+    listProfilesWithAccounts: async (): Promise<
+      Awaited<ReturnType<typeof api.accounts.profiles.get>>
+    > =>
+      withAuthRefresh(() =>
+        api.accounts.profiles.get({
+          headers: buildHeaders(),
+        }),
+      ),
+  },
 };

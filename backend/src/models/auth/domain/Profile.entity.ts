@@ -1,3 +1,4 @@
+import { Decimal } from 'decimal.js';
 import { DomainError } from '@/common/errors';
 
 export interface ProfileProps {
@@ -7,6 +8,7 @@ export interface ProfileProps {
   firstName: string;
   lastName: string;
   email: string;
+  balance: Decimal | string | number;
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date | null;
@@ -24,6 +26,7 @@ export class Profile {
   public readonly firstName: string;
   public readonly lastName: string;
   public readonly email: string;
+  public readonly balance: Decimal;
   public readonly createdAt: Date;
   public readonly updatedAt: Date;
   public deletedAt?: Date | null;
@@ -41,6 +44,8 @@ export class Profile {
     this.firstName = props.firstName;
     this.lastName = props.lastName;
     this.email = props.email;
+    this.balance =
+      props.balance instanceof Decimal ? props.balance : new Decimal(props.balance ?? 0);
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
     this.deletedAt = props.deletedAt;
@@ -104,5 +109,38 @@ export class Profile {
    */
   public static reconstruct(props: ProfileProps): Profile {
     return new Profile(props);
+  }
+
+  /**
+   * Calculates the profile balance from the sum of all account balances.
+   * This method is used to validate that the stored balance matches the calculated balance.
+   *
+   * @param accountBalances - Array of account balances (Decimal values)
+   * @returns The calculated balance as a Decimal
+   */
+  public static calculateBalance(accountBalances: Decimal[]): Decimal {
+    return accountBalances.reduce((sum, balance) => sum.plus(balance), new Decimal(0));
+  }
+
+  /**
+   * Updates the profile balance by syncing it with the calculated balance from accounts.
+   * This creates a new Profile instance with the updated balance.
+   *
+   * @param calculatedBalance - The calculated balance from accounts
+   * @returns A new Profile instance with updated balance
+   */
+  public updateBalance(calculatedBalance: Decimal): Profile {
+    return Profile.reconstruct({
+      id: this.id,
+      userId: this.userId,
+      tenantId: this.tenantId,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      email: this.email,
+      balance: calculatedBalance,
+      createdAt: this.createdAt,
+      updatedAt: new Date(),
+      deletedAt: this.deletedAt,
+    });
   }
 }

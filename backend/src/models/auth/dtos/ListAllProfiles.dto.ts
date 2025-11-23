@@ -23,6 +23,7 @@ export const ListAllProfilesResponseSchema = t.Object({
       firstName: t.String(),
       lastName: t.String(),
       email: t.String(),
+      balance: t.String(),
       createdAt: t.Date(),
       updatedAt: t.Date(),
       deletedAt: t.Optional(t.Nullable(t.Date())),

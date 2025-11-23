@@ -51,6 +51,19 @@ export class AuthorizationHelper {
 
   /**
    * Checks if the authenticated user owns a profile or is a master user.
+   * Throws an error if the user is not authorized.
+   *
+   * @param args - The profile ID to check ownership for
+   * @param args.profileId - The profile ID to check ownership for
+   * @throws {ForbiddenError} If the user is not authorized
+   * @throws {NotFoundError} If the profile is not found
+   */
+  public async requireProfileOwnershipOrMaster(args: { profileId: string }): Promise<void> {
+    await this.checkProfileOwnership(args.profileId);
+  }
+
+  /**
+   * Checks if the authenticated user owns a profile or is a master user.
    *
    * @param profileId - The profile ID to check ownership for
    * @throws {ForbiddenError} If the user is not authorized

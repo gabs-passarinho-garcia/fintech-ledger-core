@@ -1,3 +1,4 @@
+import { Decimal } from 'decimal.js';
 import { uuidv7 } from 'uuidv7';
 import { Profile } from './Profile.entity';
 
@@ -7,6 +8,7 @@ export interface CreateProfileInput {
   firstName: string;
   lastName: string;
   email: string;
+  balance?: Decimal | string | number;
 }
 
 /**
@@ -30,6 +32,7 @@ export class ProfileFactory {
       firstName: input.firstName.trim(),
       lastName: input.lastName.trim(),
       email: input.email.trim().toLowerCase(),
+      balance: input.balance ?? 0,
       createdAt: now,
       updatedAt: now,
       deletedAt: null,
@@ -49,6 +52,7 @@ export class ProfileFactory {
     firstName: string;
     lastName: string;
     email: string;
+    balance: Decimal | string | number;
     createdAt: Date;
     updatedAt: Date;
     deletedAt?: Date | null;
@@ -60,6 +64,7 @@ export class ProfileFactory {
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
+      balance: data.balance,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
       deletedAt: data.deletedAt ?? null,

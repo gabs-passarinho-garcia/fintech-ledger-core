@@ -9,6 +9,11 @@ import { LedgerEntryFactory } from '../domain/LedgerEntry.factory';
 import type { GetAccountRepository } from '../infra/repositories/GetAccountRepository';
 import type { UpdateAccountBalanceRepository } from '../infra/repositories/UpdateAccountBalanceRepository';
 import type { CreateLedgerEntryRepository } from '../infra/repositories/CreateLedgerEntryRepository';
+import type { GetProfileRepository } from '@/models/auth/infra/repositories/GetProfileRepository';
+import type { GetProfileBalanceRepository } from '@/models/auth/infra/repositories/GetProfileBalanceRepository';
+import type { UpdateProfileBalanceRepository } from '@/models/auth/infra/repositories/UpdateProfileBalanceRepository';
+import type { GetUserRepository } from '@/models/auth/infra/repositories/GetUserRepository';
+import { AuthorizationHelper } from '@/models/auth/usecases/helpers/AuthorizationHelper';
 import { DomainError } from '@/common/errors';
 
 export interface CreateLedgerEntryInput {
@@ -45,6 +50,9 @@ export class CreateLedgerEntryUseCase
   private readonly getAccountRepository: GetAccountRepository;
   private readonly updateAccountBalanceRepository: UpdateAccountBalanceRepository;
   private readonly createLedgerEntryRepository: CreateLedgerEntryRepository;
+  private readonly getProfileBalanceRepository: GetProfileBalanceRepository;
+  private readonly updateProfileBalanceRepository: UpdateProfileBalanceRepository;
+  private readonly authorizationHelper: AuthorizationHelper;
 
   public constructor(opts: {
     [AppProviders.transactionManager]: ITransactionManager;
@@ -54,6 +62,10 @@ export class CreateLedgerEntryUseCase
     [AppProviders.getAccountRepository]: GetAccountRepository;
     [AppProviders.updateAccountBalanceRepository]: UpdateAccountBalanceRepository;
     [AppProviders.createLedgerEntryRepository]: CreateLedgerEntryRepository;
+    [AppProviders.getProfileRepository]: GetProfileRepository;
+    [AppProviders.getProfileBalanceRepository]: GetProfileBalanceRepository;
+    [AppProviders.updateProfileBalanceRepository]: UpdateProfileBalanceRepository;
+    [AppProviders.getUserRepository]: GetUserRepository;
   }) {
     this.transactionManager = opts[AppProviders.transactionManager];
     this.queueProducer = opts[AppProviders.queueProducer];
@@ -62,6 +74,13 @@ export class CreateLedgerEntryUseCase
     this.getAccountRepository = opts[AppProviders.getAccountRepository];
     this.updateAccountBalanceRepository = opts[AppProviders.updateAccountBalanceRepository];
     this.createLedgerEntryRepository = opts[AppProviders.createLedgerEntryRepository];
+    this.getProfileBalanceRepository = opts[AppProviders.getProfileBalanceRepository];
+    this.updateProfileBalanceRepository = opts[AppProviders.updateProfileBalanceRepository];
+    this.authorizationHelper = new AuthorizationHelper({
+      sessionHandler: opts[AppProviders.sessionHandler],
+      getUserRepository: opts[AppProviders.getUserRepository],
+      getProfileRepository: opts[AppProviders.getProfileRepository],
+    });
   }
 
   /**
@@ -106,21 +125,40 @@ export class CreateLedgerEntryUseCase
 
     // Execute all operations within a single transaction
     const ledgerEntry = await this.transactionManager.runInTransaction(async (ctx) => {
-      // Validate accounts exist (if applicable)
+      // Validate accounts exist and get their profileIds
+      let fromAccountProfileId: string | null = null;
+      let toAccountProfileId: string | null = null;
+
       if (input.fromAccountId) {
-        await this.getAccountRepository.findByIdOrThrow({
+        const fromAccount = await this.getAccountRepository.findByIdOrThrow({
           accountId: input.fromAccountId,
           tenantId: input.tenantId,
           tx: ctx.prisma,
         });
+        fromAccountProfileId = fromAccount.profileId;
+
+        // Validate profile ownership for common users
+        if (fromAccountProfileId) {
+          await this.authorizationHelper.requireProfileOwnershipOrMaster({
+            profileId: fromAccountProfileId,
+          });
+        }
       }
 
       if (input.toAccountId) {
-        await this.getAccountRepository.findByIdOrThrow({
+        const toAccount = await this.getAccountRepository.findByIdOrThrow({
           accountId: input.toAccountId,
           tenantId: input.tenantId,
           tx: ctx.prisma,
         });
+        toAccountProfileId = toAccount.profileId;
+
+        // Validate profile ownership for common users
+        if (toAccountProfileId) {
+          await this.authorizationHelper.requireProfileOwnershipOrMaster({
+            profileId: toAccountProfileId,
+          });
+        }
       }
 
       // Handle balance updates based on transaction type
@@ -221,6 +259,43 @@ export class CreateLedgerEntryUseCase
         ledgerEntry: entry,
         tx: ctx.prisma,
       });
+
+      // Update profile balances for affected profiles
+      const affectedProfileIds = new Set<string>();
+      if (fromAccountProfileId) {
+        affectedProfileIds.add(fromAccountProfileId);
+      }
+      if (toAccountProfileId && toAccountProfileId !== fromAccountProfileId) {
+        affectedProfileIds.add(toAccountProfileId);
+      }
+
+      // Update each affected profile's balance
+      await Promise.all(
+        Array.from(affectedProfileIds).map(async (profileId) => {
+          const calculatedBalance = await this.getProfileBalanceRepository.calculateBalance({
+            profileId,
+            tenantId: input.tenantId,
+            tx: ctx.prisma,
+          });
+
+          await this.updateProfileBalanceRepository.updateBalance({
+            profileId,
+            tenantId: input.tenantId,
+            balance: calculatedBalance,
+            updatedBy: createdBy,
+            tx: ctx.prisma,
+          });
+
+          this.logger.info(
+            {
+              profileId,
+              newBalance: calculatedBalance.toString(),
+            },
+            'create_ledger_entry:profile_balance_updated',
+            CreateLedgerEntryUseCase.name,
+          );
+        }),
+      );
 
       this.logger.info(
         {

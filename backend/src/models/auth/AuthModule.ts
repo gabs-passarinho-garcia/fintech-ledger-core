@@ -26,7 +26,10 @@ import { DeleteProfileRepository } from './infra/repositories/DeleteProfileRepos
 import { DeleteUserRepository } from './infra/repositories/DeleteUserRepository';
 import { ListAllUsersRepository } from './infra/repositories/ListAllUsersRepository';
 import { ListAllProfilesRepository } from './infra/repositories/ListAllProfilesRepository';
+import { GetProfileBalanceRepository } from './infra/repositories/GetProfileBalanceRepository';
+import { UpdateProfileBalanceRepository } from './infra/repositories/UpdateProfileBalanceRepository';
 import { CreateRefreshTokenRepository } from './infra/repositories/CreateRefreshTokenRepository';
+import { GetProfileBalanceUseCase } from './usecases/GetProfileBalanceUseCase';
 import { GetRefreshTokenRepository } from './infra/repositories/GetRefreshTokenRepository';
 import { DeleteRefreshTokenRepository } from './infra/repositories/DeleteRefreshTokenRepository';
 
@@ -74,6 +77,14 @@ export const AuthModule: ModuleDefinition = {
       ListAllProfilesRepository,
       Lifecycle.SINGLETON,
     ),
+    [AppProviders.getProfileBalanceRepository]: provideClass(
+      GetProfileBalanceRepository,
+      Lifecycle.SINGLETON,
+    ),
+    [AppProviders.updateProfileBalanceRepository]: provideClass(
+      UpdateProfileBalanceRepository,
+      Lifecycle.SINGLETON,
+    ),
     [AppProviders.createRefreshTokenRepository]: provideClass(
       CreateRefreshTokenRepository,
       Lifecycle.SINGLETON,
@@ -109,5 +120,9 @@ export const AuthModule: ModuleDefinition = {
     [AppProviders.deleteProfileUseCase]: provideClass(DeleteProfileUseCase, Lifecycle.SINGLETON),
     [AppProviders.deleteUserUseCase]: provideClass(DeleteUserUseCase, Lifecycle.SINGLETON),
     [AppProviders.createProfileUseCase]: provideClass(CreateProfileUseCase, Lifecycle.SINGLETON),
+    [AppProviders.getProfileBalanceUseCase]: provideClass(
+      GetProfileBalanceUseCase,
+      Lifecycle.SINGLETON,
+    ),
   },
 };

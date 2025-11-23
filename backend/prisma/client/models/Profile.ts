@@ -20,8 +20,18 @@ export type ProfileModel = runtime.Types.Result.DefaultSelection<Prisma.$Profile
 
 export type AggregateProfile = {
   _count: ProfileCountAggregateOutputType | null
+  _avg: ProfileAvgAggregateOutputType | null
+  _sum: ProfileSumAggregateOutputType | null
   _min: ProfileMinAggregateOutputType | null
   _max: ProfileMaxAggregateOutputType | null
+}
+
+export type ProfileAvgAggregateOutputType = {
+  balance: runtime.Decimal | null
+}
+
+export type ProfileSumAggregateOutputType = {
+  balance: runtime.Decimal | null
 }
 
 export type ProfileMinAggregateOutputType = {
@@ -31,6 +41,7 @@ export type ProfileMinAggregateOutputType = {
   firstName: string | null
   lastName: string | null
   email: string | null
+  balance: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -43,6 +54,7 @@ export type ProfileMaxAggregateOutputType = {
   firstName: string | null
   lastName: string | null
   email: string | null
+  balance: runtime.Decimal | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -55,12 +67,21 @@ export type ProfileCountAggregateOutputType = {
   firstName: number
   lastName: number
   email: number
+  balance: number
   createdAt: number
   updatedAt: number
   deletedAt: number
   _all: number
 }
 
+
+export type ProfileAvgAggregateInputType = {
+  balance?: true
+}
+
+export type ProfileSumAggregateInputType = {
+  balance?: true
+}
 
 export type ProfileMinAggregateInputType = {
   id?: true
@@ -69,6 +90,7 @@ export type ProfileMinAggregateInputType = {
   firstName?: true
   lastName?: true
   email?: true
+  balance?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -81,6 +103,7 @@ export type ProfileMaxAggregateInputType = {
   firstName?: true
   lastName?: true
   email?: true
+  balance?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -93,6 +116,7 @@ export type ProfileCountAggregateInputType = {
   firstName?: true
   lastName?: true
   email?: true
+  balance?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -137,6 +161,18 @@ export type ProfileAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ProfileAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ProfileSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ProfileMinAggregateInputType
@@ -167,6 +203,8 @@ export type ProfileGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: ProfileCountAggregateInputType | true
+  _avg?: ProfileAvgAggregateInputType
+  _sum?: ProfileSumAggregateInputType
   _min?: ProfileMinAggregateInputType
   _max?: ProfileMaxAggregateInputType
 }
@@ -178,10 +216,13 @@ export type ProfileGroupByOutputType = {
   firstName: string
   lastName: string
   email: string
+  balance: runtime.Decimal
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
   _count: ProfileCountAggregateOutputType | null
+  _avg: ProfileAvgAggregateOutputType | null
+  _sum: ProfileSumAggregateOutputType | null
   _min: ProfileMinAggregateOutputType | null
   _max: ProfileMaxAggregateOutputType | null
 }
@@ -211,11 +252,13 @@ export type ProfileWhereInput = {
   firstName?: Prisma.StringFilter<"Profile"> | string
   lastName?: Prisma.StringFilter<"Profile"> | string
   email?: Prisma.StringFilter<"Profile"> | string
+  balance?: Prisma.DecimalFilter<"Profile"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Profile"> | Date | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  accounts?: Prisma.AccountListRelationFilter
 }
 
 export type ProfileOrderByWithRelationInput = {
@@ -225,11 +268,13 @@ export type ProfileOrderByWithRelationInput = {
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  balance?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   tenant?: Prisma.TenantOrderByWithRelationInput
+  accounts?: Prisma.AccountOrderByRelationAggregateInput
 }
 
 export type ProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -243,11 +288,13 @@ export type ProfileWhereUniqueInput = Prisma.AtLeast<{
   firstName?: Prisma.StringFilter<"Profile"> | string
   lastName?: Prisma.StringFilter<"Profile"> | string
   email?: Prisma.StringFilter<"Profile"> | string
+  balance?: Prisma.DecimalFilter<"Profile"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Profile"> | Date | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  accounts?: Prisma.AccountListRelationFilter
 }, "id" | "userId_tenantId">
 
 export type ProfileOrderByWithAggregationInput = {
@@ -257,12 +304,15 @@ export type ProfileOrderByWithAggregationInput = {
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  balance?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ProfileCountOrderByAggregateInput
+  _avg?: Prisma.ProfileAvgOrderByAggregateInput
   _max?: Prisma.ProfileMaxOrderByAggregateInput
   _min?: Prisma.ProfileMinOrderByAggregateInput
+  _sum?: Prisma.ProfileSumOrderByAggregateInput
 }
 
 export type ProfileScalarWhereWithAggregatesInput = {
@@ -275,6 +325,7 @@ export type ProfileScalarWhereWithAggregatesInput = {
   firstName?: Prisma.StringWithAggregatesFilter<"Profile"> | string
   lastName?: Prisma.StringWithAggregatesFilter<"Profile"> | string
   email?: Prisma.StringWithAggregatesFilter<"Profile"> | string
+  balance?: Prisma.DecimalWithAggregatesFilter<"Profile"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Profile"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Profile"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Profile"> | Date | string | null
@@ -285,11 +336,13 @@ export type ProfileCreateInput = {
   firstName: string
   lastName: string
   email: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutProfilesInput
   tenant: Prisma.TenantCreateNestedOneWithoutProfilesInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateInput = {
@@ -299,9 +352,11 @@ export type ProfileUncheckedCreateInput = {
   firstName: string
   lastName: string
   email: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUpdateInput = {
@@ -309,11 +364,13 @@ export type ProfileUpdateInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutProfilesNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProfilesNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateInput = {
@@ -323,9 +380,11 @@ export type ProfileUncheckedUpdateInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileCreateManyInput = {
@@ -335,6 +394,7 @@ export type ProfileCreateManyInput = {
   firstName: string
   lastName: string
   email: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -345,6 +405,7 @@ export type ProfileUpdateManyMutationInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -357,6 +418,7 @@ export type ProfileUncheckedUpdateManyInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -372,6 +434,11 @@ export type ProfileOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type ProfileNullableScalarRelationFilter = {
+  is?: Prisma.ProfileWhereInput | null
+  isNot?: Prisma.ProfileWhereInput | null
+}
+
 export type ProfileUserIdTenantIdCompoundUniqueInput = {
   userId: string
   tenantId: string
@@ -384,9 +451,14 @@ export type ProfileCountOrderByAggregateInput = {
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  balance?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+}
+
+export type ProfileAvgOrderByAggregateInput = {
+  balance?: Prisma.SortOrder
 }
 
 export type ProfileMaxOrderByAggregateInput = {
@@ -396,6 +468,7 @@ export type ProfileMaxOrderByAggregateInput = {
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  balance?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -408,9 +481,14 @@ export type ProfileMinOrderByAggregateInput = {
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   email?: Prisma.SortOrder
+  balance?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+}
+
+export type ProfileSumOrderByAggregateInput = {
+  balance?: Prisma.SortOrder
 }
 
 export type ProfileCreateNestedManyWithoutTenantInput = {
@@ -453,6 +531,22 @@ export type ProfileUncheckedUpdateManyWithoutTenantNestedInput = {
   update?: Prisma.ProfileUpdateWithWhereUniqueWithoutTenantInput | Prisma.ProfileUpdateWithWhereUniqueWithoutTenantInput[]
   updateMany?: Prisma.ProfileUpdateManyWithWhereWithoutTenantInput | Prisma.ProfileUpdateManyWithWhereWithoutTenantInput[]
   deleteMany?: Prisma.ProfileScalarWhereInput | Prisma.ProfileScalarWhereInput[]
+}
+
+export type ProfileCreateNestedOneWithoutAccountsInput = {
+  create?: Prisma.XOR<Prisma.ProfileCreateWithoutAccountsInput, Prisma.ProfileUncheckedCreateWithoutAccountsInput>
+  connectOrCreate?: Prisma.ProfileCreateOrConnectWithoutAccountsInput
+  connect?: Prisma.ProfileWhereUniqueInput
+}
+
+export type ProfileUpdateOneWithoutAccountsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProfileCreateWithoutAccountsInput, Prisma.ProfileUncheckedCreateWithoutAccountsInput>
+  connectOrCreate?: Prisma.ProfileCreateOrConnectWithoutAccountsInput
+  upsert?: Prisma.ProfileUpsertWithoutAccountsInput
+  disconnect?: Prisma.ProfileWhereInput | boolean
+  delete?: Prisma.ProfileWhereInput | boolean
+  connect?: Prisma.ProfileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProfileUpdateToOneWithWhereWithoutAccountsInput, Prisma.ProfileUpdateWithoutAccountsInput>, Prisma.ProfileUncheckedUpdateWithoutAccountsInput>
 }
 
 export type ProfileCreateNestedManyWithoutUserInput = {
@@ -502,10 +596,12 @@ export type ProfileCreateWithoutTenantInput = {
   firstName: string
   lastName: string
   email: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutProfilesInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutTenantInput = {
@@ -514,9 +610,11 @@ export type ProfileUncheckedCreateWithoutTenantInput = {
   firstName: string
   lastName: string
   email: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileCreateOrConnectWithoutTenantInput = {
@@ -555,9 +653,78 @@ export type ProfileScalarWhereInput = {
   firstName?: Prisma.StringFilter<"Profile"> | string
   lastName?: Prisma.StringFilter<"Profile"> | string
   email?: Prisma.StringFilter<"Profile"> | string
+  balance?: Prisma.DecimalFilter<"Profile"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Profile"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Profile"> | Date | string | null
+}
+
+export type ProfileCreateWithoutAccountsInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  email: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  user: Prisma.UserCreateNestedOneWithoutProfilesInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProfilesInput
+}
+
+export type ProfileUncheckedCreateWithoutAccountsInput = {
+  id?: string
+  userId: string
+  tenantId: string
+  firstName: string
+  lastName: string
+  email: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type ProfileCreateOrConnectWithoutAccountsInput = {
+  where: Prisma.ProfileWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProfileCreateWithoutAccountsInput, Prisma.ProfileUncheckedCreateWithoutAccountsInput>
+}
+
+export type ProfileUpsertWithoutAccountsInput = {
+  update: Prisma.XOR<Prisma.ProfileUpdateWithoutAccountsInput, Prisma.ProfileUncheckedUpdateWithoutAccountsInput>
+  create: Prisma.XOR<Prisma.ProfileCreateWithoutAccountsInput, Prisma.ProfileUncheckedCreateWithoutAccountsInput>
+  where?: Prisma.ProfileWhereInput
+}
+
+export type ProfileUpdateToOneWithWhereWithoutAccountsInput = {
+  where?: Prisma.ProfileWhereInput
+  data: Prisma.XOR<Prisma.ProfileUpdateWithoutAccountsInput, Prisma.ProfileUncheckedUpdateWithoutAccountsInput>
+}
+
+export type ProfileUpdateWithoutAccountsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutProfilesNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProfilesNestedInput
+}
+
+export type ProfileUncheckedUpdateWithoutAccountsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ProfileCreateWithoutUserInput = {
@@ -565,10 +732,12 @@ export type ProfileCreateWithoutUserInput = {
   firstName: string
   lastName: string
   email: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   tenant: Prisma.TenantCreateNestedOneWithoutProfilesInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileUncheckedCreateWithoutUserInput = {
@@ -577,9 +746,11 @@ export type ProfileUncheckedCreateWithoutUserInput = {
   firstName: string
   lastName: string
   email: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutProfileInput
 }
 
 export type ProfileCreateOrConnectWithoutUserInput = {
@@ -614,6 +785,7 @@ export type ProfileCreateManyTenantInput = {
   firstName: string
   lastName: string
   email: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -624,10 +796,12 @@ export type ProfileUpdateWithoutTenantInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutProfilesNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutTenantInput = {
@@ -636,9 +810,11 @@ export type ProfileUncheckedUpdateWithoutTenantInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateManyWithoutTenantInput = {
@@ -647,6 +823,7 @@ export type ProfileUncheckedUpdateManyWithoutTenantInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -658,6 +835,7 @@ export type ProfileCreateManyUserInput = {
   firstName: string
   lastName: string
   email: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -668,10 +846,12 @@ export type ProfileUpdateWithoutUserInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProfilesNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateWithoutUserInput = {
@@ -680,9 +860,11 @@ export type ProfileUncheckedUpdateWithoutUserInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutProfileNestedInput
 }
 
 export type ProfileUncheckedUpdateManyWithoutUserInput = {
@@ -691,11 +873,41 @@ export type ProfileUncheckedUpdateManyWithoutUserInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
+
+/**
+ * Count Type ProfileCountOutputType
+ */
+
+export type ProfileCountOutputType = {
+  accounts: number
+}
+
+export type ProfileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  accounts?: boolean | ProfileCountOutputTypeCountAccountsArgs
+}
+
+/**
+ * ProfileCountOutputType without action
+ */
+export type ProfileCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProfileCountOutputType
+   */
+  select?: Prisma.ProfileCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ProfileCountOutputType without action
+ */
+export type ProfileCountOutputTypeCountAccountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AccountWhereInput
+}
 
 
 export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -705,11 +917,14 @@ export type ProfileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   firstName?: boolean
   lastName?: boolean
   email?: boolean
+  balance?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  accounts?: boolean | Prisma.Profile$accountsArgs<ExtArgs>
+  _count?: boolean | Prisma.ProfileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["profile"]>
 
 export type ProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -719,6 +934,7 @@ export type ProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   firstName?: boolean
   lastName?: boolean
   email?: boolean
+  balance?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -733,6 +949,7 @@ export type ProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   firstName?: boolean
   lastName?: boolean
   email?: boolean
+  balance?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -747,15 +964,18 @@ export type ProfileSelectScalar = {
   firstName?: boolean
   lastName?: boolean
   email?: boolean
+  balance?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "tenantId" | "firstName" | "lastName" | "email" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["profile"]>
+export type ProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "tenantId" | "firstName" | "lastName" | "email" | "balance" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["profile"]>
 export type ProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  accounts?: boolean | Prisma.Profile$accountsArgs<ExtArgs>
+  _count?: boolean | Prisma.ProfileCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProfileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -771,6 +991,7 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     tenant: Prisma.$TenantPayload<ExtArgs>
+    accounts: Prisma.$AccountPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -779,6 +1000,7 @@ export type $ProfilePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     firstName: string
     lastName: string
     email: string
+    balance: runtime.Decimal
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -1178,6 +1400,7 @@ export interface Prisma__ProfileClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  accounts<T extends Prisma.Profile$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Profile$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1213,6 +1436,7 @@ export interface ProfileFieldRefs {
   readonly firstName: Prisma.FieldRef<"Profile", 'String'>
   readonly lastName: Prisma.FieldRef<"Profile", 'String'>
   readonly email: Prisma.FieldRef<"Profile", 'String'>
+  readonly balance: Prisma.FieldRef<"Profile", 'Decimal'>
   readonly createdAt: Prisma.FieldRef<"Profile", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Profile", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Profile", 'DateTime'>
@@ -1609,6 +1833,30 @@ export type ProfileDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Profiles to delete.
    */
   limit?: number
+}
+
+/**
+ * Profile.accounts
+ */
+export type Profile$accountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Account
+   */
+  select?: Prisma.AccountSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Account
+   */
+  omit?: Prisma.AccountOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccountInclude<ExtArgs> | null
+  where?: Prisma.AccountWhereInput
+  orderBy?: Prisma.AccountOrderByWithRelationInput | Prisma.AccountOrderByWithRelationInput[]
+  cursor?: Prisma.AccountWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AccountScalarFieldEnum | Prisma.AccountScalarFieldEnum[]
 }
 
 /**

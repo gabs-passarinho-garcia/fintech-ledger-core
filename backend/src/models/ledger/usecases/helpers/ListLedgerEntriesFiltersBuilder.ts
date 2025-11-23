@@ -18,6 +18,7 @@ export class ListLedgerEntriesFiltersBuilder {
     type?: 'DEPOSIT' | 'WITHDRAWAL' | 'TRANSFER';
     dateFrom?: unknown;
     dateTo?: unknown;
+    accountIds?: string[];
   }): ListLedgerEntriesFilters {
     return {
       tenantId: input.tenantId,
@@ -25,6 +26,7 @@ export class ListLedgerEntriesFiltersBuilder {
       type: input.type,
       dateFrom: QueryParameterConverter.toDate(input.dateFrom),
       dateTo: QueryParameterConverter.toDate(input.dateTo),
+      accountIds: input.accountIds,
     };
   }
 }

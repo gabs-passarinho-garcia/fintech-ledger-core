@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { createLedgerEntry } from "../services/ledger";
 import { listTenants } from "../services/tenants";
 import { listProfilesByTenant } from "../services/profile";
+import { getMyAccounts, listAccountsByProfile } from "../services/accounts";
+import { getCurrentUser } from "../services/auth";
 import { storage } from "../utils/storage";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import Loading from "../components/Loading";
 import type { CreateLedgerEntryInput } from "../services/ledger";
-import type { Tenant, Profile } from "../types";
+import type { Tenant, Profile, Account } from "../types";
 
 /**
  * Create ledger entry page
@@ -24,50 +26,69 @@ export default function LedgerEntryCreate(): JSX.Element {
   });
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [selectedProfileId, setSelectedProfileId] = useState<string>("");
+  const [isMaster, setIsMaster] = useState(false);
   const [isLoadingTenants, setIsLoadingTenants] = useState(true);
   const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
+  const [isLoadingAccounts, setIsLoadingAccounts] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const user = getCurrentUser();
+    setIsMaster(user?.isMaster ?? false);
     loadTenants();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (formData.tenantId) {
-      loadProfiles(formData.tenantId);
+      if (isMaster) {
+        loadProfilesForMaster(formData.tenantId);
+      } else {
+        loadMyAccounts();
+      }
     } else {
       setProfiles([]);
+      setAccounts([]);
     }
-  }, [formData.tenantId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.tenantId, isMaster]);
+
+  useEffect(() => {
+    if (isMaster && selectedProfileId && formData.tenantId) {
+      loadAccountsForProfile(selectedProfileId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedProfileId, isMaster, formData.tenantId]);
+
+  const selectTenantFromResponse = (tenantsList: Tenant[]): void => {
+    if (tenantsList.length === 1 && !formData.tenantId) {
+      setFormData((prev) => ({
+        ...prev,
+        tenantId: tenantsList[0]?.id || "",
+      }));
+      return;
+    }
+
+    if (formData.tenantId) {
+      const tenantExists = tenantsList.some((t) => t.id === formData.tenantId);
+      if (!tenantExists && tenantsList.length > 0) {
+        setFormData((prev) => ({
+          ...prev,
+          tenantId: tenantsList[0]?.id || "",
+        }));
+      }
+    }
+  };
 
   const loadTenants = async (): Promise<void> => {
     setIsLoadingTenants(true);
     try {
       const response = await listTenants();
       setTenants(response.tenants);
-
-      // Se houver apenas uma tenant, pré-selecionar
-      if (response.tenants.length === 1 && !formData.tenantId) {
-        setFormData((prev) => ({
-          ...prev,
-          tenantId: response.tenants[0]?.id || "",
-        }));
-      }
-      // Se o tenantId do storage existir e estiver na lista, manter selecionado
-      else if (formData.tenantId) {
-        const tenantExists = response.tenants.some(
-          (t) => t.id === formData.tenantId,
-        );
-        if (!tenantExists && response.tenants.length > 0) {
-          // Se o tenant do storage não existe mais, selecionar o primeiro
-          setFormData((prev) => ({
-            ...prev,
-            tenantId: response.tenants[0]?.id || "",
-          }));
-        }
-      }
+      selectTenantFromResponse(response.tenants);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load tenants");
     } finally {
@@ -75,17 +96,13 @@ export default function LedgerEntryCreate(): JSX.Element {
     }
   };
 
-  const loadProfiles = async (tenantId: string): Promise<void> => {
+  const loadProfilesForMaster = async (tenantId: string): Promise<void> => {
     setIsLoadingProfiles(true);
     try {
       const response = await listProfilesByTenant(tenantId);
       setProfiles(response.profiles);
-      // Reset account IDs when profiles change
-      setFormData((prev) => ({
-        ...prev,
-        fromAccountId: "",
-        toAccountId: "",
-      }));
+      setSelectedProfileId("");
+      resetAccountIds();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load profiles");
     } finally {
@@ -93,25 +110,65 @@ export default function LedgerEntryCreate(): JSX.Element {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+  const loadMyAccounts = async (): Promise<void> => {
+    setIsLoadingAccounts(true);
+    try {
+      const response = await getMyAccounts();
+      setAccounts(response.accounts);
+      resetAccountIds();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load accounts");
+    } finally {
+      setIsLoadingAccounts(false);
+    }
+  };
 
+  const loadAccountsForProfile = async (profileId: string): Promise<void> => {
+    setIsLoadingAccounts(true);
+    try {
+      const response = await listAccountsByProfile(profileId);
+      setAccounts(response.accounts);
+      resetAccountIds();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load accounts");
+    } finally {
+      setIsLoadingAccounts(false);
+    }
+  };
+
+  const validateForm = (): string | null => {
     if (
       !formData.tenantId ||
       !formData.amount ||
       !formData.type ||
       !formData.fromAccountId
     ) {
-      setError("Tenant, amount, type, and from account are required");
-      setIsLoading(false);
-      return;
+      return "Tenant, amount, type, and from account are required";
     }
 
-    // Validate toAccountId based on type
     if (formData.type === "TRANSFER" && !formData.toAccountId) {
-      setError("To account is required for transfer transactions");
+      return "To account is required for transfer transactions";
+    }
+
+    const amount =
+      typeof formData.amount === "string"
+        ? parseFloat(formData.amount)
+        : formData.amount;
+    if (isNaN(amount) || amount <= 0) {
+      return "Amount must be a positive number";
+    }
+
+    return null;
+  };
+
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
       setIsLoading(false);
       return;
     }
@@ -121,12 +178,6 @@ export default function LedgerEntryCreate(): JSX.Element {
         typeof formData.amount === "string"
           ? parseFloat(formData.amount)
           : formData.amount;
-      if (isNaN(amount) || amount <= 0) {
-        setError("Amount must be a positive number");
-        setIsLoading(false);
-        return;
-      }
-
       await createLedgerEntry({
         ...formData,
         amount,
@@ -143,6 +194,21 @@ export default function LedgerEntryCreate(): JSX.Element {
     }
   };
 
+  const resetAccountIds = (): void => {
+    setFormData((prev) => ({
+      ...prev,
+      fromAccountId: "",
+      toAccountId: "",
+    }));
+  };
+
+  const formatAccountBalance = (balance: string): string => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(parseFloat(balance || "0"));
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ): void => {
@@ -150,6 +216,11 @@ export default function LedgerEntryCreate(): JSX.Element {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleProfileChange = (profileId: string): void => {
+    setSelectedProfileId(profileId);
+    resetAccountIds();
   };
 
   return (
@@ -231,21 +302,57 @@ export default function LedgerEntryCreate(): JSX.Element {
             placeholder="0.00"
           />
 
+          {isMaster && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Profile
+              </label>
+              {isLoadingProfiles ? (
+                <div className="flex items-center gap-2">
+                  <Loading size="sm" />
+                  <span className="text-sm text-gray-500">
+                    Loading profiles...
+                  </span>
+                </div>
+              ) : profiles.length === 0 ? (
+                <div className="p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg text-sm text-yellow-700 dark:text-yellow-300">
+                  No profiles available for this tenant. Please select a tenant
+                  first.
+                </div>
+              ) : (
+                <select
+                  value={selectedProfileId}
+                  onChange={(e) => handleProfileChange(e.target.value)}
+                  className="input-field"
+                  aria-label="Select profile"
+                >
+                  <option value="">Select a profile</option>
+                  {profiles.map((profile) => (
+                    <option key={profile.id} value={profile.id}>
+                      {profile.firstName} {profile.lastName} ({profile.email})
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+          )}
+
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               From Account <span className="text-red-500">*</span>
             </label>
-            {isLoadingProfiles ? (
+            {isLoadingAccounts ? (
               <div className="flex items-center gap-2">
                 <Loading size="sm" />
                 <span className="text-sm text-gray-500">
-                  Loading profiles...
+                  Loading accounts...
                 </span>
               </div>
-            ) : profiles.length === 0 ? (
+            ) : accounts.length === 0 ? (
               <div className="p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg text-sm text-yellow-700 dark:text-yellow-300">
-                No profiles available for this tenant. Please select a tenant
-                first.
+                {isMaster
+                  ? "No accounts available. Please select a profile first."
+                  : "No accounts available. Please contact your administrator."}
               </div>
             ) : (
               <select
@@ -255,11 +362,13 @@ export default function LedgerEntryCreate(): JSX.Element {
                 className="input-field"
                 required
                 aria-label="Select from account"
+                disabled={isMaster && !selectedProfileId}
               >
                 <option value="">Select from account</option>
-                {profiles.map((profile) => (
-                  <option key={profile.id} value={profile.id}>
-                    {profile.firstName} {profile.lastName} ({profile.email})
+                {accounts.map((account) => (
+                  <option key={account.id} value={account.id}>
+                    {account.name} (Balance:{" "}
+                    {formatAccountBalance(account.balance)})
                   </option>
                 ))}
               </select>
@@ -273,17 +382,18 @@ export default function LedgerEntryCreate(): JSX.Element {
                 <span className="text-red-500"> *</span>
               )}
             </label>
-            {isLoadingProfiles ? (
+            {isLoadingAccounts ? (
               <div className="flex items-center gap-2">
                 <Loading size="sm" />
                 <span className="text-sm text-gray-500">
-                  Loading profiles...
+                  Loading accounts...
                 </span>
               </div>
-            ) : profiles.length === 0 ? (
+            ) : accounts.length === 0 ? (
               <div className="p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded-lg text-sm text-yellow-700 dark:text-yellow-300">
-                No profiles available for this tenant. Please select a tenant
-                first.
+                {isMaster
+                  ? "No accounts available. Please select a profile first."
+                  : "No accounts available. Please contact your administrator."}
               </div>
             ) : (
               <select
@@ -293,11 +403,13 @@ export default function LedgerEntryCreate(): JSX.Element {
                 className="input-field"
                 required={formData.type === "TRANSFER"}
                 aria-label="Select to account"
+                disabled={isMaster && !selectedProfileId}
               >
                 <option value="">Select to account</option>
-                {profiles.map((profile) => (
-                  <option key={profile.id} value={profile.id}>
-                    {profile.firstName} {profile.lastName} ({profile.email})
+                {accounts.map((account) => (
+                  <option key={account.id} value={account.id}>
+                    {account.name} (Balance:{" "}
+                    {formatAccountBalance(account.balance)})
                   </option>
                 ))}
               </select>

@@ -71,6 +71,7 @@ export class UpdateProfileRepository {
       firstName: updated.firstName,
       lastName: updated.lastName,
       email: updated.email,
+      balance: updated.balance,
       createdAt: updated.createdAt,
       updatedAt: updated.updatedAt,
       deletedAt: updated.deletedAt,

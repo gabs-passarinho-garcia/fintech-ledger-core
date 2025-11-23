@@ -30,6 +30,7 @@ model Tenant {
 model Account {
   id        String    @id @default(uuid()) @db.Uuid
   tenantId  String    @db.Uuid
+  profileId String?   @db.Uuid
   name      String
   balance   Decimal   @default(0) @db.Decimal(18, 2)
   createdBy String
@@ -40,10 +41,12 @@ model Account {
   deletedAt DateTime?
 
   tenant                Tenant         @relation(fields: [tenantId], references: [id])
+  profile                Profile?       @relation(fields: [profileId], references: [id])
   fromLedgerEntries     LedgerEntry[] @relation("FromAccount")
   toLedgerEntries       LedgerEntry[] @relation("ToAccount")
 
   @@index([tenantId])
+  @@index([profileId])
   @@index([deletedAt])
   @@map("accounts")
 }
@@ -112,12 +115,14 @@ model Profile {
   firstName String
   lastName  String
   email     String
+  balance   Decimal  @default(0) @db.Decimal(18, 2)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
 
-  user   User   @relation(fields: [userId], references: [id])
-  tenant Tenant @relation(fields: [tenantId], references: [id])
+  user     User      @relation(fields: [userId], references: [id])
+  tenant   Tenant    @relation(fields: [tenantId], references: [id])
+  accounts Account[]
 
   @@unique([userId, tenantId])
   @@index([userId])

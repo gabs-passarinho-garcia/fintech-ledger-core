@@ -42,7 +42,14 @@ import type { DeleteProfileRepository } from '@/models/auth/infra/repositories/D
 import type { DeleteUserRepository } from '@/models/auth/infra/repositories/DeleteUserRepository';
 import type { ListAllUsersRepository } from '@/models/auth/infra/repositories/ListAllUsersRepository';
 import type { ListAllProfilesRepository } from '@/models/auth/infra/repositories/ListAllProfilesRepository';
+import type { GetProfileBalanceRepository } from '@/models/auth/infra/repositories/GetProfileBalanceRepository';
+import type { UpdateProfileBalanceRepository } from '@/models/auth/infra/repositories/UpdateProfileBalanceRepository';
 import type { CreateRefreshTokenRepository } from '@/models/auth/infra/repositories/CreateRefreshTokenRepository';
+import type { ListAccountsByProfileIdRepository } from '@/models/accounts/infra/repositories/ListAccountsByProfileIdRepository';
+import type { GetMyAccountsUseCase } from '@/models/accounts/usecases/GetMyAccountsUseCase';
+import type { ListAccountsByProfileUseCase } from '@/models/accounts/usecases/ListAccountsByProfileUseCase';
+import type { ListProfilesWithAccountsUseCase } from '@/models/accounts/usecases/ListProfilesWithAccountsUseCase';
+import type { GetProfileBalanceUseCase } from '@/models/auth/usecases/GetProfileBalanceUseCase';
 import type { GetRefreshTokenRepository } from '@/models/auth/infra/repositories/GetRefreshTokenRepository';
 import type { DeleteRefreshTokenRepository } from '@/models/auth/infra/repositories/DeleteRefreshTokenRepository';
 import type { SignUpUseCase } from '@/models/auth/usecases/SignUpUseCase';
@@ -113,7 +120,10 @@ export interface IAppContainer {
   deleteUserRepository: DeleteUserRepository;
   listAllUsersRepository: ListAllUsersRepository;
   listAllProfilesRepository: ListAllProfilesRepository;
+  getProfileBalanceRepository: GetProfileBalanceRepository;
+  updateProfileBalanceRepository: UpdateProfileBalanceRepository;
   createRefreshTokenRepository: CreateRefreshTokenRepository;
+  listAccountsByProfileIdRepository: ListAccountsByProfileIdRepository;
   getRefreshTokenRepository: GetRefreshTokenRepository;
   deleteRefreshTokenRepository: DeleteRefreshTokenRepository;
   // Auth use cases
@@ -130,6 +140,11 @@ export interface IAppContainer {
   deleteProfileUseCase: DeleteProfileUseCase;
   deleteUserUseCase: DeleteUserUseCase;
   createProfileUseCase: CreateProfileUseCase;
+  getProfileBalanceUseCase: GetProfileBalanceUseCase;
+  // Account use cases
+  getMyAccountsUseCase: GetMyAccountsUseCase;
+  listAccountsByProfileUseCase: ListAccountsByProfileUseCase;
+  listProfilesWithAccountsUseCase: ListProfilesWithAccountsUseCase;
   // Tenant repositories
   listTenantsByUserRepository: ListTenantsByUserRepository;
   listAllTenantsRepository: ListAllTenantsRepository;

@@ -6,6 +6,7 @@ import { NotFoundError } from '@/common/errors';
 export interface AccountData {
   id: string;
   tenantId: string;
+  profileId: string | null;
   name: string;
   balance: Prisma.Decimal;
 }
@@ -46,6 +47,7 @@ export class GetAccountRepository {
       select: {
         id: true,
         tenantId: true,
+        profileId: true,
         name: true,
         balance: true,
       },

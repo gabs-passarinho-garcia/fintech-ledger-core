@@ -83,6 +83,7 @@ export class ListAllProfilesUseCase
         firstName: item.profile.firstName,
         lastName: item.profile.lastName,
         email: item.profile.email,
+        balance: item.profile.balance.toString(),
         createdAt: item.profile.createdAt,
         updatedAt: item.profile.updatedAt,
         deletedAt: item.profile.deletedAt,

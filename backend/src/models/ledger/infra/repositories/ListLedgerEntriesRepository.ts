@@ -14,6 +14,7 @@ export interface ListLedgerEntriesFilters {
   type?: TransactionType;
   dateFrom?: Date;
   dateTo?: Date;
+  accountIds?: string[]; // Filter by account IDs (for profile-based filtering)
 }
 
 export interface ListLedgerEntriesResult {
@@ -74,6 +75,14 @@ export class ListLedgerEntriesRepository {
       if (args.filters.dateTo) {
         where.createdAt.lte = args.filters.dateTo;
       }
+    }
+
+    // Filter by account IDs if provided (for profile-based filtering)
+    if (args.filters.accountIds && args.filters.accountIds.length > 0) {
+      where.OR = [
+        { fromAccountId: { in: args.filters.accountIds } },
+        { toAccountId: { in: args.filters.accountIds } },
+      ];
     }
 
     const [entries, total] = await Promise.all([

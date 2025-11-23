@@ -37,6 +37,7 @@ export type AccountSumAggregateOutputType = {
 export type AccountMinAggregateOutputType = {
   id: string | null
   tenantId: string | null
+  profileId: string | null
   name: string | null
   balance: runtime.Decimal | null
   createdBy: string | null
@@ -50,6 +51,7 @@ export type AccountMinAggregateOutputType = {
 export type AccountMaxAggregateOutputType = {
   id: string | null
   tenantId: string | null
+  profileId: string | null
   name: string | null
   balance: runtime.Decimal | null
   createdBy: string | null
@@ -63,6 +65,7 @@ export type AccountMaxAggregateOutputType = {
 export type AccountCountAggregateOutputType = {
   id: number
   tenantId: number
+  profileId: number
   name: number
   balance: number
   createdBy: number
@@ -86,6 +89,7 @@ export type AccountSumAggregateInputType = {
 export type AccountMinAggregateInputType = {
   id?: true
   tenantId?: true
+  profileId?: true
   name?: true
   balance?: true
   createdBy?: true
@@ -99,6 +103,7 @@ export type AccountMinAggregateInputType = {
 export type AccountMaxAggregateInputType = {
   id?: true
   tenantId?: true
+  profileId?: true
   name?: true
   balance?: true
   createdBy?: true
@@ -112,6 +117,7 @@ export type AccountMaxAggregateInputType = {
 export type AccountCountAggregateInputType = {
   id?: true
   tenantId?: true
+  profileId?: true
   name?: true
   balance?: true
   createdBy?: true
@@ -212,6 +218,7 @@ export type AccountGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type AccountGroupByOutputType = {
   id: string
   tenantId: string
+  profileId: string | null
   name: string
   balance: runtime.Decimal
   createdBy: string
@@ -248,6 +255,7 @@ export type AccountWhereInput = {
   NOT?: Prisma.AccountWhereInput | Prisma.AccountWhereInput[]
   id?: Prisma.UuidFilter<"Account"> | string
   tenantId?: Prisma.UuidFilter<"Account"> | string
+  profileId?: Prisma.UuidNullableFilter<"Account"> | string | null
   name?: Prisma.StringFilter<"Account"> | string
   balance?: Prisma.DecimalFilter<"Account"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy?: Prisma.StringFilter<"Account"> | string
@@ -257,6 +265,7 @@ export type AccountWhereInput = {
   deletedBy?: Prisma.StringNullableFilter<"Account"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Account"> | Date | string | null
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  profile?: Prisma.XOR<Prisma.ProfileNullableScalarRelationFilter, Prisma.ProfileWhereInput> | null
   fromLedgerEntries?: Prisma.LedgerEntryListRelationFilter
   toLedgerEntries?: Prisma.LedgerEntryListRelationFilter
 }
@@ -264,6 +273,7 @@ export type AccountWhereInput = {
 export type AccountOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   balance?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
@@ -273,6 +283,7 @@ export type AccountOrderByWithRelationInput = {
   deletedBy?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   tenant?: Prisma.TenantOrderByWithRelationInput
+  profile?: Prisma.ProfileOrderByWithRelationInput
   fromLedgerEntries?: Prisma.LedgerEntryOrderByRelationAggregateInput
   toLedgerEntries?: Prisma.LedgerEntryOrderByRelationAggregateInput
 }
@@ -283,6 +294,7 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.AccountWhereInput[]
   NOT?: Prisma.AccountWhereInput | Prisma.AccountWhereInput[]
   tenantId?: Prisma.UuidFilter<"Account"> | string
+  profileId?: Prisma.UuidNullableFilter<"Account"> | string | null
   name?: Prisma.StringFilter<"Account"> | string
   balance?: Prisma.DecimalFilter<"Account"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy?: Prisma.StringFilter<"Account"> | string
@@ -292,6 +304,7 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
   deletedBy?: Prisma.StringNullableFilter<"Account"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Account"> | Date | string | null
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  profile?: Prisma.XOR<Prisma.ProfileNullableScalarRelationFilter, Prisma.ProfileWhereInput> | null
   fromLedgerEntries?: Prisma.LedgerEntryListRelationFilter
   toLedgerEntries?: Prisma.LedgerEntryListRelationFilter
 }, "id">
@@ -299,6 +312,7 @@ export type AccountWhereUniqueInput = Prisma.AtLeast<{
 export type AccountOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   balance?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
@@ -320,6 +334,7 @@ export type AccountScalarWhereWithAggregatesInput = {
   NOT?: Prisma.AccountScalarWhereWithAggregatesInput | Prisma.AccountScalarWhereWithAggregatesInput[]
   id?: Prisma.UuidWithAggregatesFilter<"Account"> | string
   tenantId?: Prisma.UuidWithAggregatesFilter<"Account"> | string
+  profileId?: Prisma.UuidNullableWithAggregatesFilter<"Account"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"Account"> | string
   balance?: Prisma.DecimalWithAggregatesFilter<"Account"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy?: Prisma.StringWithAggregatesFilter<"Account"> | string
@@ -341,6 +356,7 @@ export type AccountCreateInput = {
   deletedBy?: string | null
   deletedAt?: Date | string | null
   tenant: Prisma.TenantCreateNestedOneWithoutAccountsInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutAccountsInput
   fromLedgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutFromAccountInput
   toLedgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutToAccountInput
 }
@@ -348,6 +364,7 @@ export type AccountCreateInput = {
 export type AccountUncheckedCreateInput = {
   id?: string
   tenantId: string
+  profileId?: string | null
   name: string
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy: string
@@ -371,6 +388,7 @@ export type AccountUpdateInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tenant?: Prisma.TenantUpdateOneRequiredWithoutAccountsNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutAccountsNestedInput
   fromLedgerEntries?: Prisma.LedgerEntryUpdateManyWithoutFromAccountNestedInput
   toLedgerEntries?: Prisma.LedgerEntryUpdateManyWithoutToAccountNestedInput
 }
@@ -378,6 +396,7 @@ export type AccountUpdateInput = {
 export type AccountUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  profileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
@@ -393,6 +412,7 @@ export type AccountUncheckedUpdateInput = {
 export type AccountCreateManyInput = {
   id?: string
   tenantId: string
+  profileId?: string | null
   name: string
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy: string
@@ -418,6 +438,7 @@ export type AccountUpdateManyMutationInput = {
 export type AccountUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  profileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
@@ -441,6 +462,7 @@ export type AccountOrderByRelationAggregateInput = {
 export type AccountCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   balance?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
@@ -458,6 +480,7 @@ export type AccountAvgOrderByAggregateInput = {
 export type AccountMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   balance?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
@@ -471,6 +494,7 @@ export type AccountMaxOrderByAggregateInput = {
 export type AccountMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  profileId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   balance?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
@@ -572,6 +596,48 @@ export type AccountUpdateOneWithoutToLedgerEntriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AccountUpdateToOneWithWhereWithoutToLedgerEntriesInput, Prisma.AccountUpdateWithoutToLedgerEntriesInput>, Prisma.AccountUncheckedUpdateWithoutToLedgerEntriesInput>
 }
 
+export type AccountCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutProfileInput, Prisma.AccountUncheckedCreateWithoutProfileInput> | Prisma.AccountCreateWithoutProfileInput[] | Prisma.AccountUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutProfileInput | Prisma.AccountCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.AccountCreateManyProfileInputEnvelope
+  connect?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+}
+
+export type AccountUncheckedCreateNestedManyWithoutProfileInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutProfileInput, Prisma.AccountUncheckedCreateWithoutProfileInput> | Prisma.AccountCreateWithoutProfileInput[] | Prisma.AccountUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutProfileInput | Prisma.AccountCreateOrConnectWithoutProfileInput[]
+  createMany?: Prisma.AccountCreateManyProfileInputEnvelope
+  connect?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+}
+
+export type AccountUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutProfileInput, Prisma.AccountUncheckedCreateWithoutProfileInput> | Prisma.AccountCreateWithoutProfileInput[] | Prisma.AccountUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutProfileInput | Prisma.AccountCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.AccountUpsertWithWhereUniqueWithoutProfileInput | Prisma.AccountUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.AccountCreateManyProfileInputEnvelope
+  set?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  disconnect?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  delete?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  connect?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  update?: Prisma.AccountUpdateWithWhereUniqueWithoutProfileInput | Prisma.AccountUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.AccountUpdateManyWithWhereWithoutProfileInput | Prisma.AccountUpdateManyWithWhereWithoutProfileInput[]
+  deleteMany?: Prisma.AccountScalarWhereInput | Prisma.AccountScalarWhereInput[]
+}
+
+export type AccountUncheckedUpdateManyWithoutProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.AccountCreateWithoutProfileInput, Prisma.AccountUncheckedCreateWithoutProfileInput> | Prisma.AccountCreateWithoutProfileInput[] | Prisma.AccountUncheckedCreateWithoutProfileInput[]
+  connectOrCreate?: Prisma.AccountCreateOrConnectWithoutProfileInput | Prisma.AccountCreateOrConnectWithoutProfileInput[]
+  upsert?: Prisma.AccountUpsertWithWhereUniqueWithoutProfileInput | Prisma.AccountUpsertWithWhereUniqueWithoutProfileInput[]
+  createMany?: Prisma.AccountCreateManyProfileInputEnvelope
+  set?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  disconnect?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  delete?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  connect?: Prisma.AccountWhereUniqueInput | Prisma.AccountWhereUniqueInput[]
+  update?: Prisma.AccountUpdateWithWhereUniqueWithoutProfileInput | Prisma.AccountUpdateWithWhereUniqueWithoutProfileInput[]
+  updateMany?: Prisma.AccountUpdateManyWithWhereWithoutProfileInput | Prisma.AccountUpdateManyWithWhereWithoutProfileInput[]
+  deleteMany?: Prisma.AccountScalarWhereInput | Prisma.AccountScalarWhereInput[]
+}
+
 export type AccountCreateWithoutTenantInput = {
   id?: string
   name: string
@@ -582,12 +648,14 @@ export type AccountCreateWithoutTenantInput = {
   updatedAt?: Date | string
   deletedBy?: string | null
   deletedAt?: Date | string | null
+  profile?: Prisma.ProfileCreateNestedOneWithoutAccountsInput
   fromLedgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutFromAccountInput
   toLedgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutToAccountInput
 }
 
 export type AccountUncheckedCreateWithoutTenantInput = {
   id?: string
+  profileId?: string | null
   name: string
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy: string
@@ -632,6 +700,7 @@ export type AccountScalarWhereInput = {
   NOT?: Prisma.AccountScalarWhereInput | Prisma.AccountScalarWhereInput[]
   id?: Prisma.UuidFilter<"Account"> | string
   tenantId?: Prisma.UuidFilter<"Account"> | string
+  profileId?: Prisma.UuidNullableFilter<"Account"> | string | null
   name?: Prisma.StringFilter<"Account"> | string
   balance?: Prisma.DecimalFilter<"Account"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy?: Prisma.StringFilter<"Account"> | string
@@ -653,12 +722,14 @@ export type AccountCreateWithoutFromLedgerEntriesInput = {
   deletedBy?: string | null
   deletedAt?: Date | string | null
   tenant: Prisma.TenantCreateNestedOneWithoutAccountsInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutAccountsInput
   toLedgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutToAccountInput
 }
 
 export type AccountUncheckedCreateWithoutFromLedgerEntriesInput = {
   id?: string
   tenantId: string
+  profileId?: string | null
   name: string
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy: string
@@ -686,12 +757,14 @@ export type AccountCreateWithoutToLedgerEntriesInput = {
   deletedBy?: string | null
   deletedAt?: Date | string | null
   tenant: Prisma.TenantCreateNestedOneWithoutAccountsInput
+  profile?: Prisma.ProfileCreateNestedOneWithoutAccountsInput
   fromLedgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutFromAccountInput
 }
 
 export type AccountUncheckedCreateWithoutToLedgerEntriesInput = {
   id?: string
   tenantId: string
+  profileId?: string | null
   name: string
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy: string
@@ -730,12 +803,14 @@ export type AccountUpdateWithoutFromLedgerEntriesInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tenant?: Prisma.TenantUpdateOneRequiredWithoutAccountsNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutAccountsNestedInput
   toLedgerEntries?: Prisma.LedgerEntryUpdateManyWithoutToAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutFromLedgerEntriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  profileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
@@ -769,12 +844,14 @@ export type AccountUpdateWithoutToLedgerEntriesInput = {
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tenant?: Prisma.TenantUpdateOneRequiredWithoutAccountsNestedInput
+  profile?: Prisma.ProfileUpdateOneWithoutAccountsNestedInput
   fromLedgerEntries?: Prisma.LedgerEntryUpdateManyWithoutFromAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutToLedgerEntriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  profileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
@@ -786,8 +863,65 @@ export type AccountUncheckedUpdateWithoutToLedgerEntriesInput = {
   fromLedgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutFromAccountNestedInput
 }
 
+export type AccountCreateWithoutProfileInput = {
+  id?: string
+  name: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdBy: string
+  createdAt?: Date | string
+  updatedBy?: string | null
+  updatedAt?: Date | string
+  deletedBy?: string | null
+  deletedAt?: Date | string | null
+  tenant: Prisma.TenantCreateNestedOneWithoutAccountsInput
+  fromLedgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutFromAccountInput
+  toLedgerEntries?: Prisma.LedgerEntryCreateNestedManyWithoutToAccountInput
+}
+
+export type AccountUncheckedCreateWithoutProfileInput = {
+  id?: string
+  tenantId: string
+  name: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdBy: string
+  createdAt?: Date | string
+  updatedBy?: string | null
+  updatedAt?: Date | string
+  deletedBy?: string | null
+  deletedAt?: Date | string | null
+  fromLedgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutFromAccountInput
+  toLedgerEntries?: Prisma.LedgerEntryUncheckedCreateNestedManyWithoutToAccountInput
+}
+
+export type AccountCreateOrConnectWithoutProfileInput = {
+  where: Prisma.AccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.AccountCreateWithoutProfileInput, Prisma.AccountUncheckedCreateWithoutProfileInput>
+}
+
+export type AccountCreateManyProfileInputEnvelope = {
+  data: Prisma.AccountCreateManyProfileInput | Prisma.AccountCreateManyProfileInput[]
+  skipDuplicates?: boolean
+}
+
+export type AccountUpsertWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.AccountWhereUniqueInput
+  update: Prisma.XOR<Prisma.AccountUpdateWithoutProfileInput, Prisma.AccountUncheckedUpdateWithoutProfileInput>
+  create: Prisma.XOR<Prisma.AccountCreateWithoutProfileInput, Prisma.AccountUncheckedCreateWithoutProfileInput>
+}
+
+export type AccountUpdateWithWhereUniqueWithoutProfileInput = {
+  where: Prisma.AccountWhereUniqueInput
+  data: Prisma.XOR<Prisma.AccountUpdateWithoutProfileInput, Prisma.AccountUncheckedUpdateWithoutProfileInput>
+}
+
+export type AccountUpdateManyWithWhereWithoutProfileInput = {
+  where: Prisma.AccountScalarWhereInput
+  data: Prisma.XOR<Prisma.AccountUpdateManyMutationInput, Prisma.AccountUncheckedUpdateManyWithoutProfileInput>
+}
+
 export type AccountCreateManyTenantInput = {
   id?: string
+  profileId?: string | null
   name: string
   balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy: string
@@ -808,12 +942,14 @@ export type AccountUpdateWithoutTenantInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  profile?: Prisma.ProfileUpdateOneWithoutAccountsNestedInput
   fromLedgerEntries?: Prisma.LedgerEntryUpdateManyWithoutFromAccountNestedInput
   toLedgerEntries?: Prisma.LedgerEntryUpdateManyWithoutToAccountNestedInput
 }
 
 export type AccountUncheckedUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  profileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
@@ -828,6 +964,63 @@ export type AccountUncheckedUpdateWithoutTenantInput = {
 
 export type AccountUncheckedUpdateManyWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  profileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type AccountCreateManyProfileInput = {
+  id?: string
+  tenantId: string
+  name: string
+  balance?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdBy: string
+  createdAt?: Date | string
+  updatedBy?: string | null
+  updatedAt?: Date | string
+  deletedBy?: string | null
+  deletedAt?: Date | string | null
+}
+
+export type AccountUpdateWithoutProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutAccountsNestedInput
+  fromLedgerEntries?: Prisma.LedgerEntryUpdateManyWithoutFromAccountNestedInput
+  toLedgerEntries?: Prisma.LedgerEntryUpdateManyWithoutToAccountNestedInput
+}
+
+export type AccountUncheckedUpdateWithoutProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdBy?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  fromLedgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutFromAccountNestedInput
+  toLedgerEntries?: Prisma.LedgerEntryUncheckedUpdateManyWithoutToAccountNestedInput
+}
+
+export type AccountUncheckedUpdateManyWithoutProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   balance?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   createdBy?: Prisma.StringFieldUpdateOperationsInput | string
@@ -881,6 +1074,7 @@ export type AccountCountOutputTypeCountToLedgerEntriesArgs<ExtArgs extends runti
 export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantId?: boolean
+  profileId?: boolean
   name?: boolean
   balance?: boolean
   createdBy?: boolean
@@ -890,6 +1084,7 @@ export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   deletedBy?: boolean
   deletedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.Account$profileArgs<ExtArgs>
   fromLedgerEntries?: boolean | Prisma.Account$fromLedgerEntriesArgs<ExtArgs>
   toLedgerEntries?: boolean | Prisma.Account$toLedgerEntriesArgs<ExtArgs>
   _count?: boolean | Prisma.AccountCountOutputTypeDefaultArgs<ExtArgs>
@@ -898,6 +1093,7 @@ export type AccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type AccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantId?: boolean
+  profileId?: boolean
   name?: boolean
   balance?: boolean
   createdBy?: boolean
@@ -907,11 +1103,13 @@ export type AccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   deletedBy?: boolean
   deletedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.Account$profileArgs<ExtArgs>
 }, ExtArgs["result"]["account"]>
 
 export type AccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   tenantId?: boolean
+  profileId?: boolean
   name?: boolean
   balance?: boolean
   createdBy?: boolean
@@ -921,11 +1119,13 @@ export type AccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   deletedBy?: boolean
   deletedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.Account$profileArgs<ExtArgs>
 }, ExtArgs["result"]["account"]>
 
 export type AccountSelectScalar = {
   id?: boolean
   tenantId?: boolean
+  profileId?: boolean
   name?: boolean
   balance?: boolean
   createdBy?: boolean
@@ -936,30 +1136,35 @@ export type AccountSelectScalar = {
   deletedAt?: boolean
 }
 
-export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "name" | "balance" | "createdBy" | "createdAt" | "updatedBy" | "updatedAt" | "deletedBy" | "deletedAt", ExtArgs["result"]["account"]>
+export type AccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "profileId" | "name" | "balance" | "createdBy" | "createdAt" | "updatedBy" | "updatedAt" | "deletedBy" | "deletedAt", ExtArgs["result"]["account"]>
 export type AccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.Account$profileArgs<ExtArgs>
   fromLedgerEntries?: boolean | Prisma.Account$fromLedgerEntriesArgs<ExtArgs>
   toLedgerEntries?: boolean | Prisma.Account$toLedgerEntriesArgs<ExtArgs>
   _count?: boolean | Prisma.AccountCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AccountIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.Account$profileArgs<ExtArgs>
 }
 export type AccountIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  profile?: boolean | Prisma.Account$profileArgs<ExtArgs>
 }
 
 export type $AccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Account"
   objects: {
     tenant: Prisma.$TenantPayload<ExtArgs>
+    profile: Prisma.$ProfilePayload<ExtArgs> | null
     fromLedgerEntries: Prisma.$LedgerEntryPayload<ExtArgs>[]
     toLedgerEntries: Prisma.$LedgerEntryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     tenantId: string
+    profileId: string | null
     name: string
     balance: runtime.Decimal
     createdBy: string
@@ -1363,6 +1568,7 @@ readonly fields: AccountFieldRefs;
 export interface Prisma__AccountClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  profile<T extends Prisma.Account$profileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$profileArgs<ExtArgs>>): Prisma.Prisma__ProfileClient<runtime.Types.Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   fromLedgerEntries<T extends Prisma.Account$fromLedgerEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$fromLedgerEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LedgerEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   toLedgerEntries<T extends Prisma.Account$toLedgerEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Account$toLedgerEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LedgerEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1396,6 +1602,7 @@ export interface Prisma__AccountClient<T, Null = never, ExtArgs extends runtime.
 export interface AccountFieldRefs {
   readonly id: Prisma.FieldRef<"Account", 'String'>
   readonly tenantId: Prisma.FieldRef<"Account", 'String'>
+  readonly profileId: Prisma.FieldRef<"Account", 'String'>
   readonly name: Prisma.FieldRef<"Account", 'String'>
   readonly balance: Prisma.FieldRef<"Account", 'Decimal'>
   readonly createdBy: Prisma.FieldRef<"Account", 'String'>
@@ -1797,6 +2004,25 @@ export type AccountDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Accounts to delete.
    */
   limit?: number
+}
+
+/**
+ * Account.profile
+ */
+export type Account$profileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Profile
+   */
+  select?: Prisma.ProfileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Profile
+   */
+  omit?: Prisma.ProfileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProfileInclude<ExtArgs> | null
+  where?: Prisma.ProfileWhereInput
 }
 
 /**
