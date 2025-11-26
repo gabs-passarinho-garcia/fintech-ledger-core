@@ -343,9 +343,17 @@ export const endpoints = {
       initialBalance?: number | string;
     }): Promise<Awaited<ReturnType<typeof api.accounts.post>>> =>
       withAuthRefresh(() =>
-        api.accounts.post(data, {
-          headers: buildHeaders(),
-        }),
+        api.accounts.post(
+          {
+            tenantId: data.tenantId,
+            profileId: data.profileId ?? "",
+            name: data.name,
+            initialBalance: data.initialBalance,
+          },
+          {
+            headers: buildHeaders(),
+          },
+        ),
       ),
   },
 };
